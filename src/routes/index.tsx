@@ -1,0 +1,110 @@
+import { ReactNode, useEffect } from 'react';
+import { createBrowserRouter, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useSnapshot } from 'valtio';
+
+import { LoginWithAccessToken } from '@/apis/user';
+import { App } from '@/App';
+import Dashboard from '@/pages/dashboard';
+import ChatSession from '@/pages/dashboard/chat/chat-session.tsx';
+import Chat from '@/pages/dashboard/chat/chat.tsx';
+import Knowledge from '@/pages/dashboard/knowledge';
+import IndexPage from '@/pages/index';
+import Login from '@/pages/login';
+import { buildTower } from '@/stores/socket';
+import userStore, { setUserAccessToken, setUserInfo } from '@/stores/user';
+
+function ProtectedRoute({ children }: { children: ReactNode }) {
+    const { accessToken, userInfo } = useSnapshot(userStore);
+    const navigate = useNavigate();
+    const { pathname } = useLocation();
+
+    if (pathname === '/dashboard') {
+        navigate('/dashboard/chat');
+
+        return;
+    }
+
+    useEffect(() => {
+        if (accessToken && (!userInfo || !userInfo.userID)) {
+            // load user info
+            async function Login(accessToken: string) {
+                try {
+                    const resp = await LoginWithAccessToken(accessToken);
+
+                    setUserInfo({
+                        userID: resp.user_id,
+                        // avatar: resp.avatar,
+                        avatar: 'https://avatar.vercel.sh/' + resp.user_id,
+                        userName: resp.user_name
+                    });
+
+                    buildTower(resp.user_id, accessToken, () => {
+                        console.log('socket connected');
+                    });
+                } catch (e: any) {
+                    console.error(e);
+
+                    setUserAccessToken('');
+                    navigate('/');
+                }
+            }
+            Login(accessToken);
+        }
+    }, [accessToken]);
+
+    return accessToken ? children : <Navigate to="/login" />;
+}
+
+function PreLogin({ children }: { children: ReactNode }) {
+    const { accessToken } = useSnapshot(userStore);
+
+    return accessToken ? <Navigate to="/dashboard/chat" /> : children;
+}
+
+const routes = createBrowserRouter([
+    {
+        path: '/',
+        element: <App />,
+        children: [
+            {
+                index: true,
+                path: '/',
+                element: <IndexPage />
+            },
+            {
+                path: '/login',
+                element: (
+                    <PreLogin>
+                        <Login />
+                    </PreLogin>
+                )
+            },
+            {
+                path: '/dashboard/*',
+                element: (
+                    <ProtectedRoute>
+                        <Dashboard />
+                    </ProtectedRoute>
+                ),
+                children: [
+                    {
+                        path: 'knowledge',
+                        element: <Knowledge />
+                    },
+                    {
+                        index: true,
+                        path: 'chat',
+                        element: <Chat />
+                    },
+                    {
+                        index: true,
+                        path: 'chat/session/:sessionID',
+                        element: <ChatSession />
+                    }
+                ]
+            }
+        ]
+    }
+]);
+
+export default routes;

@@ -1,0 +1,58 @@
+declare type Resource = {
+    id: string;
+    title: string;
+    cycle: number;
+    description: string;
+};
+
+declare type Session = {
+    key: string;
+    title: string;
+};
+
+declare type SessionNamedEvent = {
+    sessionID: string;
+    name: string;
+};
+
+declare type SessionStore = {
+    currentSelectedSession: Session | undefined;
+    sessionNamedEvent: SessionNamedEvent | undefined;
+};
+
+declare type ResourceStore = {
+    currentSelectedResource: Resource | undefined;
+    currentSpaceResources: Resource[] | undefined;
+    onResourceUpdate: boolean;
+};
+
+type callbackFunc = (msg: FireTowerMsg) => void;
+type subscribeFunc = (topics: string[], callback: callbackFunc) => () => void;
+
+declare type SocketStore = {
+    connectionStatus: string;
+    subscribe: subscribeFunc | undefined;
+};
+
+declare type SpaceStore = {
+    spaces: UserSpace[];
+    currentSelectedSpace: string;
+};
+
+declare type UserInfo = {
+    userID: string;
+    userName: string;
+    avatar: string;
+};
+
+declare type UserStore = {
+    accessToken: string | null;
+    userInfo: UserInfo;
+    host: string;
+};
+
+declare type EventStore = {
+    themeChange: boolean;
+};
+
+declare type Size = 'sm' | 'md' | 'lg' | 'xs' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | 'full' | undefined;
