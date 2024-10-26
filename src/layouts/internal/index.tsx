@@ -102,6 +102,9 @@ export default function Component({ children }: { children: React.ReactNode }) {
                 setUserAccessToken('');
                 navigate('/');
                 break;
+            case 'setting':
+                navigate('/user/setting');
+                break;
             default:
         }
     }, []);
@@ -326,6 +329,13 @@ export default function Component({ children }: { children: React.ReactNode }) {
                             )}
                         </DropdownTrigger>
                         <DropdownMenu aria-label="Account switcher" variant="flat" onAction={userAction}>
+                            <DropdownItem key="setting" textValue="setting">
+                                <div className="flex items-center gap-x-3">
+                                    <div className="flex flex-col">
+                                        <p className="text-small font-medium text-default-600">{t('Setting')}</p>
+                                    </div>
+                                </div>
+                            </DropdownItem>
                             <DropdownItem key="logout" textValue="logout">
                                 <div className="flex items-center gap-x-3">
                                     <div className="flex flex-col">

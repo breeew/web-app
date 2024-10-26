@@ -85,7 +85,8 @@ export default function Component() {
                 userID: resp.user_id,
                 // avatar: resp.avatar,
                 avatar: 'https://avatar.vercel.sh/' + resp.user_id,
-                userName: resp.user_name
+                userName: resp.user_name,
+                email: resp.email
             });
             navigate('/dashboard/chat');
         } catch (e: any) {

@@ -42,6 +42,7 @@ declare type SpaceStore = {
 declare type UserInfo = {
     userID: string;
     userName: string;
+    email: string;
     avatar: string;
 };
 

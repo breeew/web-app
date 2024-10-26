@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from 'react';
+import { Children, ReactNode, useEffect } from 'react';
 import { createBrowserRouter, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 
@@ -8,6 +8,7 @@ import Dashboard from '@/pages/dashboard';
 import ChatSession from '@/pages/dashboard/chat/chat-session.tsx';
 import Chat from '@/pages/dashboard/chat/chat.tsx';
 import Knowledge from '@/pages/dashboard/knowledge';
+import Setting from '@/pages/dashboard/setting/setting';
 import IndexPage from '@/pages/index';
 import Login from '@/pages/login';
 import { buildTower } from '@/stores/socket';
@@ -33,6 +34,7 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
 
                     setUserInfo({
                         userID: resp.user_id,
+                        email: resp.email,
                         // avatar: resp.avatar,
                         avatar: 'https://avatar.vercel.sh/' + resp.user_id,
                         userName: resp.user_name
@@ -100,6 +102,20 @@ const routes = createBrowserRouter([
                         index: true,
                         path: 'chat/session/:sessionID',
                         element: <ChatSession />
+                    }
+                ]
+            },
+            {
+                path: '/user/*',
+                element: (
+                    <ProtectedRoute>
+                        <Outlet />
+                    </ProtectedRoute>
+                ),
+                children: [
+                    {
+                        path: 'setting',
+                        element: <Setting />
                     }
                 ]
             }

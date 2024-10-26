@@ -1,3 +1,4 @@
+import { enableMapSet } from 'immer';
 import { proxy } from 'valtio';
 
 import { ChangeBaseURL } from '@/apis/request';
@@ -7,7 +8,8 @@ const userStore = proxy<UserStore>({
     userInfo: {
         userID: '',
         userName: '',
-        avatar: ''
+        avatar: '',
+        email: ''
     },
     host: localStorage.getItem('self-host') || import.meta.env.VITE_BASE_URL
 });
@@ -23,9 +25,10 @@ export const setUserAccessToken = (token: string) => {
     localStorage.setItem('access_token', token);
 };
 
-export const setUserInfo = (userInfo?: { userID: string; userName: string; avatar: string }) => {
+export const setUserInfo = (userInfo?: { userID: string; userName: string; email: string; avatar: string }) => {
     if (!userInfo) {
         userStore.userInfo = {
+            email: '',
             userID: '',
             userName: '',
             avatar: ''
@@ -35,7 +38,8 @@ export const setUserInfo = (userInfo?: { userID: string; userName: string; avata
     userStore.userInfo = {
         userID: userInfo.userID,
         userName: userInfo.userName,
-        avatar: userInfo.avatar
+        avatar: userInfo.avatar,
+        email: userInfo.email
     };
 };
 

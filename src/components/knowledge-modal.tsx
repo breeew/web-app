@@ -1,13 +1,13 @@
 import { BreadcrumbItem, Breadcrumbs, Button, ButtonGroup, Kbd, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Skeleton, Spacer, useDisclosure } from '@nextui-org/react';
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMediaQuery } from 'usehooks-ts';
 import { useSnapshot } from 'valtio';
 
 import { GetKnowledge, type Knowledge } from '@/apis/knowledge';
 import KnowledgeDeletePopover from '@/components/knowledge-delete-popover';
 import KnowledgeEdit from '@/components/knowledge-edit';
 import KnowledgeView from '@/components/knowledge-view';
+import { useMedia } from '@/hooks/use-media';
 import spaceStore from '@/stores/space';
 
 export interface ViewKnowledgeProps {
@@ -23,7 +23,7 @@ const ViewKnowledge = memo(
         const [knowledge, setKnowledge] = useState<Knowledge>();
         const [size, setSize] = useState<Size>('md');
         const [isEdit, setIsEdit] = useState(false);
-        const isMobile = useMediaQuery('(max-width: 768px)');
+        const { isMobile } = useMedia();
         const [canEsc, setCanEsc] = useState(true);
 
         const { onChange, onDelete } = props;
