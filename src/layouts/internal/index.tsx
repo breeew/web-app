@@ -1,9 +1,9 @@
 import { Icon } from '@iconify/react';
-import { Button, Card, CardBody, CardFooter, Chip, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, ScrollShadow, Skeleton, Spacer, useDisclosure, User } from '@nextui-org/react';
+import { Button, Card, CardBody, CardFooter, Chip, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Link, ScrollShadow, Skeleton, Spacer, useDisclosure, User } from '@nextui-org/react';
 import { cn } from '@nextui-org/react';
 import React, { Key, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useImmer } from 'use-immer';
 import { useMediaQuery } from 'usehooks-ts';
 import { useSnapshot } from 'valtio';
@@ -127,7 +127,7 @@ export default function Component({ children }: { children: React.ReactNode }) {
                     })}
                 >
                     <div className="flex items-center justify-between">
-                        <Link to="/">
+                        <Link color="foreground" to="/" className="cursor-pointer">
                             <div className="flex items-center gap-2 px-2">
                                 <Logo size={20} />
 
@@ -336,7 +336,7 @@ export default function Component({ children }: { children: React.ReactNode }) {
                                     </div>
                                 </div>
                             </DropdownItem>
-                            <DropdownItem key="logout" textValue="logout">
+                            <DropdownItem key="logout" color="danger" textValue="logout">
                                 <div className="flex items-center gap-x-3">
                                     <div className="flex flex-col">
                                         <p className="text-small font-medium text-default-600">{t('Logout')}</p>

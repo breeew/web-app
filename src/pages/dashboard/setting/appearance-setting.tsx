@@ -40,8 +40,8 @@ const AppearanceSetting = React.forwardRef<HTMLDivElement, AppearanceSettingCard
         [isDark]
     );
 
-    const modifyLanguage = React.useCallback((lng: string) => {
-        if (!lng) {
+    const modifyLanguage = React.useCallback((lng: string | { size: number }) => {
+        if (!lng || lng.size === 0) {
             return;
         }
         changeLanguage(lng);
@@ -79,7 +79,7 @@ const AppearanceSetting = React.forwardRef<HTMLDivElement, AppearanceSettingCard
                         <p className="text-base font-medium text-default-700">{t('Language')}</p>
                         <p className="mt-1 text-sm font-normal text-default-400">Modify web language.</p>
                     </div>
-                    <Select className="max-w-[200px]" defaultSelectedKeys={[currentLanguage]} onSelectionChange={modifyLanguage}>
+                    <Select isRequired selectionMode="single" className="max-w-[200px]" aria-label="Favorite Animal" selectedKeys={[currentLanguage]} onSelectionChange={modifyLanguage}>
                         {LanguageOptions.map(LanguageOption => (
                             <SelectItem key={LanguageOption.value} value={LanguageOption.value}>
                                 {LanguageOption.label}

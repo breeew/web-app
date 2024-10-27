@@ -21,28 +21,74 @@ const ProfileSetting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>
     const { toast } = useToast();
 
     const [userName, setUserName] = React.useState('');
+    const [errorUserName, setErrorUserName] = React.useState({
+        invalid: false,
+        errorMessage: ''
+    });
     const [email, setEmail] = React.useState('');
+    const [errorEmail, setErrorEmail] = React.useState({
+        invalid: false,
+        errorMessage: ''
+    });
 
     React.useEffect(() => {
         console.log(userInfo);
         if (!userInfo) {
             subscribeKey(userStore, 'userInfo', userInfo => {
-                console.log('???', userInfo);
                 if (!userInfo) {
                     return;
                 }
+
                 setEmail(userInfo.email);
                 setUserName(userInfo.userName);
             });
 
             return;
         }
+
         setEmail(userInfo.email);
         setUserName(userInfo.userName);
+
         setLoading(false);
     }, [userInfo]);
 
+    const disabled = React.useMemo(() => {
+        return userInfo.email === email && userInfo.userName === userName;
+    }, [email, userName, userInfo]);
+
+    function initInvalidMessage() {
+        setErrorUserName({
+            invalid: false,
+            errorMessage: ''
+        });
+        setErrorEmail({
+            invalid: false,
+            errorMessage: ''
+        });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     async function updateUserProfile() {
+        initInvalidMessage();
+        if (userName.length > 32) {
+            setErrorUserName({
+                invalid: true,
+                errorMessage: 'too long, must < 32'
+            });
+
+            return;
+        }
+
+        if (!emailRegex.test(email)) {
+            setErrorEmail({
+                invalid: true,
+                errorMessage: 'email address is wrong'
+            });
+
+            return;
+        }
+
         setLoading(true);
         try {
             await UpdateUserProfile(userName, email);
@@ -98,17 +144,36 @@ const ProfileSetting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>
                 <div>
                     <p className="text-base font-medium text-default-700">{t('Nickname')}</p>
                     <p className="mt-1 text-sm font-normal text-default-400">Nickname or first name.</p>
-                    {userName && <Input className="mt-2" placeholder="Type your nickname" defaultValue={userInfo.userName} onValueChange={setUserName} />}
+                    {userName && (
+                        <Input
+                            className="mt-2"
+                            placeholder="Type your nickname"
+                            isInvalid={errorUserName.invalid}
+                            errorMessage={errorUserName.errorMessage}
+                            defaultValue={userInfo.userName}
+                            onValueChange={setUserName}
+                        />
+                    )}
                 </div>
                 <Spacer y={2} />
                 {/* Email Address */}
                 <div>
                     <p className="text-base font-medium text-default-700">{t('Email Address')}</p>
                     <p className="mt-1 text-sm font-normal text-default-400">The email address associated with your account.</p>
-                    {email && <Input className="mt-2" placeholder="Type your email" defaultValue={email} onValueChange={setEmail} />}
+                    {email && (
+                        <Input
+                            className="mt-2"
+                            placeholder="Type your email"
+                            type="email"
+                            isInvalid={errorEmail.invalid}
+                            errorMessage={errorEmail.errorMessage}
+                            defaultValue={email}
+                            onValueChange={setEmail}
+                        />
+                    )}
                 </div>
                 <Spacer y={2} />
-                <Button className="mt-4 bg-default-foreground text-background" isLoading={loading} onClick={updateUserProfile}>
+                <Button isDisabled={disabled} className="mt-4 bg-default-foreground text-background" isLoading={loading} onClick={updateUserProfile}>
                     {t('Update')}
                 </Button>
             </Skeleton>

@@ -1,5 +1,6 @@
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react';
-import React, { memo, useState, useTransition } from 'react';
+import React, { memo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { DeleteKnowledge, type Knowledge } from '@/apis/knowledge';
 
@@ -15,7 +16,7 @@ export default memo(function DeleteKnowledgePopover({
     backdrop?: 'transparent' | 'opaque' | 'blur' | undefined;
 }) {
     // const backdrops = ['opaque', 'blur', 'transparent'];
-    const { t } = useTransition();
+    const { t } = useTranslation();
     const { isOpen, onOpenChange } = useDisclosure();
     const [isLoading, setLoading] = useState(false);
 
