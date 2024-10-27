@@ -37,10 +37,10 @@ const Setting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>(({ cla
                         panel: 'w-full p-0 pt-4'
                     }}
                 >
-                    <Tab key="profile" title="Profile">
+                    <Tab key="profile" title={t('Profile')}>
                         <ProfileSetting />
                     </Tab>
-                    <Tab key="appearance" title="Appearance">
+                    <Tab key="appearance" title={t('Appearance')}>
                         <AppearanceSetting />
                     </Tab>
                 </Tabs>

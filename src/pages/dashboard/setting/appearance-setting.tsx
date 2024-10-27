@@ -40,8 +40,8 @@ const AppearanceSetting = React.forwardRef<HTMLDivElement, AppearanceSettingCard
         [isDark]
     );
 
-    const modifyLanguage = React.useCallback((lng: string | { size: number }) => {
-        if (!lng || lng.size === 0) {
+    const modifyLanguage = React.useCallback((lng: string | { currentKey: any }) => {
+        if (!lng || !lng.currentKey) {
             return;
         }
         changeLanguage(lng);
@@ -53,7 +53,7 @@ const AppearanceSetting = React.forwardRef<HTMLDivElement, AppearanceSettingCard
         }
 
         return i18n.language;
-    }, [i18n]);
+    }, [i18n.language]);
 
     return (
         <div ref={ref} className={cn('p-2', className)} {...props}>
