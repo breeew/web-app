@@ -124,6 +124,7 @@ export default function Chat() {
                             if (messages.find(v => v.key === data.messageID)) {
                                 break;
                             }
+                            setAiTyping(false);
                             setMessages((prev: Message[]) => {
                                 prev.push({
                                     key: data.messageID,
@@ -135,6 +136,7 @@ export default function Chat() {
                                     ext: {}
                                 });
                             });
+
                             break;
                         case EventType.EVENT_ASSISTANT_CONTINUE:
                             let index = 0;
@@ -398,8 +400,9 @@ export default function Chat() {
                     await query(location.state.messages[0].message);
                     location.state.messages = undefined;
                 }
+            } else {
+                setAiTyping(false);
             }
-            setAiTyping(false);
         }
         if (currentSelectedSpace) {
             if (!sessionID || (messages && messages.length > 0 && messages[0].spaceID !== currentSelectedSpace)) {

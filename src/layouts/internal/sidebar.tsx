@@ -39,7 +39,7 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
         const [selected, setSelected] = React.useState<React.Key>(defaultSelectedKey || '');
 
         useEffect(() => {
-            defaultSelectedKey && setSelected(defaultSelectedKey);
+            setSelected(defaultSelectedKey || '');
         }, [defaultSelectedKey]);
 
         const sectionClasses = {

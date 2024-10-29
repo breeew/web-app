@@ -74,7 +74,10 @@ export default function Component({ children }: { children: React.ReactNode }) {
     }, [currentSelectedSpace, isChat, sessionID]);
 
     useEffect(() => {
-        if (!sessionID || (currentSelectedSession && currentSelectedSession.space_id !== currentSelectedSpace)) {
+        if (!sessionID && !currentSelectedSession?.key) {
+            return;
+        }
+        if (!sessionID || (currentSelectedSession?.space_id !== '' && currentSelectedSession.space_id !== currentSelectedSpace)) {
             setCurrentSelectedSession({
                 key: '',
                 title: '',
@@ -83,6 +86,7 @@ export default function Component({ children }: { children: React.ReactNode }) {
 
             return;
         }
+
         for (const item of sessionList) {
             if (item.id === sessionID) {
                 setCurrentSelectedSession({
@@ -196,40 +200,36 @@ export default function Component({ children }: { children: React.ReactNode }) {
                             (() => {
                                 if (isChat) {
                                     return (
-                                        ((currentSelectedSession && currentSelectedSession.key) || !isSession) && (
-                                            <>
-                                                <Sidebar
-                                                    defaultSelectedKey={currentSelectedSession?.key}
-                                                    iconClassName="group-data-[selected=true]:text-primary-foreground"
-                                                    itemClasses={{
-                                                        base: 'data-[selected=true]:bg-primary-400 data-[selected=true]:focus:bg-primary-400 dark:data-[selected=true]:bg-primary-300 data-[hover=true]:bg-default-300/20 dark:data-[hover=true]:bg-default-200/40',
-                                                        title: 'group-data-[selected=true]:text-primary-foreground'
-                                                    }}
-                                                    items={sessionList.map(v => {
-                                                        return {
-                                                            key: v.id,
-                                                            title: v.title || v.id
-                                                        };
-                                                    })}
-                                                    onSelect={key => {
-                                                        for (const item of sessionList) {
-                                                            if (item.id === key) {
-                                                                setCurrentSelectedSession({
-                                                                    key: key,
-                                                                    title: item.title,
-                                                                    space_id: item.space_id
-                                                                });
-                                                                redirectSession(key);
-                                                                break;
-                                                            }
-                                                        }
-                                                        if (isMobile && isOpen) {
-                                                            onOpenChange();
-                                                        }
-                                                    }}
-                                                />
-                                            </>
-                                        )
+                                        <Sidebar
+                                            defaultSelectedKey={currentSelectedSession?.key}
+                                            iconClassName="group-data-[selected=true]:text-primary-foreground"
+                                            itemClasses={{
+                                                base: 'data-[selected=true]:bg-primary-400 data-[selected=true]:focus:bg-primary-400 dark:data-[selected=true]:bg-primary-300 data-[hover=true]:bg-default-300/20 dark:data-[hover=true]:bg-default-200/40',
+                                                title: 'group-data-[selected=true]:text-primary-foreground'
+                                            }}
+                                            items={sessionList.map(v => {
+                                                return {
+                                                    key: v.id,
+                                                    title: v.title || v.id
+                                                };
+                                            })}
+                                            onSelect={key => {
+                                                for (const item of sessionList) {
+                                                    if (item.id === key) {
+                                                        setCurrentSelectedSession({
+                                                            key: key,
+                                                            title: item.title,
+                                                            space_id: item.space_id
+                                                        });
+                                                        redirectSession(key);
+                                                        break;
+                                                    }
+                                                }
+                                                if (isMobile && isOpen) {
+                                                    onOpenChange();
+                                                }
+                                            }}
+                                        />
                                     );
                                 } else {
                                     return (

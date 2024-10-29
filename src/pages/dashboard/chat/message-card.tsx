@@ -126,7 +126,7 @@ const MessageCard = React.forwardRef<HTMLDivElement, MessageCardProps>(
                 </div>
                 <div className="flex flex-1 overflow-hidden flex-col gap-4 relative">
                     <div className={cn('relative w-full rounded-medium py-3 text-default-600', failedMessageClassName, messageClassName)}>
-                        {!hasFailed && isLoading ? (
+                        {!hasFailed && !message ? (
                             <>
                                 <div className="flex flex-col gap-3 mt-[-3px]">
                                     <Skeleton className="h-6 w-3/5 rounded-lg" />

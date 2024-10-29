@@ -460,7 +460,7 @@ const NormalCard = memo(function NormalCard({ title, content, tags, stage }: { t
                                 })}
                             </div>
                         )}
-                        <div className="text-base dark:text-white/60 text-gray-500 h-full overflow-ellipsis overflow-hidden line-clamp-6 text-wrap whitespace-break-spaces break-words">
+                        <div className="text-base dark:text-white/60 text-gray-500 h-full overflow-ellipsis overflow-hidden line-clamp-6 text-wrap break-words">
                             <Markdown
                                 isLight
                                 urlTransform={() => {
