@@ -2,12 +2,14 @@ declare type Resource = {
     id: string;
     title: string;
     cycle: number;
+    space_id: string;
     description: string;
 };
 
 declare type Session = {
     key: string;
     title: string;
+    space_id: string;
 };
 
 declare type SessionNamedEvent = {

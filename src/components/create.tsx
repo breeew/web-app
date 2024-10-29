@@ -100,7 +100,7 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
                         <Select
                             isRequired
                             variant="faded"
-                            label="Resource"
+                            label={t('knowledgeCreateResourceLable')}
                             defaultSelectedKeys={[resources[0].id]}
                             labelPlacement="outside"
                             placeholder="Select an resource"

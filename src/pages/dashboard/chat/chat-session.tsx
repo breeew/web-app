@@ -402,7 +402,7 @@ export default function Chat() {
             setAiTyping(false);
         }
         if (currentSelectedSpace) {
-            if (!sessionID && messages && messages.length > 0 && messages[0].spaceID !== currentSelectedSpace) {
+            if (!sessionID || (messages && messages.length > 0 && messages[0].spaceID !== currentSelectedSpace)) {
                 navigate('/dashboard/chat');
 
                 return;

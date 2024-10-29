@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils';
 import eventStore from '@/stores/event';
 
 export default memo(function MarkdownComponent(props: Options & { isLight?: boolean }) {
-    const { children, isLight, ...rest } = props;
+    const { children, isLight, className, ...rest } = props;
     const cps = useMemo(() => {
         if (isLight) {
             return undefined;
@@ -23,9 +23,13 @@ export default memo(function MarkdownComponent(props: Options & { isLight?: bool
         return { code: code, a: CustomLink };
     }, [isLight]);
 
+    let markdownClassName = className ? className : '';
+
+    markdownClassName += ' markdown-box';
+
     return (
         <>
-            <Markdown {...rest} remarkPlugins={[[remarkGfm, { stringLength: stringWidth }]]} components={cps}>
+            <Markdown {...rest} className={markdownClassName} remarkPlugins={[[remarkGfm, { stringLength: stringWidth }]]} components={cps}>
                 {children as string}
             </Markdown>
         </>

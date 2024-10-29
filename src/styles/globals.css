@@ -6,3 +6,8 @@
     display: none;
     /* 隐藏滚动条 */
 }
+
+.markdown-box ol li {
+    list-style-type: disc;
+    list-style-position: inside;
+}

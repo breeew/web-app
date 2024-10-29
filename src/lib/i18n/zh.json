@@ -61,7 +61,7 @@
     "knowledgeCreateButtonTitle": "开始酝酿你的记忆",
     "knowledgeCreateContentLabel": "记忆内容",
     "knowledgeCreateContentLabelPlaceholder": "输入你的想法或知识点来生成记忆",
-    "knowledgeCreateResourceLable": "资源类型（仅接受英文字母，输入不存在的资源类型则自动创建）",
+    "knowledgeCreateResourceLable": "资源类型",
     "knowledgeCreateResourceLablePlaceholder": "输入你的资源类型，默认为knowledge",
     "showRelevanceDocs": "展示可能关联的内容"
 }

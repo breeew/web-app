@@ -5,7 +5,6 @@ import React, { Key, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useImmer } from 'use-immer';
-import { useMediaQuery } from 'usehooks-ts';
 import { useSnapshot } from 'valtio';
 import { subscribeKey } from 'valtio/utils';
 
@@ -19,6 +18,7 @@ import { ListResources } from '@/apis/resource';
 import { GithubIcon, Logo } from '@/components/icons';
 import ResourceManage from '@/components/resource-modal';
 import { useChatPageCondition } from '@/hooks/use-chat-page';
+import { useMedia } from '@/hooks/use-media';
 import resourceStore, { setCurrentSelectedResource, setSpaceResource } from '@/stores/resource';
 import sessionStore, { setCurrentSelectedSession } from '@/stores/session';
 import { closeSocket } from '@/stores/socket';
@@ -35,7 +35,7 @@ export default function Component({ children }: { children: React.ReactNode }) {
     const navigate = useNavigate();
     const { isOpen, onOpenChange } = useDisclosure();
     const [isCollapsed, _] = React.useState(false);
-    const isMobile = useMediaQuery('(max-width: 768px)');
+    const { isMobile } = useMedia();
     const { currentSelectedSpace } = useSnapshot(spaceStore);
     const { currentSelectedResource } = useSnapshot(resourceStore);
     const { currentSelectedSession } = useSnapshot(sessionStore);
@@ -74,10 +74,11 @@ export default function Component({ children }: { children: React.ReactNode }) {
     }, [currentSelectedSpace, isChat, sessionID]);
 
     useEffect(() => {
-        if (!sessionID) {
+        if (!sessionID || (currentSelectedSession && currentSelectedSession.space_id !== currentSelectedSpace)) {
             setCurrentSelectedSession({
                 key: '',
-                title: ''
+                title: '',
+                space_id: ''
             });
 
             return;
@@ -86,12 +87,13 @@ export default function Component({ children }: { children: React.ReactNode }) {
             if (item.id === sessionID) {
                 setCurrentSelectedSession({
                     key: item.id,
-                    title: item.title
+                    title: item.title,
+                    space_id: item.space_id
                 });
                 break;
             }
         }
-    }, [sessionID, sessionList]);
+    }, [sessionID, sessionList, currentSelectedSpace]);
 
     // @ts-ignore
     const userAction = useCallback((actionName: Key) => {
@@ -214,11 +216,15 @@ export default function Component({ children }: { children: React.ReactNode }) {
                                                             if (item.id === key) {
                                                                 setCurrentSelectedSession({
                                                                     key: key,
-                                                                    title: item.title
+                                                                    title: item.title,
+                                                                    space_id: item.space_id
                                                                 });
                                                                 redirectSession(key);
                                                                 break;
                                                             }
+                                                        }
+                                                        if (isMobile && isOpen) {
+                                                            onOpenChange();
                                                         }
                                                     }}
                                                 />
@@ -239,9 +245,11 @@ export default function Component({ children }: { children: React.ReactNode }) {
                                                 for (const item of resourceList) {
                                                     if (item.id === key) {
                                                         setCurrentSelectedResource(item);
-
-                                                        return;
+                                                        break;
                                                     }
+                                                }
+                                                if (isMobile && isOpen) {
+                                                    onOpenChange();
                                                 }
                                             }}
                                         />
@@ -387,7 +395,7 @@ function useResourceMode() {
             let currentSelectedResourceAlreadyExist = false;
 
             resp.forEach(v => {
-                if (currentSelectedResource && currentSelectedResource.id && v.id === currentSelectedResource.id) {
+                if (currentSelectedResource && currentSelectedResource.id && v.id === currentSelectedResource.id && v.space_id === currentSelectedResource.space_id) {
                     currentSelectedResourceAlreadyExist = true;
                 }
                 items.push({

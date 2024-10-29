@@ -61,7 +61,7 @@
     "knowledgeCreateButtonTitle": "Brew your memory.",
     "knowledgeCreateContentLabel": "Memory Content",
     "knowledgeCreateContentLabelPlaceholder": "Ideas or knowledges to create new memory",
-    "knowledgeCreateResourceLable": "Resource (type new resource for create)",
+    "knowledgeCreateResourceLable": "Resource",
     "knowledgeCreateResourceLablePlaceholder": "Your memory resource type, default is knowledge",
     "showRelevanceDocs": "Show Relevance Docs"
 }
