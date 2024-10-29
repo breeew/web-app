@@ -82,7 +82,6 @@ export default function Component() {
 
     useEffect(() => {
         if (spaces && spaces.length > 0) {
-            console.log(spaces);
             spacesToSelector(spaces);
             setLoaded(true);
 

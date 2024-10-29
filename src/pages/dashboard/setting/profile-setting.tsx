@@ -32,7 +32,6 @@ const ProfileSetting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>
     });
 
     React.useEffect(() => {
-        console.log(userInfo);
         if (!userInfo) {
             subscribeKey(userStore, 'userInfo', userInfo => {
                 if (!userInfo) {

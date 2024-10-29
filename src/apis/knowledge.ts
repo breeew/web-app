@@ -45,7 +45,6 @@ export async function GetKnowledge(spaceID: string, knowledgeID: string): Promis
 }
 
 export async function CreateKnowledge(spaceID: string, resource: string, content: string, async: boolean = true): Promise<string> {
-    console.log(spaceID);
     const resp = await instance.post(`/${spaceID}/knowledge`, {
         resource,
         content,
