@@ -1,10 +1,13 @@
 import { Icon } from '@iconify/react';
-import { Button, Input, Link, ScrollShadow, Textarea } from '@nextui-org/react';
-import { memo, useCallback, useState } from 'react';
+import { Button, Input, Link, ScrollShadow, Select, SelectItem, Textarea } from '@nextui-org/react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSnapshot } from 'valtio';
 
 import { CreateKnowledge, type Knowledge, UpdateKnowledge } from '@/apis/knowledge';
+import { Resource } from '@/apis/resource';
 import { useToast } from '@/hooks/use-toast';
+import resourceStore from '@/stores/resource';
 
 export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { knowledge?: Knowledge; onChange?: () => void; onCancel?: () => void }) {
     const { t } = useTranslation();
@@ -15,6 +18,37 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
     const [isInvalid, setInvalid] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setLoading] = useState(false);
+
+    const { currentSpaceResources } = useSnapshot(resourceStore);
+    const resources = useMemo(() => {
+        let list: Resource[] = [];
+        let matched = false;
+
+        if (currentSpaceResources) {
+            for (const item of currentSpaceResources) {
+                if (resource === item.id) {
+                    matched = true;
+                }
+
+                if (item.id !== '') {
+                    list.push(item);
+                }
+            }
+        }
+
+        if (!matched && resource) {
+            list.push({
+                id: resource,
+                title: t('UnCreate') + ': ' + resource
+            });
+        }
+
+        if (resource === '') {
+            setResource(list[0].id);
+        }
+
+        return list;
+    }, [currentSpaceResources]);
 
     const onKnowledgeContentChanged = useCallback((value: string) => {
         if (isInvalid) {
@@ -132,7 +166,28 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
                                 </div>
                             </div>
 
-                            <Input
+                            {resources.length > 0 && (
+                                <Select
+                                    isRequired
+                                    variant="bordered"
+                                    label={t('knowledgeCreateResourceLable')}
+                                    defaultSelectedKeys={[resource ? resource : resources[0].id]}
+                                    labelPlacement="outside"
+                                    placeholder="Select an resource"
+                                    className="text-xl text-gray-800 dark:text-gray-100 !mt-12"
+                                    onSelectionChange={item => {
+                                        if (item) {
+                                            setResource(item.currentKey || '');
+                                        }
+                                    }}
+                                >
+                                    {resources.map(item => {
+                                        return <SelectItem key={item.id}>{item.title}</SelectItem>;
+                                    })}
+                                </Select>
+                            )}
+
+                            {/* <Input
                                 label={t('knowledgeCreateResourceLable')}
                                 variant="bordered"
                                 placeholder={t('knowledgeCreateResourceLablePlaceholder')}
@@ -140,7 +195,7 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
                                 labelPlacement="outside"
                                 defaultValue={knowledge.resource || 'knowledge'}
                                 onValueChange={setResource}
-                            />
+                            /> */}
                         </div>
 
                         <div className="flex gap-4 justify-end">

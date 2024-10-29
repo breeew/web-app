@@ -30,6 +30,7 @@ const ResourceManage = memo(
         });
         const [isCreate, setIsCreate] = useState(false);
         const [isLoading, setIsLoading] = useState(false);
+        const { toast } = useToast();
 
         const { isMobile } = useMedia();
         const { onModify } = props;
@@ -49,7 +50,6 @@ const ResourceManage = memo(
             onOpen();
         }
 
-        const toast = useToast();
         const create = useCallback(async () => {
             if (!id) {
                 return;
@@ -142,7 +142,7 @@ const ResourceManage = memo(
 
                                     <div className="flex flex-wrap gap-1 mb-5">
                                         <Input
-                                            label={t('Cycle') + '(' + t('Day') + ')'}
+                                            label={t('ClearCycle') + '(' + t('Day') + ')' + ' empty or 0 means unlimit'}
                                             variant="bordered"
                                             placeholder="Resource life cycle (day)"
                                             className="text-xl text-gray-800 dark:text-gray-100"

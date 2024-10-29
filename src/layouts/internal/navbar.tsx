@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Button, ButtonGroup, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@nextui-org/react';
+import { Button, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@nextui-org/react';
 import { PressEvent } from '@react-types/shared/src';
 import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -86,7 +86,7 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
                 })()}
             </NavbarBrand>
             {!isChat && (
-                <NavbarContent className="ml-4 hidden h-12 w-full max-w-fit gap-4 rounded-full bg-content2 px-4 dark:bg-content1 lg:flex" justify="end">
+                <NavbarContent className="ml-4 hidden h-12 w-full max-w-fit gap-4 rounded-full px-4  lg:flex" justify="end">
                     {/* <NavbarItem>
                         <Link className="flex gap-2 text-inherit" href="#">
                             Prompt
@@ -95,7 +95,7 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
                     {currentSelectedResource && currentSelectedResource.id && currentSelectedResource.id !== 'knowledge' && (
                         <>
                             <NavbarItem>
-                                <Button className="flex gap-2 text-inherit" onClick={showResourceSetting}>
+                                <Button radius="full" variant="ghost" className="flex gap-2 text-inherit" onClick={showResourceSetting}>
                                     {t('Resource Setting')}
                                 </Button>
                             </NavbarItem>

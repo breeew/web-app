@@ -20,7 +20,7 @@ export default memo(function MarkdownComponent(props: Options & { isLight?: bool
             return undefined;
         }
 
-        return { code };
+        return { code: code, a: CustomLink };
     }, [isLight]);
 
     return (
@@ -31,6 +31,14 @@ export default memo(function MarkdownComponent(props: Options & { isLight?: bool
         </>
     );
 });
+
+const CustomLink = ({ href, children }) => {
+    return (
+        <a href={href} className={href && href !== '#' && 'text-blue-400'} target="_blank" rel="noopener noreferrer">
+            {children}
+        </a>
+    );
+};
 
 const code = function Code(props: ExtraProps) {
     // @ts-ignore

@@ -23,7 +23,7 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
 
         if (currentSpaceResources) {
             for (const item of currentSpaceResources) {
-                if (item.key !== '') {
+                if (item.id !== '') {
                     list.push(item);
                 }
             }
@@ -77,7 +77,6 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
                     <div className="mt-1 flex w-full items-center justify-end gap-2 px-1">
                         <p className="text-tiny text-default-400 dark:text-default-300">{t('One thing, One memory')}</p>
                     </div>
-
                     <Textarea
                         minRows={8}
                         name="knowledge"
@@ -102,7 +101,7 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
                             isRequired
                             variant="faded"
                             label="Resource"
-                            defaultSelectedKeys={[resources[0].key]}
+                            defaultSelectedKeys={[resources[0].id]}
                             labelPlacement="outside"
                             placeholder="Select an resource"
                             className="max-w-xs"
@@ -113,11 +112,10 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
                             }}
                         >
                             {resources.map(item => {
-                                return <SelectItem key={item.key}>{item.title}</SelectItem>;
+                                return <SelectItem key={item.id}>{item.title}</SelectItem>;
                             })}
                         </Select>
                     )}
-
                     <Button className="mt-1 text-white bg-gradient-to-br from-pink-300 from-15%  to-indigo-600 dark:from-indigo-500 dark:to-pink-500" isLoading={loading} onClick={createNewKnowledge}>
                         {t('Submit')}
                     </Button>

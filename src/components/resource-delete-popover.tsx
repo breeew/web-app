@@ -3,6 +3,7 @@ import React, { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { DeleteResource, type Resource } from '@/apis/resource';
+import { useToast } from '@/hooks/use-toast';
 
 export default memo(function DeleteKnowledgePopover({
     children,
@@ -19,6 +20,7 @@ export default memo(function DeleteKnowledgePopover({
     const { t } = useTranslation();
     const { isOpen, onOpenChange } = useDisclosure();
     const [isLoading, setLoading] = useState(false);
+    const { toast } = useToast();
 
     async function deleteResource() {
         if (!resource) {
@@ -27,6 +29,9 @@ export default memo(function DeleteKnowledgePopover({
         setLoading(true);
         try {
             await DeleteResource(resource.space_id, resource.id);
+            toast({
+                title: t('Success')
+            });
             onDelete(resource.id);
             onOpenChange();
         } catch (e: any) {
