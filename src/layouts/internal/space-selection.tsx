@@ -55,16 +55,17 @@ export default function Component() {
     }
 
     function spacesToSelector(datas: UserSpace[]) {
-        setWorkspaces([
+        let selected = '';
+
+        const spacesSelector = [
             {
                 value: '0',
                 label: t('Workspace'),
                 items: datas.map((val: UserSpace, i: number) => {
-                    if (!spaceID && i === 0) {
+                    if ((!spaceID && i === 0) || val.space_id === spaceID) {
                         // default
                         onSelected(val.space_id);
-                    } else if (val.space_id === spaceID) {
-                        onSelected(spaceID);
+                        selected = val.space_id;
                     }
 
                     return {
@@ -73,7 +74,14 @@ export default function Component() {
                     };
                 })
             }
-        ]);
+        ];
+
+        setWorkspaces(spacesSelector);
+
+        if (!selected && spacesSelector[0].items) {
+            // on user deleted space
+            onSelected(spacesSelector[0].items[0].value);
+        }
     }
 
     useEffect(() => {

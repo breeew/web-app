@@ -53,7 +53,7 @@ const CreateSpaceComponent = forwardRef((_, ref) => {
                                 />
                             </ModalBody>
                             <ModalFooter>
-                                <Button className="bg-gradient-to-tr from-red-500 to-blue-500 text-white shadow-lg" onPress={createSpace} isLoading={loading}>
+                                <Button className="bg-gradient-to-tr from-red-500 to-blue-500 text-white shadow-lg" isLoading={loading} onPress={createSpace}>
                                     {t('Create')}
                                 </Button>
                             </ModalFooter>

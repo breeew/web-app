@@ -1,11 +1,12 @@
 import { Icon } from '@iconify/react';
 import { Button, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@nextui-org/react';
 import { PressEvent } from '@react-types/shared/src';
-import { useCallback, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 
+import ManageSpaceComponent from '@/components/manage-space';
 import ResourceManage from '@/components/resource-modal';
 import { ThemeSwitch } from '@/components/theme-switch';
 import { useChatPageCondition } from '@/hooks/use-chat-page';
@@ -16,9 +17,12 @@ import spaceStore from '@/stores/space';
 export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange: (e: PressEvent) => void }) {
     const { t } = useTranslation();
     const { currentSelectedResource } = useSnapshot(resourceStore);
-    const { currentSelectedSpace } = useSnapshot(spaceStore);
+    const { spaces, currentSelectedSpace } = useSnapshot(spaceStore);
     const { isChat } = useChatPageCondition();
     const resourceManage = useRef<HTMLElement>();
+    const currentSpace = useMemo(() => {
+        return spaces.find(v => v.space_id === currentSelectedSpace);
+    }, [spaces, currentSelectedSpace]);
 
     const navigate = useNavigate();
     const { pathname, state } = useLocation();
@@ -94,6 +98,12 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
                             Prompt
                         </Link>
                     </NavbarItem> */}
+                    {currentSpace && currentSpace.title !== 'Main' && (
+                        <NavbarItem>
+                            <ManageSpaceComponent radius="full" label={t('ManageSpace')} variant="ghost" className="flex gap-2 text-inherit" space={currentSpace} />
+                        </NavbarItem>
+                    )}
+
                     {currentSelectedResource && currentSelectedResource.id && currentSelectedResource.id !== 'knowledge' && (
                         <>
                             <NavbarItem>

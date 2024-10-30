@@ -1,33 +1,16 @@
 import { useMemo } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
-import { useSnapshot } from 'valtio';
-
-import spaceStore from '@/stores/space';
+import { useLocation } from 'react-router-dom';
 
 export const useChatPageCondition = () => {
     const { pathname } = useLocation();
-    const { currentSelectedSpace } = useSnapshot(spaceStore);
-    const { spaceID } = useParams();
 
     const isChat = useMemo(() => {
-        let space = spaceID;
-
-        if (!space) {
-            space = currentSelectedSpace;
-        }
-
-        return pathname === `/dashboard/${space}/chat` || pathname.startsWith(`/dashboard/${space}/chat/session/`);
+        return pathname.indexOf('/chat') !== -1;
     }, [pathname]);
 
     const isSession = useMemo(() => {
-        let space = spaceID;
-
-        if (!space) {
-            space = currentSelectedSpace;
-        }
-
-        return isChat && pathname !== `/dashboard/${space}/chat`;
-    }, [pathname]);
+        return isChat && pathname.indexOf(`/chat/session`) !== -1;
+    }, [pathname, isChat]);
 
     return { isChat, isSession };
 };

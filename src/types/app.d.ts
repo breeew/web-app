@@ -36,6 +36,15 @@ declare type SocketStore = {
     subscribe: subscribeFunc | undefined;
 };
 
+declare type UserSpace = {
+    space_id: string;
+    user_id: string;
+    role: string;
+    title: string;
+    description: string;
+    created_at: number;
+};
+
 declare type SpaceStore = {
     spaces: UserSpace[];
     currentSelectedSpace: string;
