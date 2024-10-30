@@ -58,7 +58,7 @@ export default function Chat() {
     function goToBottom() {
         if (ssDom) {
             // @ts-ignore
-            ssDom.current.scrollTop = 999999;
+            ssDom.current.scrollTop = 9999999;
         }
     }
 
@@ -362,6 +362,9 @@ export default function Chat() {
                         ext: {}
                     });
                 });
+                goToBottom();
+                // waiting ws response
+                setAiTyping(true);
             } catch (e: any) {
                 console.error(e);
                 throw e;
