@@ -100,7 +100,7 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
                     </NavbarItem> */}
                     {currentSpace && currentSpace.title !== 'Main' && (
                         <NavbarItem>
-                            <ManageSpaceComponent radius="full" label={t('ManageSpace')} variant="ghost" className="flex gap-2 text-inherit" space={currentSpace} />
+                            <ManageSpaceComponent radius="full" label={t('Space Setting')} variant="ghost" className="flex gap-2 text-inherit" space={currentSpace} />
                         </NavbarItem>
                     )}
 
