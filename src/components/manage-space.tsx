@@ -76,7 +76,7 @@ const ManageSpaceComponent = forwardRef(({ space, className, label, variant, rad
                 <ModalContent>
                     {() => (
                         <>
-                            <ModalHeader className="flex flex-col gap-1">{t('Manage new space')}</ModalHeader>
+                            <ModalHeader className="flex flex-col gap-1">{t('ManageSpace')}</ModalHeader>
                             <ModalBody>
                                 <Input label={t('createSpaceNameLabel')} defaultValue={title} labelPlacement="outside" placeholder="Named your space" variant="bordered" onValueChange={setTitle} />
                                 <Textarea

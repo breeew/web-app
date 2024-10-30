@@ -21,13 +21,13 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
     const { pathname } = useLocation();
     const { currentSelectedSpace } = useSnapshot(spaceStore);
 
-    if (pathname === '/dashboard' && currentSelectedSpace) {
-        navigate(`/dashboard/${currentSelectedSpace}/chat`);
-
-        return;
-    }
-
     useEffect(() => {
+        if (pathname === '/dashboard' && currentSelectedSpace) {
+            navigate(`/dashboard/${currentSelectedSpace}/chat`);
+
+            return;
+        }
+
         if (accessToken && (!userInfo || !userInfo.userID)) {
             // load user info
             async function Login(accessToken: string) {
@@ -54,7 +54,7 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
             }
             Login(accessToken);
         }
-    }, [accessToken]);
+    }, [accessToken, currentSelectedSpace]);
 
     return accessToken ? children : <Navigate to="/login" />;
 }

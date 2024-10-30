@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Button, Select, SelectItem, SelectSection, Skeleton } from '@nextui-org/react';
+import { Button, select, Select, SelectItem, SelectSection, Skeleton } from '@nextui-org/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -38,11 +38,10 @@ export default function Component() {
 
     const [isLoaded, setLoaded] = useState(false);
     const [selected, setSelected] = useState('');
-    const { currentSelectedSpace } = useSnapshot(spaceStore);
     const navigate = useNavigate();
 
-    function onSelected(key: string) {
-        if (selected || !currentSelectedSpace) {
+    function onSelected(key: string, redirect: boolean = false) {
+        if (redirect) {
             if (isChat) {
                 navigate(`/dashboard/${key}/chat`);
             } else {
@@ -80,7 +79,7 @@ export default function Component() {
 
         if (!selected && spacesSelector[0].items) {
             // on user deleted space
-            onSelected(spacesSelector[0].items[0].value);
+            onSelected(spacesSelector[0].items[0].value, true);
         }
     }
 
@@ -90,7 +89,7 @@ export default function Component() {
         });
 
         return unSubscribe;
-    }, [workspaces]);
+    }, [workspaces, spaceID]);
 
     async function loadData() {
         try {
@@ -117,7 +116,7 @@ export default function Component() {
     // @ts-ignore
     function handleSelectionChange(e) {
         if (e.currentKey) {
-            onSelected(e.currentKey);
+            onSelected(e.currentKey, true);
         }
     }
 
