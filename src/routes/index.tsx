@@ -2,6 +2,8 @@ import { Children, ReactNode, useEffect } from 'react';
 import { createBrowserRouter, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 
+
+
 import { LoginWithAccessToken } from '@/apis/user';
 import { App } from '@/App';
 import Dashboard from '@/pages/dashboard';
@@ -14,11 +16,13 @@ import Login from '@/pages/login';
 import { buildTower } from '@/stores/socket';
 import userStore, { setUserAccessToken, setUserInfo } from '@/stores/user';
 
+
 function ProtectedRoute({ children }: { children: ReactNode }) {
     const { accessToken, userInfo } = useSnapshot(userStore);
     const navigate = useNavigate();
     const { pathname } = useLocation();
 
+    console.log(333, pathname);
     if (pathname === '/dashboard') {
         navigate('/dashboard/chat');
 
@@ -90,17 +94,17 @@ const routes = createBrowserRouter([
                 ),
                 children: [
                     {
-                        path: 'knowledge',
+                        path: ':spaceID/knowledge',
                         element: <Knowledge />
                     },
                     {
                         index: true,
-                        path: 'chat',
+                        path: ':spaceID/chat',
                         element: <Chat />
                     },
                     {
                         index: true,
-                        path: 'chat/session/:sessionID',
+                        path: ':spaceID/chat/session/:sessionID',
                         element: <ChatSession />
                     }
                 ]

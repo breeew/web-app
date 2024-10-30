@@ -2,11 +2,13 @@ import { Icon } from '@iconify/react';
 import { Button, Select, SelectItem, SelectSection, Skeleton } from '@nextui-org/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 import { subscribeKey } from 'valtio/utils';
 
 import { UserSpace } from '@/apis/space';
 import CreateSpace from '@/components/create-space';
+import { useChatPageCondition } from '@/hooks/use-chat-page';
 import spaceStore, { loadUserSpaces, setCurrentSelectedSpace } from '@/stores/space';
 
 interface WorkSpace {
@@ -21,6 +23,7 @@ interface WorkSpaceItem {
 }
 export default function Component() {
     const { t } = useTranslation();
+    const { spaceID } = useParams();
 
     const [workspaces, setWorkspaces] = useState<WorkSpace[]>([
         {
@@ -29,13 +32,20 @@ export default function Component() {
             items: []
         }
     ]);
+    const { isChat } = useChatPageCondition();
 
     const { spaces } = useSnapshot(spaceStore);
 
     const [isLoaded, setLoaded] = useState(false);
     const [selected, setSelected] = useState('');
+    const navigate = useNavigate();
 
     function onSelected(key: string) {
+        if (isChat) {
+            navigate(`/dashboard/${key}/chat`);
+        } else {
+            navigate(`/dashboard/${key}/knowledge`);
+        }
         setSelected(key); // 设置selection
         setCurrentSelectedSpace(key); // 设置valtio，通知上层组件开始加载spaceid下的resource
     }
@@ -46,9 +56,11 @@ export default function Component() {
                 value: '0',
                 label: t('Workspace'),
                 items: datas.map((val: UserSpace, i: number) => {
-                    if (i === 0) {
+                    if (!spaceID && i === 0) {
                         // default
                         onSelected(val.space_id);
+                    } else if (val.space_id === spaceID) {
+                        onSelected(spaceID);
                     }
 
                     return {

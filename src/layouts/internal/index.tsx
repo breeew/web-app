@@ -77,7 +77,7 @@ export default function Component({ children }: { children: React.ReactNode }) {
         if (!sessionID && !currentSelectedSession?.key) {
             return;
         }
-        if (!sessionID || (currentSelectedSession?.space_id !== '' && currentSelectedSession.space_id !== currentSelectedSpace)) {
+        if (!sessionID || (currentSelectedSession?.space_id !== '' && currentSelectedSession?.space_id !== currentSelectedSpace)) {
             setCurrentSelectedSession({
                 key: '',
                 title: '',
@@ -87,8 +87,10 @@ export default function Component({ children }: { children: React.ReactNode }) {
             return;
         }
 
+        let matched = false;
         for (const item of sessionList) {
             if (item.id === sessionID) {
+                matched = true;
                 setCurrentSelectedSession({
                     key: item.id,
                     title: item.title,
@@ -96,6 +98,10 @@ export default function Component({ children }: { children: React.ReactNode }) {
                 });
                 break;
             }
+        }
+
+        if (!matched) {
+            navigate(`/dashboard/${currentSelectedSpace}/chat`);
         }
     }, [sessionID, sessionList, currentSelectedSpace]);
 
@@ -116,12 +122,15 @@ export default function Component({ children }: { children: React.ReactNode }) {
     }, []);
 
     const createNewSession = useCallback(() => {
-        navigate('/dashboard/chat');
-    }, []);
+        navigate(`/dashboard/${currentSelectedSpace}/chat`);
+    }, [currentSelectedSpace]);
 
-    const redirectSession = useCallback((key: string) => {
-        navigate(`/dashboard/chat/session/${key}`);
-    }, []);
+    const redirectSession = useCallback(
+        (key: string) => {
+            navigate(`/dashboard/${currentSelectedSpace}/chat/session/${key}`);
+        },
+        [currentSelectedSpace]
+    );
 
     return (
         <div className="flex h-dvh w-full gap-4 dark:bg-zinc-900">
