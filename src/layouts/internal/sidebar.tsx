@@ -206,7 +206,7 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
                 color="default"
                 itemClasses={{
                     ...itemClasses,
-                    base: cn('px-3 min-h-11 rounded-large h-[44px]', itemClasses?.base),
+                    base: cn('px-3 min-h-11 rounded-large', itemClasses?.base),
                     title: cn('text-small font-medium text-default-500 group-data-[selected=true]:text-foreground', itemClasses?.title)
                 }}
                 items={items}

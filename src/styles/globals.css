@@ -12,3 +12,8 @@
     list-style-position: inside;
     padding-inline-start: 20px;
 }
+
+.markdown-box ol,
+.markdown-box ul li p {
+    display: inline;
+}

@@ -11,7 +11,7 @@ import { ThemeSwitch } from '@/components/theme-switch';
 import { useChatPageCondition } from '@/hooks/use-chat-page';
 // import NotificationsCard from './notifications-card';
 import resourceStore, { onResourceUpdate } from '@/stores/resource';
-import spaceStore, { setCurrentSelectedSpace } from '@/stores/space';
+import spaceStore from '@/stores/space';
 
 export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange: (e: PressEvent) => void }) {
     const { t } = useTranslation();
@@ -31,7 +31,7 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
             //       }
             //     : ''
         });
-    }, [pathname]);
+    }, [pathname, currentSelectedSpace]);
 
     const goToChat = useCallback(() => {
         if (state && state.from) {
@@ -39,7 +39,7 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
         } else {
             navigate(`/dashboard/${currentSelectedSpace}/chat`);
         }
-    }, [pathname]);
+    }, [pathname, currentSelectedSpace]);
 
     const showResourceSetting = useCallback(() => {
         currentSelectedResource && resourceManage.current.show(currentSelectedResource);

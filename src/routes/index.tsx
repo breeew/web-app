@@ -2,8 +2,6 @@ import { Children, ReactNode, useEffect } from 'react';
 import { createBrowserRouter, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 
-
-
 import { LoginWithAccessToken } from '@/apis/user';
 import { App } from '@/App';
 import Dashboard from '@/pages/dashboard';
@@ -14,17 +12,17 @@ import Setting from '@/pages/dashboard/setting/setting';
 import IndexPage from '@/pages/index';
 import Login from '@/pages/login';
 import { buildTower } from '@/stores/socket';
+import spaceStore, { setCurrentSelectedSpace } from '@/stores/space';
 import userStore, { setUserAccessToken, setUserInfo } from '@/stores/user';
-
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
     const { accessToken, userInfo } = useSnapshot(userStore);
     const navigate = useNavigate();
     const { pathname } = useLocation();
+    const { currentSelectedSpace } = useSnapshot(spaceStore);
 
-    console.log(333, pathname);
-    if (pathname === '/dashboard') {
-        navigate('/dashboard/chat');
+    if (pathname === '/dashboard' && currentSelectedSpace) {
+        navigate(`/dashboard/${currentSelectedSpace}/chat`);
 
         return;
     }
@@ -64,7 +62,11 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
 function PreLogin({ children }: { children: ReactNode }) {
     const { accessToken } = useSnapshot(userStore);
 
-    return accessToken ? <Navigate to="/dashboard/chat" /> : children;
+    if (accessToken) {
+        setCurrentSelectedSpace('');
+    }
+
+    return accessToken ? <Navigate to="/dashboard" /> : children;
 }
 
 const routes = createBrowserRouter([
@@ -98,12 +100,10 @@ const routes = createBrowserRouter([
                         element: <Knowledge />
                     },
                     {
-                        index: true,
                         path: ':spaceID/chat',
                         element: <Chat />
                     },
                     {
-                        index: true,
                         path: ':spaceID/chat/session/:sessionID',
                         element: <ChatSession />
                     }

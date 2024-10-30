@@ -20,7 +20,13 @@ export const useChatPageCondition = () => {
     }, [pathname]);
 
     const isSession = useMemo(() => {
-        return isChat && pathname !== '/dashboard/chat';
+        let space = spaceID;
+
+        if (!space) {
+            space = currentSelectedSpace;
+        }
+
+        return isChat && pathname !== `/dashboard/${space}/chat`;
     }, [pathname]);
 
     return { isChat, isSession };

@@ -38,14 +38,18 @@ export default function Component() {
 
     const [isLoaded, setLoaded] = useState(false);
     const [selected, setSelected] = useState('');
+    const { currentSelectedSpace } = useSnapshot(spaceStore);
     const navigate = useNavigate();
 
     function onSelected(key: string) {
-        if (isChat) {
-            navigate(`/dashboard/${key}/chat`);
-        } else {
-            navigate(`/dashboard/${key}/knowledge`);
+        if (selected || !currentSelectedSpace) {
+            if (isChat) {
+                navigate(`/dashboard/${key}/chat`);
+            } else {
+                navigate(`/dashboard/${key}/knowledge`);
+            }
         }
+
         setSelected(key); // 设置selection
         setCurrentSelectedSpace(key); // 设置valtio，通知上层组件开始加载spaceid下的resource
     }
@@ -106,7 +110,6 @@ export default function Component() {
     function handleSelectionChange(e) {
         if (e.currentKey) {
             onSelected(e.currentKey);
-            setCurrentSelectedSpace(e.currentKey);
         }
     }
 

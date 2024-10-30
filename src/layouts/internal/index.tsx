@@ -87,10 +87,8 @@ export default function Component({ children }: { children: React.ReactNode }) {
             return;
         }
 
-        let matched = false;
         for (const item of sessionList) {
             if (item.id === sessionID) {
-                matched = true;
                 setCurrentSelectedSession({
                     key: item.id,
                     title: item.title,
@@ -98,10 +96,6 @@ export default function Component({ children }: { children: React.ReactNode }) {
                 });
                 break;
             }
-        }
-
-        if (!matched) {
-            navigate(`/dashboard/${currentSelectedSpace}/chat`);
         }
     }, [sessionID, sessionList, currentSelectedSpace]);
 
