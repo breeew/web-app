@@ -3,6 +3,6 @@
     "display": "standalone",
     "theme_color": "#18181b",
     "short_name": "Brew",
-    "start_url": "/dashboard/chat",
+    "start_url": "/dashboard",
     "prefer_related_applications": true
 }

@@ -406,7 +406,7 @@ export default function Chat() {
         }
         if (currentSelectedSpace) {
             if (!sessionID || (messages && messages.length > 0 && messages[0].spaceID !== currentSelectedSpace)) {
-                navigate('/dashboard/chat');
+                navigate(`/dashboard/${currentSelectedSpace}/chat`);
 
                 return;
             }

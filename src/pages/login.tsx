@@ -2,7 +2,6 @@ import { Icon } from '@iconify/react';
 import { Button, Divider, Input, Link } from '@nextui-org/react';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 
 import { LoginWithAccessToken } from '@/apis/user';
@@ -59,8 +58,6 @@ export default function Component() {
         [hostURLInvalid]
     );
 
-    const navigate = useNavigate();
-
     async function accessTokenLogin() {
         if (!accessToken) {
             setInvalidAccessToken({
@@ -88,7 +85,6 @@ export default function Component() {
                 userName: resp.user_name,
                 email: resp.email
             });
-            navigate('/dashboard/chat');
         } catch (e: any) {
             console.error(e);
         }

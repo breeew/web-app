@@ -22,7 +22,7 @@ export default function Chat() {
             try {
                 const sessionID = await CreateChatSession(currentSelectedSpace);
 
-                navigate('/dashboard/chat/session/' + sessionID + '?isNew=true', {
+                navigate(`/dashboard/${currentSelectedSpace}/chat/session/${sessionID}?isNew=true`, {
                     state: {
                         messages: [
                             {
