@@ -22,11 +22,12 @@ export interface ListKnowledgeResponse {
     total: number;
 }
 
-export async function ListKnowledge(spaceID: string, resource: string = '', page: number, pageSize: number): Promise<ListKnowledgeResponse> {
+export async function ListKnowledge(spaceID: string, keywords: string, resource: string = '', page: number, pageSize: number): Promise<ListKnowledgeResponse> {
     const resp = await instance.get(`/${spaceID}/knowledge/list`, {
         params: {
             page: page,
             pagesize: pageSize,
+            keywords,
             resource
         }
     });

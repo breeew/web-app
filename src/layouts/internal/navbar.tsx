@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Button, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@nextui-org/react';
+import { Button, Input, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@nextui-org/react';
 import { PressEvent } from '@react-types/shared/src';
 import { useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,6 +23,7 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
     const currentSpace = useMemo(() => {
         return spaces.find(v => v.space_id === currentSelectedSpace);
     }, [spaces, currentSelectedSpace]);
+    const keywords
 
     const navigate = useNavigate();
     const { pathname, state } = useLocation();
@@ -124,9 +125,22 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
 
             <NavbarContent className="flex h-12 max-w-fit items-center gap-0 rounded-full p-0 bg-content2 lg:px-1 dark:bg-content1" justify="end">
                 <NavbarItem className="flex">
-                    <Button isIconOnly radius="full" variant="light">
+                    {/* <Button isIconOnly radius="full" variant="light">
                         <Icon className="text-default-500" icon="solar:magnifer-linear" width={22} />
-                    </Button>
+                    </Button> */}
+                    <Input
+                        classNames={{
+                            base: 'max-w-full sm:max-w-[10rem] h-10',
+                            mainWrapper: 'h-full',
+                            input: 'text-small',
+                            inputWrapper: 'h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20'
+                        }}
+                        placeholder="Type to search..."
+                        size="sm"
+                        startContent={<Icon className="text-default-500" icon="solar:magnifer-linear" width={18} />}
+                        type="search"
+                        onValueChange={setKeywords}
+                    />
                 </NavbarItem>
                 <NavbarItem className="flex">
                     <Button isIconOnly radius="full" variant="light">

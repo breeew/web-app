@@ -46,6 +46,7 @@ export default function Component() {
     const [total, setTotal] = useState(0);
     const [hasMore, setHasMore] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
+    const [knowledgeSearchKeywords, setKnowledgeSearchKeywords] = useState('');
 
     // load knowledge logic
     function initPage() {
@@ -64,7 +65,7 @@ export default function Component() {
         }
         setIsLoading(true);
         try {
-            const resp = await ListKnowledge(currentSelectedSpace, currentSelectedResource?.id, page, pageSize);
+            const resp = await ListKnowledge(currentSelectedSpace, knowledgeSearchKeywords, currentSelectedResource?.id, page, pageSize);
 
             setPage(page);
             if (resp.total <= page * pageSize) {
