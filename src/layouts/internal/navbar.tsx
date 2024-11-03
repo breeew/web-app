@@ -10,6 +10,8 @@ import ManageSpaceComponent from '@/components/manage-space';
 import ResourceManage from '@/components/resource-modal';
 import { ThemeSwitch } from '@/components/theme-switch';
 import { useChatPageCondition } from '@/hooks/use-chat-page';
+import { tiggerKnowledgeSearch } from '@/stores/event';
+import { onKnowledgeSearchKeywordsChange } from '@/stores/knowledge';
 // import NotificationsCard from './notifications-card';
 import resourceStore, { onResourceUpdate } from '@/stores/resource';
 import spaceStore from '@/stores/space';
@@ -23,7 +25,6 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
     const currentSpace = useMemo(() => {
         return spaces.find(v => v.space_id === currentSelectedSpace);
     }, [spaces, currentSelectedSpace]);
-    const keywords
 
     const navigate = useNavigate();
     const { pathname, state } = useLocation();
@@ -49,6 +50,25 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
     const showResourceSetting = useCallback(() => {
         currentSelectedResource && resourceManage.current.show(currentSelectedResource);
     }, [currentSelectedResource]);
+
+    const handleKeyDown = async (event: KeyboardEvent) => {
+        if (loading) {
+            return;
+        }
+        // 阻止默认的提交行为
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            const keyCode = event.which || event.keyCode;
+
+            if (keyCode === 229) {
+                // 触发中文输入法确认中文等回车行为
+                return;
+            }
+            if (props.onSubmitFunc && prompt) {
+                tiggerKnowledgeSearch();
+            }
+        }
+    };
 
     return (
         <Navbar
@@ -139,7 +159,8 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
                         size="sm"
                         startContent={<Icon className="text-default-500" icon="solar:magnifer-linear" width={18} />}
                         type="search"
-                        onValueChange={setKeywords}
+                        onValueChange={onKnowledgeSearchKeywordsChange}
+                        onKeyDown={handleKeyDown}
                     />
                 </NavbarItem>
                 <NavbarItem className="flex">

@@ -20,6 +20,7 @@ import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo,
 import { useTranslation } from 'react-i18next';
 import { useMediaQuery } from 'usehooks-ts';
 import { useSnapshot } from 'valtio';
+import { subscribeKey } from 'valtio/utils';
 
 import { GetKnowledge, type Knowledge, ListKnowledge } from '@/apis/knowledge';
 import CreateKnowledge from '@/components/create';
@@ -31,6 +32,7 @@ import Markdown from '@/components/markdown';
 import { useMedia } from '@/hooks/use-media';
 import { useUserAgent } from '@/hooks/use-user-agent';
 import { FireTowerMsg } from '@/lib/firetower';
+import knowledgeStore from '@/stores/knowledge';
 import resourceStore from '@/stores/resource';
 import socketStore, { CONNECTION_OK } from '@/stores/socket';
 import spaceStore from '@/stores/space';
@@ -46,7 +48,15 @@ export default function Component() {
     const [total, setTotal] = useState(0);
     const [hasMore, setHasMore] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
-    const [knowledgeSearchKeywords, setKnowledgeSearchKeywords] = useState('');
+    const { knowledgeSearchKeywords } = useSnapshot(knowledgeStore);
+
+    useEffect(() => {
+        const unSubscribe = subscribeKey(knowledgeStore, 'searchKeywords', () => {
+            loadData(1);
+        });
+
+        return unSubscribe;
+    }, []);
 
     // load knowledge logic
     function initPage() {
