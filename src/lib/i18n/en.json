@@ -66,5 +66,8 @@
     "knowledgeCreateContentLabelPlaceholder": "Ideas or knowledges to create new memory",
     "knowledgeCreateResourceLable": "Resource",
     "knowledgeCreateResourceLablePlaceholder": "Your memory resource type, default is knowledge",
-    "showRelevanceDocs": "Show Relevance Docs"
+    "showRelevanceDocs": "Show Relevance Docs",
+    "Today": "Today",
+    "PreviousDays": "Previous {{day}} Days",
+    "Earlier": "Earlier"
 }

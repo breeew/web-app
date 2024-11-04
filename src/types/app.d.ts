@@ -65,11 +65,11 @@ declare type UserStore = {
 
 declare type EventStore = {
     themeChange: boolean;
-    onKnowledgeSearch: boolean;
 };
 
 declare type KnowledgeStore = {
     searchKeywords: string;
+    onKnowledgeSearch: string;
 };
 
 declare type Size = 'sm' | 'md' | 'lg' | 'xs' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | 'full' | undefined;

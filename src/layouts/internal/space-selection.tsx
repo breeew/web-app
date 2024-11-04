@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Button, select, Select, SelectItem, SelectSection, Skeleton } from '@nextui-org/react';
+import { Button, Select, SelectItem, SelectSection, Skeleton } from '@nextui-org/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';

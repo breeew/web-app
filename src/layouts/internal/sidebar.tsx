@@ -20,6 +20,11 @@ export type SidebarItem = {
     className?: string;
 };
 
+export type SidebarItemWithSection = {
+    title: string;
+    items: SidebarItem[];
+};
+
 export type SidebarProps = Omit<ListboxProps<SidebarItem>, 'children'> & {
     items: SidebarItem[];
     isCompact?: boolean;

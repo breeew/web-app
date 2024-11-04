@@ -71,6 +71,10 @@ function PreLogin({ children }: { children: ReactNode }) {
 
 const routes = createBrowserRouter([
     {
+        path: '*',
+        element: <IndexPage />
+    },
+    {
         path: '/',
         element: <App />,
         children: [
@@ -88,7 +92,7 @@ const routes = createBrowserRouter([
                 )
             },
             {
-                path: '/dashboard/*',
+                path: '/dashboard/',
                 element: (
                     <ProtectedRoute>
                         <Dashboard />
