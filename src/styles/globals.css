@@ -7,13 +7,14 @@
     /* 隐藏滚动条 */
 }
 
-.markdown-box ol, .markdown-box ul li {
+.markdown-box option li, .markdown-box ul li,
+.markdown-box ol li {
     list-style-type: disc;
     list-style-position: inside;
     padding-inline-start: 20px;
 }
 
-.markdown-box ol,
+.markdown-box ol li p,
 .markdown-box ul li p {
     display: inline;
 }

@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Button, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@nextui-org/react';
+import { Button, Input, Kbd, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@nextui-org/react';
 import { PressEvent } from '@react-types/shared/src';
 import { useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,6 +10,8 @@ import ManageSpaceComponent from '@/components/manage-space';
 import ResourceManage from '@/components/resource-modal';
 import { ThemeSwitch } from '@/components/theme-switch';
 import { useChatPageCondition } from '@/hooks/use-chat-page';
+import { triggerKnowledgeSearch } from '@/stores/knowledge';
+import { onKnowledgeSearchKeywordsChange } from '@/stores/knowledge';
 // import NotificationsCard from './notifications-card';
 import resourceStore, { onResourceUpdate } from '@/stores/resource';
 import spaceStore from '@/stores/space';
@@ -48,6 +50,20 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
     const showResourceSetting = useCallback(() => {
         currentSelectedResource && resourceManage.current.show(currentSelectedResource);
     }, [currentSelectedResource]);
+
+    const handleKeyDown = async (event: KeyboardEvent) => {
+        // 阻止默认的提交行为
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            const keyCode = event.which || event.keyCode;
+
+            if (keyCode === 229) {
+                // 触发中文输入法确认中文等回车行为
+                return;
+            }
+            triggerKnowledgeSearch();
+        }
+    };
 
     return (
         <Navbar
@@ -122,12 +138,29 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
                 </NavbarContent>
             )}
 
-            <NavbarContent className="flex h-12 max-w-fit items-center gap-0 rounded-full p-0 bg-content2 lg:px-1 dark:bg-content1" justify="end">
-                <NavbarItem className="flex">
-                    <Button isIconOnly radius="full" variant="light">
+            <NavbarContent className="flex gap-2 h-12 max-w-fit items-center rounded-full p-0 lg:px-1" justify="end">
+                {isChat || (
+                    <NavbarItem className="flex">
+                        {/* <Button isIconOnly radius="full" variant="light">
                         <Icon className="text-default-500" icon="solar:magnifer-linear" width={22} />
-                    </Button>
-                </NavbarItem>
+                    </Button> */}
+                        <Input
+                            classNames={{
+                                base: 'max-w-full sm:max-w-[20rem] h-10',
+                                mainWrapper: 'h-full',
+                                input: 'text-small',
+                                inputWrapper: 'h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20'
+                            }}
+                            placeholder="Type to search..."
+                            size="sm"
+                            startContent={<Icon className="text-default-500" icon="solar:magnifer-linear" width={18} />}
+                            endContent={<Kbd keys={['enter']} className="cursor-pointer" onClick={_ => triggerKnowledgeSearch()} />}
+                            type="search"
+                            onValueChange={onKnowledgeSearchKeywordsChange}
+                            onKeyDown={handleKeyDown}
+                        />
+                    </NavbarItem>
+                )}
                 <NavbarItem className="flex">
                     <Button isIconOnly radius="full" variant="light">
                         <ThemeSwitch />

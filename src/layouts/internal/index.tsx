@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Button, Card, CardBody, CardFooter, Chip, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Link, ScrollShadow, Skeleton, Spacer, useDisclosure, User } from '@nextui-org/react';
+import { Button, Card, CardBody, CardFooter, Chip, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Link, ScrollShadow, Skeleton, Spacer, useDisclosure, User } from '@nextui-org/react';
 import { cn } from '@nextui-org/react';
 import React, { Key, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -40,7 +40,7 @@ export default function Component({ children }: { children: React.ReactNode }) {
     const { currentSelectedResource } = useSnapshot(resourceStore);
     const { currentSelectedSession } = useSnapshot(sessionStore);
     const { userInfo } = useSnapshot(userStore);
-    const { isChat, isSession } = useChatPageCondition();
+    const { isChat } = useChatPageCondition();
     const { sessionID } = useParams();
 
     const { resourceList, resourceLoading, listResource } = useResourceMode();
@@ -63,8 +63,10 @@ export default function Component({ children }: { children: React.ReactNode }) {
             return;
         }
         if (isChat) {
-            !sessionList.find(v => {
-                return v.id === sessionID && v.space_id === currentSelectedSpace;
+            !sessionList.find((v: ChatSessionGroup) => {
+                return v.items?.find((v: ChatSession) => {
+                    return v.id === sessionID && v.space_id === currentSelectedSpace;
+                });
             }) && reload(currentSelectedSpace);
 
             return;
@@ -88,11 +90,17 @@ export default function Component({ children }: { children: React.ReactNode }) {
         }
 
         for (const item of sessionList) {
-            if (item.id === sessionID) {
+            const result = item.items?.find(v => {
+                if (v.id === sessionID) {
+                    return v;
+                }
+            });
+
+            if (result) {
                 setCurrentSelectedSession({
-                    key: item.id,
-                    title: item.title,
-                    space_id: item.space_id
+                    key: result.id,
+                    title: result.title,
+                    space_id: result.space_id
                 });
                 break;
             }
@@ -187,7 +195,7 @@ export default function Component({ children }: { children: React.ReactNode }) {
                         )}
                     </div>
 
-                    <div className="pt-6 px-3 text-zinc-500 text-sm">{isChat ? t('Chat Sessions') : t('Resource List')}</div>
+                    <div className="pt-6 px-2 text-zinc-500 text-sm">{isChat ? t('Chat Sessions') : t('Resource List')}</div>
                     <Spacer y={1} />
 
                     <ScrollShadow hideScrollBar className="-mr-6 h-full max-h-full py-3 pr-6">
@@ -210,19 +218,33 @@ export default function Component({ children }: { children: React.ReactNode }) {
                                                 base: 'data-[selected=true]:bg-primary-400 data-[selected=true]:focus:bg-primary-400 dark:data-[selected=true]:bg-primary-300 data-[hover=true]:bg-default-300/20 dark:data-[hover=true]:bg-default-200/40',
                                                 title: 'group-data-[selected=true]:text-primary-foreground'
                                             }}
-                                            items={sessionList.map(v => {
-                                                return {
-                                                    key: v.id,
-                                                    title: v.title || v.id
-                                                };
-                                            })}
+                                            items={(() => {
+                                                const items: ChatSessionGroup[] = [];
+
+                                                for (const item of sessionList) {
+                                                    items.push({
+                                                        key: item.key,
+                                                        title: item.title,
+                                                        items: item.items?.map(v => {
+                                                            return {
+                                                                key: v.id,
+                                                                title: v.title || v.id
+                                                            };
+                                                        })
+                                                    });
+                                                }
+
+                                                return items;
+                                            })()}
                                             onSelect={key => {
                                                 for (const item of sessionList) {
-                                                    if (item.id === key) {
+                                                    const result = item.items.find(v => v.id == key);
+
+                                                    if (result) {
                                                         setCurrentSelectedSession({
                                                             key: key,
-                                                            title: item.title,
-                                                            space_id: item.space_id
+                                                            title: result.title,
+                                                            space_id: result.space_id
                                                         });
                                                         redirectSession(key);
                                                         break;
@@ -384,43 +406,47 @@ function useResourceMode() {
         });
     }, [currentSelectedSpace]);
 
-    async function listResource(spaceID: string) {
-        setResourceLoading(true);
-        try {
-            let resp = await ListResources(spaceID);
-            const items: SidebarItem[] = [
-                {
-                    id: '',
-                    title: t('All')
-                }
-            ];
+    const listResource = useCallback(
+        async function (spaceID: string) {
+            setResourceLoading(true);
+            try {
+                let resp = await ListResources(spaceID);
+                const items: SidebarItem[] = [
+                    {
+                        id: '',
+                        title: t('All')
+                    }
+                ];
 
-            let currentSelectedResourceAlreadyExist = false;
+                let currentSelectedResourceAlreadyExist = currentSelectedResource && currentSelectedResource.id === '';
 
-            resp.forEach(v => {
-                if (currentSelectedResource && currentSelectedResource.id && v.id === currentSelectedResource.id && v.space_id === currentSelectedResource.space_id) {
-                    currentSelectedResourceAlreadyExist = true;
-                }
-                items.push({
-                    id: v.id,
-                    title: v.title,
-                    cycle: v.cycle,
-                    space_id: v.space_id,
-                    description: v.description
+                resp.forEach(v => {
+                    if (currentSelectedResource && v.id === currentSelectedResource.id &&  v.space_id === currentSelectedResource.space_id) {
+                        currentSelectedResourceAlreadyExist = true;
+                    }
+                    items.push({
+                        id: v.id,
+                        title: v.title,
+                        cycle: v.cycle,
+                        space_id: v.space_id,
+                        description: v.description
+                    });
                 });
-            });
 
-            if (!currentSelectedResourceAlreadyExist) {
-                setCurrentSelectedResource(items[0]);
+                if (!currentSelectedResourceAlreadyExist) {
+                    console.log('set new resources');
+                    setCurrentSelectedResource(items[0]);
+                }
+
+                setSpaceResource(items);
+                setResourceList(items);
+            } catch (e: any) {
+                console.error(e);
             }
-
-            setSpaceResource(items);
-            setResourceList(items);
-        } catch (e: any) {
-            console.error(e);
-        }
-        setResourceLoading(false);
-    }
+            setResourceLoading(false);
+        },
+        [currentSelectedResource, currentSelectedSpace]
+    );
 
     return {
         resourceList,
@@ -430,21 +456,110 @@ function useResourceMode() {
     };
 }
 
+export interface ChatSessionGroup {
+    key: string;
+    title: string;
+    items: ChatSession[];
+}
+
+function categorizeTimestamp(timestamp: number): string {
+    // 将时间戳转换为毫秒（Unix 时间戳通常以秒为单位）
+    const date = new Date(timestamp * 1000);
+
+    // 获取当前日期的时间
+    const now = new Date();
+
+    // 判断是否为今天
+    const isToday = date.getDate() === now.getDate() && date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+
+    if (isToday) {
+        return 'today';
+    }
+
+    // 判断是否为前7天
+    const sevenDaysAgo = new Date();
+
+    sevenDaysAgo.setDate(now.getDate() - 7);
+
+    if (date > sevenDaysAgo) {
+        return 'previousDays';
+    }
+
+    // 更早之前
+    return 'earlier';
+}
+
+function useGroupSessions(): () => ChatSessionGroup[] {
+    const { t } = useTranslation();
+
+    return (list: ChatSession[]): ChatSessionGroup[] => {
+        if (!list || list.length === 0) {
+            return [];
+        }
+
+        const todayGroup: ChatSessionGroup = {
+            key: 'today',
+            title: t('Today'),
+            items: []
+        };
+
+        const previous7Days: ChatSessionGroup = {
+            key: 'previous7days',
+            title: t('PreviousDays', { day: '7' }),
+            items: []
+        };
+
+        const earlier: ChatSessionGroup = {
+            key: 'earlier',
+            title: t('Earlier'),
+            items: []
+        };
+
+        const result: ChatSessionGroup[] = [];
+
+        list.forEach(v => {
+            switch (categorizeTimestamp(v.latest_access_time)) {
+                case 'today':
+                    todayGroup.items.push(v);
+                    break;
+                case 'previousDays':
+                    previous7Days.items.push(v);
+                    break;
+                default:
+                    earlier.items.push(v);
+            }
+        });
+
+        if (todayGroup.items.length > 0) {
+            result.push(todayGroup);
+        }
+        if (previous7Days.items.length > 0) {
+            result.push(previous7Days);
+        }
+        if (earlier.items.length > 0) {
+            result.push(earlier);
+        }
+
+        return result;
+    };
+}
+
 function useChatMode() {
-    const [sessionList, setSessionList] = useImmer<ChatSession[]>([]);
+    const [sessionList, setSessionList] = useImmer<ChatSessionGroup[]>([]);
     const [sessionLoading, setSessionLoading] = useState<boolean>(false);
-    const pageSize = 10;
+    const pageSize = 20;
     const [page, setPage] = useState<number>(0);
-    const [total, setTotal] = useState<number>(0);
+    // const [total, setTotal] = useState<number>(0);
     const [hasMore, setHasMore] = useState<boolean>(true);
+    const groupSessions = useGroupSessions();
 
     useEffect(() => {
         const unSubscribe = subscribeKey(sessionStore, 'sessionNamedEvent', (data: SessionNamedEvent | undefined) => {
             if (!data) {
                 return;
             }
-            setSessionList((prev: ChatSession[]) => {
-                const todo = prev.find(v => v.id === data.sessionID);
+            setSessionList((prev: ChatSessionGroup[]) => {
+                const todo = prev[0]?.items?.find(v => v.id === data.sessionID);
 
                 if (todo) {
                     todo.title = data.name;
@@ -470,13 +585,24 @@ function useChatMode() {
                 }
 
                 if (page === 1) {
-                    setSessionList(resp.list || []);
+                    setSessionList(groupSessions(resp.list) || []);
                 } else if (resp.list) {
-                    setSessionList((prev: ChatSession[]) => {
-                        return prev.concat(resp.list);
+                    setSessionList((prev: ChatSessionGroup[]) => {
+                        const groups = groupSessions(resp.list);
+
+                        groups.forEach((v, k) => {
+                            if (!prev[k]) {
+                                prev.push(v);
+
+                                return;
+                            }
+                            prev[k].concat(v);
+                        });
+
+                        return prev;
                     });
                 }
-                setTotal(resp.total);
+                // setTotal(resp.total);
             } catch (e: any) {
                 console.error(e);
             }

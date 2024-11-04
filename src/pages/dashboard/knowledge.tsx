@@ -20,6 +20,7 @@ import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo,
 import { useTranslation } from 'react-i18next';
 import { useMediaQuery } from 'usehooks-ts';
 import { useSnapshot } from 'valtio';
+import { subscribeKey } from 'valtio/utils';
 
 import { GetKnowledge, type Knowledge, ListKnowledge } from '@/apis/knowledge';
 import CreateKnowledge from '@/components/create';
@@ -31,11 +32,12 @@ import Markdown from '@/components/markdown';
 import { useMedia } from '@/hooks/use-media';
 import { useUserAgent } from '@/hooks/use-user-agent';
 import { FireTowerMsg } from '@/lib/firetower';
+import knowledgeStore from '@/stores/knowledge';
 import resourceStore from '@/stores/resource';
 import socketStore, { CONNECTION_OK } from '@/stores/socket';
 import spaceStore from '@/stores/space';
 
-export default function Component() {
+export default memo(function Component() {
     const { t } = useTranslation();
     const { isMobile } = useMedia();
     const { currentSelectedSpace } = useSnapshot(spaceStore);
@@ -46,6 +48,20 @@ export default function Component() {
     const [total, setTotal] = useState(0);
     const [hasMore, setHasMore] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
+    const { onKnowledgeSearch } = useSnapshot(knowledgeStore);
+
+    useEffect(() => {
+        if (!currentSelectedResource || !currentSelectedSpace) {
+            return;
+        }
+
+        const unSubscribe = subscribeKey(knowledgeStore, 'onKnowledgeSearch', (keywords: string) => {
+            initPage();
+            loadData(1, pageSize, currentSelectedSpace, keywords, currentSelectedResource?.id);
+        });
+
+        return unSubscribe;
+    }, [currentSelectedSpace, currentSelectedResource]);
 
     // load knowledge logic
     function initPage() {
@@ -54,9 +70,10 @@ export default function Component() {
         }
         setPage(1);
         setHasMore(true);
+        setDataList([]);
     }
 
-    async function loadData(page: number) {
+    async function loadData(page: number, pageSize: number, spaceID: string, searchKeywords: string, resourceID: string = '') {
         let _dataList: Knowledge[] = [];
 
         if (page !== 1 && dataList.length > 0) {
@@ -64,11 +81,11 @@ export default function Component() {
         }
         setIsLoading(true);
         try {
-            const resp = await ListKnowledge(currentSelectedSpace, currentSelectedResource?.id, page, pageSize);
+            const resp = await ListKnowledge(spaceID, searchKeywords, resourceID, page, pageSize);
 
-            setPage(page);
+            setPage(_ => page);
             if (resp.total <= page * pageSize) {
-                setHasMore(false);
+                setHasMore(_ => false);
             }
 
             if (resp.list && _dataList.length > 0) {
@@ -78,8 +95,8 @@ export default function Component() {
             } else {
                 _dataList = resp.list || [];
             }
-            setDataList(_dataList);
-            setTotal(resp.total);
+            setDataList(_ => _dataList);
+            setTotal(_ => resp.total);
         } catch (e: any) {
             console.error(e);
         }
@@ -89,14 +106,15 @@ export default function Component() {
     const refreshDataList = useCallback(() => {
         initPage();
 
-        loadData(1);
-    }, [currentSelectedResource, currentSelectedSpace]);
+        loadData(1, pageSize, currentSelectedSpace, onKnowledgeSearch, currentSelectedResource?.id);
+    }, [currentSelectedResource, currentSelectedSpace, onKnowledgeSearch]);
 
     // reload on selected resource or space changed
     useEffect(() => {
-        if (!currentSelectedResource || !currentSelectedSpace) {
+        if (!currentSelectedResource || !currentSelectedResource.title || !currentSelectedSpace) {
             return;
         }
+
         refreshDataList();
     }, [currentSelectedResource, currentSelectedSpace]);
 
@@ -107,7 +125,7 @@ export default function Component() {
             return;
         }
         setOnLoadingMore(true);
-        await loadData(page + 1);
+        await loadData(page + 1, pageSize, currentSelectedSpace, onKnowledgeSearch, currentSelectedResource?.id);
         setTimeout(() => {
             setOnLoadingMore(false);
         }, 500);
@@ -186,7 +204,7 @@ export default function Component() {
                     </div>
 
                     <Skeleton isLoaded={total > 0 || !isLoading} className="max-w-64 rounded-lg">
-                        <p className="text-small text-default-400">{t('memories count', { total: total, title: currentSelectedResource ? t(currentSelectedResource.title) : '' })}</p>
+                        <p className="text-small text-default-400">{t('memories count', { total: total, title: currentSelectedResource?.title})}</p>
                     </Skeleton>
                 </div>
                 <KnowledgeList ref={ssDom} knowledgeList={dataList} onSelect={showKnowledge} onChanges={onChanges} onLoadMore={onLoadMore} />
@@ -215,7 +233,7 @@ export default function Component() {
             />
         </>
     );
-}
+});
 
 interface KnowledgeListProps {
     knowledgeList: Knowledge[];

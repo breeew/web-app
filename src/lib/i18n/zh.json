@@ -66,5 +66,8 @@
     "knowledgeCreateContentLabelPlaceholder": "输入你的想法或知识点来生成记忆",
     "knowledgeCreateResourceLable": "资源类型",
     "knowledgeCreateResourceLablePlaceholder": "输入你的资源类型，默认为knowledge",
-    "showRelevanceDocs": "展示可能关联的内容"
+    "showRelevanceDocs": "展示可能关联的内容",
+    "Today": "今天",
+    "PreviousDays": "前{{day}}天",
+    "Earlier": "更早之前"
 }
