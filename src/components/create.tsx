@@ -16,8 +16,7 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
     const [isInvalid, setInvalid] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [loading, setLoading] = useState(false);
-
-    const { currentSpaceResources } = useSnapshot(resourceStore);
+    const { currentSpaceResources, currentSelectedResource } = useSnapshot(resourceStore);
     const resources = useMemo(() => {
         let list = [];
 
@@ -32,6 +31,17 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
         return list;
     }, [currentSpaceResources]);
 
+    const defaultResource = useMemo(() => {
+        if (currentSelectedResource && currentSelectedResource.id) {
+            return currentSelectedResource.id;
+        }
+
+        if (resources.length > 0) {
+            return resources[0].id;
+        }
+
+        return '';
+    }, [resources, currentSelectedResource]);
     const [resource, setResource] = useState('');
 
     const onKnowledgeContentChanged = useCallback((value: string) => {
@@ -58,7 +68,7 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
 
         setLoading(true);
         try {
-            await CreateKnowledge(spaceStore.currentSelectedSpace, resource, knowledge);
+            await CreateKnowledge(spaceStore.currentSelectedSpace, resource || defaultResource, knowledge);
 
             if (props.onChanges) {
                 props.onChanges();
@@ -96,12 +106,12 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
                             &nbsp;supported.
                         </p>
                     </div>
-                    {resources.length > 0 && (
+                    {defaultResource && (
                         <Select
                             isRequired
                             variant="faded"
                             label={t('knowledgeCreateResourceLable')}
-                            defaultSelectedKeys={[resources[0].id]}
+                            defaultSelectedKeys={[defaultResource]}
                             labelPlacement="outside"
                             placeholder="Select an resource"
                             className="max-w-xs"

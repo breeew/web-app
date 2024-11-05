@@ -13,13 +13,12 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
     const { t } = useTranslation();
     const [title, setTitle] = useState(knowledge ? knowledge.title : '');
     const [content, setContent] = useState(knowledge ? knowledge.content : '');
-    const [resource, setResource] = useState(knowledge ? knowledge.resource : '');
     const [tags, setTags] = useState(knowledge ? knowledge.tags : []);
     const [isInvalid, setInvalid] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setLoading] = useState(false);
-
-    const { currentSpaceResources } = useSnapshot(resourceStore);
+    const [resource, setResource] = useState(knowledge ? knowledge.resource : '');
+    const { currentSpaceResources, currentSelectedResource } = useSnapshot(resourceStore);
     const resources = useMemo(() => {
         let list: Resource[] = [];
         let matched = false;
@@ -43,12 +42,20 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
             });
         }
 
-        if (resource === '') {
-            setResource(list[0].id);
-        }
-
         return list;
     }, [currentSpaceResources]);
+
+    const defaultResource = useMemo(() => {
+        if (currentSelectedResource && currentSelectedResource.id) {
+            return currentSelectedResource.id;
+        }
+
+        if (resources.length > 0) {
+            return resources[0].id;
+        }
+
+        return '';
+    }, [currentSelectedResource, resources]);
 
     const onKnowledgeContentChanged = useCallback((value: string) => {
         if (isInvalid) {
@@ -80,7 +87,7 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
         try {
             if (knowledge.id) {
                 await UpdateKnowledge(knowledge.space_id, knowledge.id, {
-                    resource: resource,
+                    resource: resource || defaultResource,
                     title: title,
                     content: content,
                     tags: tags
@@ -90,7 +97,7 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
                     description: 'Updated knowledge ' + knowledge.id
                 });
             } else {
-                await CreateKnowledge(knowledge.space_id, resource, content);
+                await CreateKnowledge(knowledge.space_id, resource || defaultResource, content);
                 toast({
                     title: 'Success',
                     description: 'Create new knowledge'
@@ -166,12 +173,12 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
                                 </div>
                             </div>
 
-                            {resources.length > 0 && (
+                            {defaultResource && (
                                 <Select
                                     isRequired
                                     variant="bordered"
                                     label={t('knowledgeCreateResourceLable')}
-                                    defaultSelectedKeys={[resource ? resource : resources[0].id]}
+                                    defaultSelectedKeys={[defaultResource]}
                                     labelPlacement="outside"
                                     placeholder="Select an resource"
                                     className="text-xl text-gray-800 dark:text-gray-100 !mt-12"
@@ -200,13 +207,13 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
 
                         <div className="flex gap-4 justify-end">
                             {onCancel && (
-                                <Button className="mt-6 float-right w-32 text-white" onClick={onCancel}>
+                                <Button className="mt-6 float-right w-32 text-white bg-zinc-400 dark:bg-zinc-500" onClick={onCancel}>
                                     {t('Cancel')}
                                 </Button>
                             )}
 
                             <Button
-                                className="mt-6 float-right w-32 text-white bg-gradient-to-br from-pink-300 to-indigo-300 dark:from-indigo-500 dark:to-pink-500"
+                                className="mt-6 float-right w-32 text-white bg-gradient-to-br from-pink-400 to-indigo-400 dark:from-indigo-500 dark:to-pink-500"
                                 isLoading={isLoading}
                                 onClick={submit}
                             >

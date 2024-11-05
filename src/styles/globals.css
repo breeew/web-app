@@ -18,3 +18,8 @@
 .markdown-box ul li p {
     display: inline;
 }
+
+.markdown-box ol, .markdown-box ul {
+    white-space-collapse: collapse;
+    white-space: normal;
+}
