@@ -1,3 +1,4 @@
+import { common } from 'lowlight';
 import { memo, useEffect, useMemo, useState } from 'react';
 // https://github.com/remarkjs/react-markdown
 import Markdown, { type ExtraProps, type Options } from 'react-markdown';
@@ -5,6 +6,7 @@ import Markdown, { type ExtraProps, type Options } from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 // @ts-ignore
 import { atomOneDark, atomOneLight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import rehypeHighlight from 'rehype-highlight';
 import remarkGfm from 'remark-gfm';
 import stringWidth from 'string-width';
 import { subscribeKey } from 'valtio/utils';
@@ -13,6 +15,13 @@ import { useTheme } from '@/hooks/use-theme';
 import { cn } from '@/lib/utils';
 import eventStore from '@/stores/event';
 
+// SyntaxHighlighter.registerLanguage('jsx', jsx);
+// SyntaxHighlighter.registerLanguage('go', go);
+// SyntaxHighlighter.registerLanguage('golang', go);
+// SyntaxHighlighter.registerLanguage('java', java);
+// SyntaxHighlighter.registerLanguage('lua', lua);
+// SyntaxHighlighter.registerLanguage('php', php);
+
 export default memo(function MarkdownComponent(props: Options & { isLight?: boolean }) {
     const { children, isLight, className, ...rest } = props;
     const cps = useMemo(() => {
@@ -20,7 +29,7 @@ export default memo(function MarkdownComponent(props: Options & { isLight?: bool
             return undefined;
         }
 
-        return { code: code, a: CustomLink };
+        return { a: CustomLink, pre: Pre };
     }, [isLight]);
 
     let markdownClassName = className ? className : '';
@@ -29,7 +38,7 @@ export default memo(function MarkdownComponent(props: Options & { isLight?: bool
 
     return (
         <>
-            <Markdown {...rest} className={markdownClassName} remarkPlugins={[[remarkGfm, { stringLength: stringWidth }]]} components={cps}>
+            <Markdown {...rest} className={markdownClassName} rehypePlugins={[[rehypeHighlight, { languages: common }]]} remarkPlugins={[[remarkGfm, { stringLength: stringWidth }]]} components={cps}>
                 {children as string}
             </Markdown>
         </>
@@ -42,6 +51,10 @@ const CustomLink = ({ href, children }) => {
             {children}
         </a>
     );
+};
+
+const Pre = ({ children }: ExtraProps) => {
+    return <pre className=" p-4 my-2 rounded-lg bg-content2">{children}</pre>;
 };
 
 const code = function Code(props: ExtraProps) {

@@ -158,7 +158,7 @@ export default function Chat() {
                                     data.startAt += char.length;
                                 });
 
-                                if (i % 25 === 0) {
+                                if (i % 26 === 0) {
                                     goToBottom();
                                 }
 
@@ -194,7 +194,7 @@ export default function Chat() {
                     goToBottom();
                 }
                 interval();
-            }, 500);
+            }, 200);
         };
 
         setTimeout(() => {
