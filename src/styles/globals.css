@@ -24,3 +24,9 @@
     white-space: normal;
 }
 
+/* 避免主题切换导致 代码块抖动的问题，主要在于 padding: 1em，在代码块主题样式更换时，同时需要调整该内容 */
+pre code.hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 1em;
+}

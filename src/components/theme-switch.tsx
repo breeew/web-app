@@ -21,8 +21,11 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({ className, classNames }) => 
 
     const onChange = () => {
         toggleTheme();
-        onThemeChange();
     };
+
+    useEffect(() => {
+        onThemeChange(theme);
+    }, [theme]);
 
     const { Component, slots, isSelected, getBaseProps, getInputProps, getWrapperProps } = useSwitch({
         isSelected: theme === 'light',

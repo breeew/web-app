@@ -1,4 +1,4 @@
-import {  ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { createBrowserRouter, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 
@@ -72,7 +72,7 @@ function PreLogin({ children }: { children: ReactNode }) {
 const routes = createBrowserRouter([
     {
         path: '*',
-        element: <IndexPage />
+        element: <Navigate to="/login" />
     },
     {
         path: '/',

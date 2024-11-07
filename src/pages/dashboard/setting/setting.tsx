@@ -12,7 +12,12 @@ const Setting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>(({ cla
     const navigate = useNavigate();
 
     function back() {
-        navigate(-1);
+        if (window.history.length > 1) {
+            navigate(-1);
+
+            return;
+        }
+        navigate('/dashboard');
     }
 
     return (

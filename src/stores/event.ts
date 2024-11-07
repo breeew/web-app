@@ -1,11 +1,12 @@
 import { proxy } from 'valtio';
 
+
 const eventStore = proxy<EventStore>({
-    themeChange: false
+    themeChange: ''
 });
 
-export const onThemeChange = () => {
-    eventStore.themeChange = !eventStore.themeChange;
+export const onThemeChange = (theme: string) => {
+    eventStore.themeChange = theme;
 };
 
 export default eventStore;

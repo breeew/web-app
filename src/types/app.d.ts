@@ -64,7 +64,7 @@ declare type UserStore = {
 };
 
 declare type EventStore = {
-    themeChange: boolean;
+    themeChange: string;
 };
 
 declare type KnowledgeStore = {
