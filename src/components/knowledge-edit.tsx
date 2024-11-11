@@ -4,6 +4,8 @@ import { memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSnapshot } from 'valtio';
 
+import MarkdownEditor from './markdown-editor/markdown-editor';
+
 import { CreateKnowledge, type Knowledge, UpdateKnowledge } from '@/apis/knowledge';
 import { Resource } from '@/apis/resource';
 import { useToast } from '@/hooks/use-toast';
@@ -147,7 +149,13 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
 
                         <div className="w-full  overflow-hidden flex-wrap flex flex-col gap-3">
                             <div className="w-full relative overflow-hidden">
-                                <Textarea
+                                <MarkdownEditor
+                                    className="border-2 rounded-xl"
+                                    content={knowledge.content}
+                                    placeholder={t('knowledgeCreateContentLabelPlaceholder')}
+                                    onValueChange={onKnowledgeContentChanged}
+                                />
+                                {/* <Textarea
                                     minRows={12}
                                     maxRows={100}
                                     name="knowledge"
@@ -170,7 +178,7 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
                                         </Link>
                                         &nbsp;supported.
                                     </p>
-                                </div>
+                                </div> */}
                             </div>
 
                             {defaultResource && (

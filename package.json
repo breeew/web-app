@@ -11,7 +11,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@codemirror/theme-one-dark": "^6.1.2",
     "@iconify/react": "4.1.1",
+    "@mdxeditor/editor": "^3.17.3",
     "@nextui-org/button": "2.0.38",
     "@nextui-org/code": "2.0.33",
     "@nextui-org/input": "2.2.5",

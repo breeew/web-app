@@ -4,6 +4,7 @@ import { memo } from 'react';
 import Markdown from './markdown';
 
 import { Knowledge } from '@/apis/knowledge';
+import MarkdownEditor from '@/components/markdown-editor/markdown-editor';
 
 export default memo(function KnowledgeView({ knowledge }: { knowledge: Knowledge }) {
     return (
@@ -26,7 +27,8 @@ export default memo(function KnowledgeView({ knowledge }: { knowledge: Knowledge
                     </div>
 
                     <div className="w-full  overflow-hidden flex-wrap">
-                        <Markdown className="w-full text-wrap break-words whitespace-pre-wrap text-gray-600 dark:text-gray-300">{knowledge.content}</Markdown>
+                        <MarkdownEditor readOnly content={knowledge.content} />
+                        {/* <Markdown className="w-full text-wrap break-words whitespace-pre-wrap text-gray-600 dark:text-gray-300">{knowledge.content}</Markdown> */}
                     </div>
                 </div>
             </ScrollShadow>
