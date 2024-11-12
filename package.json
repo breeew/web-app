@@ -11,6 +11,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@editorjs/checklist": "^1.6.0",
+    "@editorjs/code": "^2.9.2",
+    "@editorjs/editorjs": "^2.30.7",
+    "@editorjs/header": "^2.8.8",
+    "@editorjs/inline-code": "^1.5.1",
+    "@editorjs/link": "^2.6.2",
+    "@editorjs/list": "^1.10.0",
+    "@editorjs/marker": "^1.4.0",
+    "@editorjs/quote": "^2.7.2",
+    "@editorjs/simple-image": "^1.6.0",
+    "@editorjs/table": "^2.4.2",
     "@iconify/react": "4.1.1",
     "@nextui-org/button": "2.0.38",
     "@nextui-org/code": "2.0.33",

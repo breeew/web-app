@@ -1,3 +1,4 @@
+import { OutputData } from '@editorjs/editorjs';
 import { Icon } from '@iconify/react';
 import { Button, Input, Link, ScrollShadow, Select, SelectItem, Textarea } from '@nextui-org/react';
 import { memo, useCallback, useMemo, useState } from 'react';
@@ -6,13 +7,14 @@ import { useSnapshot } from 'valtio';
 
 import { CreateKnowledge, type Knowledge, UpdateKnowledge } from '@/apis/knowledge';
 import { Resource } from '@/apis/resource';
+import { Editor } from '@/components/editor/index';
 import { useToast } from '@/hooks/use-toast';
 import resourceStore from '@/stores/resource';
 
 export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { knowledge?: Knowledge; onChange?: () => void; onCancel?: () => void }) {
     const { t } = useTranslation();
     const [title, setTitle] = useState(knowledge ? knowledge.title : '');
-    const [content, setContent] = useState(knowledge ? knowledge.content : '');
+    const [content, setContent] = useState<string | OutputData>(knowledge ? knowledge.content : '');
     const [tags, setTags] = useState(knowledge ? knowledge.tags : []);
     const [isInvalid, setInvalid] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
@@ -57,7 +59,7 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
         return '';
     }, [currentSelectedResource, resources]);
 
-    const onKnowledgeContentChanged = useCallback((value: string) => {
+    const onKnowledgeContentChanged = useCallback((value: string | OutputData) => {
         if (isInvalid) {
             setErrorMessage('');
             setInvalid(false);
@@ -117,7 +119,7 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
         <>
             {knowledge && (
                 <ScrollShadow hideScrollBar className="w-full flex-grow box-border p-4 flex justify-center">
-                    <div className="w-full h-full md:max-w-[620px]">
+                    <div className="w-full h-full md:max-w-[650px]">
                         {knowledge.id && (
                             <>
                                 <div className="w-full my-10 dark:text-gray-100 text-gray-800 text-lg overflow-hidden">
@@ -145,9 +147,31 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
                             </>
                         )}
 
-                        <div className="w-full  overflow-hidden flex-wrap flex flex-col gap-3">
-                            <div className="w-full relative overflow-hidden">
-                                <Textarea
+                        <div className="w-full flex-wrap flex flex-col gap-3">
+                            {defaultResource && (
+                                <Select
+                                    isRequired
+                                    variant="bordered"
+                                    label={t('knowledgeCreateResourceLable')}
+                                    defaultSelectedKeys={[defaultResource]}
+                                    labelPlacement="outside"
+                                    placeholder="Select an resource"
+                                    className="text-xl text-gray-800 dark:text-gray-100"
+                                    onSelectionChange={item => {
+                                        if (item) {
+                                            setResource(item.currentKey || '');
+                                        }
+                                    }}
+                                >
+                                    {resources.map(item => {
+                                        return <SelectItem key={item.id}>{item.title}</SelectItem>;
+                                    })}
+                                </Select>
+                            )}
+
+                            <div className="w-full relative mt-6 p-6 bg-zinc-800 rounded-xl">
+                                <Editor data={knowledge.content} onValueChange={onKnowledgeContentChanged} />
+                                {/* <Textarea
                                     minRows={12}
                                     maxRows={100}
                                     name="knowledge"
@@ -170,29 +194,8 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
                                         </Link>
                                         &nbsp;supported.
                                     </p>
-                                </div>
+                                </div> */}
                             </div>
-
-                            {defaultResource && (
-                                <Select
-                                    isRequired
-                                    variant="bordered"
-                                    label={t('knowledgeCreateResourceLable')}
-                                    defaultSelectedKeys={[defaultResource]}
-                                    labelPlacement="outside"
-                                    placeholder="Select an resource"
-                                    className="text-xl text-gray-800 dark:text-gray-100 !mt-12"
-                                    onSelectionChange={item => {
-                                        if (item) {
-                                            setResource(item.currentKey || '');
-                                        }
-                                    }}
-                                >
-                                    {resources.map(item => {
-                                        return <SelectItem key={item.id}>{item.title}</SelectItem>;
-                                    })}
-                                </Select>
-                            )}
 
                             {/* <Input
                                 label={t('knowledgeCreateResourceLable')}

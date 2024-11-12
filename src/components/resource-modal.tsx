@@ -113,7 +113,7 @@ const ResourceManage = memo(
                                 </Breadcrumbs> */}
                             </ModalHeader>
                             <ModalBody className="w-full overflow-hidden flex flex-col items-center">
-                                <div className="w-full h-full md:max-w-[620px]">
+                                <div className="w-full h-full md:max-w-[650px]">
                                     <div className="flex flex-wrap gap-1">
                                         <Input
                                             isRequired
