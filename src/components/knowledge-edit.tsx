@@ -99,7 +99,7 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
                     description: 'Updated knowledge ' + knowledge.id
                 });
             } else {
-                await CreateKnowledge(knowledge.space_id, resource || defaultResource, 'blocks', content);
+                await CreateKnowledge(knowledge.space_id, resource || defaultResource, content, 'blocks');
                 toast({
                     title: 'Success',
                     description: 'Create new knowledge'
@@ -175,7 +175,7 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
                                 <Spacer y={2} />
                                 <Editor
                                     autofocus
-                                    data={knowledge.content}
+                                    data={knowledge.blocks || knowledge.content}
                                     dataType={knowledge.content_type}
                                     placeholder={t('knowledgeCreateContentLabelPlaceholder')}
                                     onValueChange={onKnowledgeContentChanged}

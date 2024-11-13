@@ -13,7 +13,10 @@ import { Skeleton } from '@nextui-org/react';
 import { memo, useEffect, useState } from 'react';
 import showdown from 'showdown';
 
+
+
 import './style.css';
+
 
 export interface EditorProps {
     readOnly: boolean;
@@ -34,6 +37,7 @@ export const Editor = memo(function Editor({ data, dataType = '', autofocus = fa
                     await editor.blocks.renderFromHTML(data);
                     break;
                 case 'blocks':
+                    console.log('hehre');
                     await editor.blocks.render(data);
                     break;
                 default: // default will be markdown
@@ -72,7 +76,7 @@ export const Editor = memo(function Editor({ data, dataType = '', autofocus = fa
         };
 
         const editor = new EditorJS({
-            minHeight: 0, // https://github.com/codex-team/editor.js/issues/1300
+            minHeight: 50, // https://github.com/codex-team/editor.js/issues/1300
             placeholder: placeholder,
             readOnly: readOnly,
             autofocus: !readOnly && autofocus,
@@ -118,7 +122,7 @@ export const Editor = memo(function Editor({ data, dataType = '', autofocus = fa
                     class: Marker,
                     shortcut: 'CMD+SHIFT+M'
                 },
-                code: {
+                codeBox: {
                     class: CodeTool,
                     inlineToolbar: true,
                     shortcut: 'CMD+SHIFT+C'

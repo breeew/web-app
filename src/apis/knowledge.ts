@@ -1,8 +1,11 @@
+import { OutputData } from '@editorjs/editorjs';
+
 import instance from './request';
 
 export interface Knowledge {
     content: string;
     content_type: string;
+    blocks: OutputData;
     id: string;
     kind: string;
     maybe_date: string;

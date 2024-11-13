@@ -26,7 +26,7 @@ export default memo(function KnowledgeView({ knowledge }: { knowledge: Knowledge
 
                     <div className="w-full flex-wrap">
                         {/* <Markdown className="w-full text-wrap break-words whitespace-pre-wrap text-gray-600 dark:text-gray-300">{knowledge.content}</Markdown> */}
-                        {knowledge.content && <Editor readOnly data={knowledge.content} />}
+                        {knowledge.content && <Editor readOnly data={knowledge.blocks || knowledge.content} dataType={knowledge.content_type} />}
                     </div>
                 </div>
             </ScrollShadow>
