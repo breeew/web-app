@@ -3,6 +3,7 @@
     --foreground: #f3f3f3;
     --border: #52525b;
     --accent: #52525b;
+    --color-border: #52525b;
 }
 
 .dark .ce-code__textarea {
@@ -125,11 +126,11 @@
 /* table class wrapper */
 .dark .tc-wrap,
 .dark .tc-wrap * {
-    --color-border: hsl(var(--border));
-    --color-text-secondary: hsl(var(--foreground));
-    --color-background: hsl(var(--accent) / 0.2);
-    --toggler-dots-color: hsl(var(--accent) / 0.2);
-    --toggler-dots-color-hovered: hsl(var(--foreground));
+    --color-border: var(--border);
+    --color-text-secondary: var(--foreground);
+    --color-background: var(--accent);
+    --toggler-dots-color: var(--accent);
+    --toggler-dots-color-hovered: var(--foreground);
 }
 
 @media (max-width: 650px) {
@@ -179,22 +180,22 @@
     @apply rounded-md;
 }
 
-h1 {
+.editor h1 {
     @apply !text-3xl;
 }
 
-h2 {
+.editor h2 {
     @apply !text-2xl;
 }
 
-h3 {
+.editor h3 {
     @apply !text-xl;
 }
 
-h4 {
+.editor h4 {
     @apply !text-lg;
 }
 
-h5 {
+.editor h5 {
     @apply !text-base;
 }

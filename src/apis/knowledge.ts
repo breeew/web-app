@@ -2,6 +2,7 @@ import instance from './request';
 
 export interface Knowledge {
     content: string;
+    content_type: string;
     id: string;
     kind: string;
     maybe_date: string;
@@ -45,10 +46,11 @@ export async function GetKnowledge(spaceID: string, knowledgeID: string): Promis
     return resp.data.data;
 }
 
-export async function CreateKnowledge(spaceID: string, resource: string, content: string, async: boolean = true): Promise<string> {
+export async function CreateKnowledge(spaceID: string, resource: string, content: string, content_type: string, async: boolean = true): Promise<string> {
     const resp = await instance.post(`/${spaceID}/knowledge`, {
         resource,
         content,
+        content_type,
         async
     });
 
@@ -58,6 +60,7 @@ export async function CreateKnowledge(spaceID: string, resource: string, content
 export interface UpdateKnowledgeArgs {
     title: string;
     content: string;
+    content_type: string;
     tags: string[];
     resource: string;
     kind?: string;

@@ -1,6 +1,5 @@
 import { OutputData } from '@editorjs/editorjs';
-import { Icon } from '@iconify/react';
-import { Button, Input, Link, ScrollShadow, Select, SelectItem, Textarea } from '@nextui-org/react';
+import { Button, Input, ScrollShadow, Select, SelectItem, Spacer } from '@nextui-org/react';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSnapshot } from 'valtio';
@@ -92,6 +91,7 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
                     resource: resource || defaultResource,
                     title: title,
                     content: content,
+                    content_type: 'blocks',
                     tags: tags
                 });
                 toast({
@@ -99,7 +99,7 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
                     description: 'Updated knowledge ' + knowledge.id
                 });
             } else {
-                await CreateKnowledge(knowledge.space_id, resource || defaultResource, content);
+                await CreateKnowledge(knowledge.space_id, resource || defaultResource, 'blocks', content);
                 toast({
                     title: 'Success',
                     description: 'Create new knowledge'
@@ -122,26 +122,26 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
                     <div className="w-full h-full md:max-w-[650px]">
                         {knowledge.id && (
                             <>
-                                <div className="w-full my-10 dark:text-gray-100 text-gray-800 text-lg overflow-hidden">
+                                <div className="w-full mt-10 mb-5 dark:text-gray-100 text-gray-800 text-lg overflow-hidden">
                                     <Input
                                         label={t('Title')}
-                                        variant="bordered"
                                         placeholder="Your knowledge title, empty to use ai genenrate"
                                         className="text-xl text-gray-800 dark:text-gray-100"
                                         labelPlacement="outside"
                                         defaultValue={knowledge.title}
                                         onValueChange={setTitle}
+                                        classNames={{ label: 'text-white font-bold' }}
                                     />
                                 </div>
                                 <div className="flex flex-wrap gap-1 mb-5">
                                     <Input
                                         label={t('Tags') + "(each tag splited with '|')"}
-                                        variant="bordered"
                                         placeholder="Your knowledge title, empty to use ai genenrate"
                                         className="text-xl text-gray-800 dark:text-gray-100"
                                         labelPlacement="outside"
                                         defaultValue={knowledge.tags ? knowledge.tags.join('|') : ''}
                                         onValueChange={setStringTags}
+                                        classNames={{ label: 'text-white font-bold' }}
                                     />
                                 </div>
                             </>
@@ -151,12 +151,12 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
                             {defaultResource && (
                                 <Select
                                     isRequired
-                                    variant="bordered"
                                     label={t('knowledgeCreateResourceLable')}
                                     defaultSelectedKeys={[defaultResource]}
                                     labelPlacement="outside"
                                     placeholder="Select an resource"
                                     className="text-xl text-gray-800 dark:text-gray-100"
+                                    classNames={{ label: 'text-white font-bold' }}
                                     onSelectionChange={item => {
                                         if (item) {
                                             setResource(item.currentKey || '');
@@ -169,8 +169,17 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
                                 </Select>
                             )}
 
-                            <div className="w-full relative mt-6 p-6 bg-zinc-800 rounded-xl">
-                                <Editor data={knowledge.content} onValueChange={onKnowledgeContentChanged} />
+                            <div className="w-full relative mt-2">
+                                <Spacer y={2} />
+                                <div className="text-small font-bold">{t('knowledgeCreateContentLabel')}</div>
+                                <Spacer y={2} />
+                                <Editor
+                                    autofocus
+                                    data={knowledge.content}
+                                    dataType={knowledge.content_type}
+                                    placeholder={t('knowledgeCreateContentLabelPlaceholder')}
+                                    onValueChange={onKnowledgeContentChanged}
+                                />
                                 {/* <Textarea
                                     minRows={12}
                                     maxRows={100}

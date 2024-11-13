@@ -9,37 +9,73 @@ import Marker from '@editorjs/marker';
 import Quote from '@editorjs/quote';
 import SimpleImage from '@editorjs/simple-image';
 import Table from '@editorjs/table';
-import { memo, useEffect } from 'react';
+import { Skeleton } from '@nextui-org/react';
+import { memo, useEffect, useState } from 'react';
+import showdown from 'showdown';
 
 import './style.css';
 
 export interface EditorProps {
     readOnly: boolean;
     data: string | OutputData;
+    dataType?: string;
+    placeholder?: string;
+    autofocus?: boolean;
     onValueChange?: () => void;
 }
 
-export const Editor = memo(function Editor({ data, readOnly, onValueChange }: EditorProps) {
-    useEffect(() => {
-        let editorData: OutputData;
+export const Editor = memo(function Editor({ data, dataType = '', autofocus = false, placeholder, readOnly, onValueChange }: EditorProps) {
+    const [isReady, setIsReady] = useState(false);
 
-        if (typeof data === 'string') {
-            editorData = {
-                blocks: [
-                    {
-                        type: 'paragraph',
-                        data: {
-                            text: data
-                        }
-                    }
-                ]
-            };
-        } else {
-            editorData = data;
-        }
+    useEffect(() => {
+        const renderFunc = async function (editor: EditorJS, data: string | OutputData, dataType: string) {
+            switch (dataType.toLowerCase()) {
+                case 'html':
+                    await editor.blocks.renderFromHTML(data);
+                    break;
+                case 'blocks':
+                    await editor.blocks.render(data);
+                    break;
+                default: // default will be markdown
+                    // await editor.blocks.render({
+                    //     blocks: [
+                    //         {
+                    //             type: 'paragraph',
+                    //             data: {
+                    //                 text: data
+                    //             }
+                    //         }
+                    //     ]
+                    // });
+                    // return;
+                    showdown.extension('code', function () {
+                        return [
+                            {
+                                type: 'output',
+                                filter: function (text, converter, options) {
+                                    return text.replace(/<pre(?: class="[^"]*")?>([\s\S]+?)<\/pre>/g, function (fullMatch, inCode) {
+                                        return '<code contenteditable="true">' + inCode + '</code>';
+                                    });
+
+                                    // return res.replace(/<pre>([\s\S]+?)<\/pre>/g, function (fullMatch, inCode) {
+                                    //     return inCode;
+                                    // });
+                                }
+                            }
+                        ];
+                    });
+
+                    let converter = new showdown.Converter({ extensions: ['code'] });
+
+                    await editor.blocks.renderFromHTML(converter.makeHtml(data));
+            }
+        };
+
         const editor = new EditorJS({
+            minHeight: 0, // https://github.com/codex-team/editor.js/issues/1300
+            placeholder: placeholder,
             readOnly: readOnly,
-            data: editorData,
+            autofocus: !readOnly && autofocus,
             /**
              * Id of Element that should contain the Editor
              */
@@ -84,12 +120,12 @@ export const Editor = memo(function Editor({ data, readOnly, onValueChange }: Ed
                 },
                 code: {
                     class: CodeTool,
+                    inlineToolbar: true,
                     shortcut: 'CMD+SHIFT+C'
                 },
                 inlineCode: {
                     class: InlineCode,
-                    inlineToolbar: true,
-                    shortcut: 'CMD+SHIFT+C'
+                    inlineToolbar: true
                 },
                 linkTool: LinkTool,
                 table: {
@@ -99,24 +135,19 @@ export const Editor = memo(function Editor({ data, readOnly, onValueChange }: Ed
                 }
             },
             // or await editor.isReady
-            onReady: () => {
-                console.log('Editor.js is ready to work!');
+            onReady: async () => {
+                await renderFunc(editor, data, dataType);
+                setIsReady(true);
             },
-            onChange: async function (api, event) {
-                console.log('something changed', api, event);
+            onChange: async function (api, _) {
                 onValueChange && onValueChange(await api.saver.save());
             }
         });
-
-        // editor
-        //     .save()
-        //     .then(outputData => {
-        //         console.log('Article data: ', outputData);
-        //     })
-        //     .catch(error => {
-        //         console.log('Saving failed: ', error);
-        //     });
     }, []);
 
-    return <div id="brew-editor" className="" />;
+    return (
+        <Skeleton isLoaded={isReady}>
+            <div id="brew-editor" className="editor" />
+        </Skeleton>
+    );
 });

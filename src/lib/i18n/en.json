@@ -63,7 +63,7 @@
     "createSpaceDescriptionLabel": "Space Description",
     "knowledgeCreateButtonTitle": "Brew your memory.",
     "knowledgeCreateContentLabel": "Memory Content",
-    "knowledgeCreateContentLabelPlaceholder": "Ideas or knowledges to create new memory",
+    "knowledgeCreateContentLabelPlaceholder": "Type ideas or knowledges to create new memory",
     "knowledgeCreateResourceLable": "Resource",
     "knowledgeCreateResourceLablePlaceholder": "Your memory resource type, default is knowledge",
     "showRelevanceDocs": "Show Relevance Docs",
