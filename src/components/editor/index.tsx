@@ -3,7 +3,6 @@ import CodeTool from '@editorjs/code';
 import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
 import InlineCode from '@editorjs/inline-code';
-import LinkTool from '@editorjs/link';
 import List from '@editorjs/list';
 import Marker from '@editorjs/marker';
 import Quote from '@editorjs/quote';
@@ -13,10 +12,7 @@ import { Skeleton } from '@nextui-org/react';
 import { memo, useEffect, useState } from 'react';
 import showdown from 'showdown';
 
-
-
 import './style.css';
-
 
 export interface EditorProps {
     readOnly: boolean;
@@ -30,14 +26,18 @@ export interface EditorProps {
 export const Editor = memo(function Editor({ data, dataType = '', autofocus = false, placeholder, readOnly, onValueChange }: EditorProps) {
     const [isReady, setIsReady] = useState(false);
 
+    console.log('editor data', data, dataType);
+
     useEffect(() => {
         const renderFunc = async function (editor: EditorJS, data: string | OutputData, dataType: string) {
+            if (!data) {
+                return;
+            }
             switch (dataType.toLowerCase()) {
                 case 'html':
                     await editor.blocks.renderFromHTML(data);
                     break;
                 case 'blocks':
-                    console.log('hehre');
                     await editor.blocks.render(data);
                     break;
                 default: // default will be markdown
@@ -60,18 +60,29 @@ export const Editor = memo(function Editor({ data, dataType = '', autofocus = fa
                                     return text.replace(/<pre(?: class="[^"]*")?>([\s\S]+?)<\/pre>/g, function (fullMatch, inCode) {
                                         return '<code contenteditable="true">' + inCode + '</code>';
                                     });
-
-                                    // return res.replace(/<pre>([\s\S]+?)<\/pre>/g, function (fullMatch, inCode) {
-                                    //     return inCode;
-                                    // });
                                 }
                             }
                         ];
                     });
 
-                    let converter = new showdown.Converter({ extensions: ['code'] });
+                    const converter = new showdown.Converter({ extensions: ['code'] });
+                    let htmlDoms = converter.makeHtml(data);
 
-                    await editor.blocks.renderFromHTML(converter.makeHtml(data));
+                    if (!htmlDoms.trim().startsWith('<div>')) {
+                        htmlDoms = '<div>' + htmlDoms + '</div>';
+                    }
+
+                    try {
+                        await editor.blocks.renderFromHTML(htmlDoms);
+                    } catch (e: any) {
+                        console.error('editor render error', e);
+                        await editor.render([
+                            {
+                                type: 'paragraph',
+                                data: { text: data || '' }
+                            }
+                        ]);
+                    }
             }
         };
 
@@ -125,13 +136,21 @@ export const Editor = memo(function Editor({ data, dataType = '', autofocus = fa
                 codeBox: {
                     class: CodeTool,
                     inlineToolbar: true,
-                    shortcut: 'CMD+SHIFT+C'
+                    shortcut: 'CMD+SHIFT+C',
+                    conversionConfig: {
+                        import(str: string): string {
+                            return str;
+                        },
+                        export(data): string {
+                            return data.code;
+                        }
+                    }
                 },
                 inlineCode: {
                     class: InlineCode,
                     inlineToolbar: true
                 },
-                linkTool: LinkTool,
+                // link: LinkTool, import LinkTool from '@editorjs/link';
                 table: {
                     class: Table,
                     inlineToolbar: true,
