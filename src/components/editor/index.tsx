@@ -2,17 +2,22 @@ import Checklist from '@editorjs/checklist';
 import CodeTool from '@editorjs/code';
 import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
+import ImageTool from '@editorjs/image';
 import InlineCode from '@editorjs/inline-code';
 import List from '@editorjs/list';
 import Marker from '@editorjs/marker';
 import Quote from '@editorjs/quote';
-import SimpleImage from '@editorjs/simple-image';
 import Table from '@editorjs/table';
 import { Skeleton } from '@nextui-org/react';
 import { memo, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import showdown from 'showdown';
 
 import './style.css';
+
+import { CreateUploadKey, UploadFileToKey } from '@/apis/upload';
+import { useToast } from '@/hooks/use-toast';
+import { compressImage } from '@/lib/compress';
 
 export interface EditorProps {
     readOnly: boolean;
@@ -24,8 +29,9 @@ export interface EditorProps {
 }
 
 export const Editor = memo(function Editor({ data, dataType = '', autofocus = false, placeholder, readOnly, onValueChange }: EditorProps) {
+    const { t } = useTranslation();
     const [isReady, setIsReady] = useState(false);
-
+    const { toast } = useToast();
     console.log('editor data', data, dataType);
 
     useEffect(() => {
@@ -110,7 +116,46 @@ export const Editor = memo(function Editor({ data, dataType = '', autofocus = fa
                 /**
                  * Or pass class directly without any configuration
                  */
-                image: SimpleImage,
+                image: {
+                    class: ImageTool,
+                    config: {
+                        uploader: {
+                            async uploadByFile(file: File): { success: number; file?: { url: string } } {
+                                try {
+                                    const result = await compressImage(file);
+                                    const resp = await CreateUploadKey('knowledge', 'image', file.name);
+
+                                    if (result.error) {
+                                        toast({
+                                            title: t('Error'),
+                                            // TODO: i18n
+                                            description: result.error
+                                        });
+
+                                        return {
+                                            success: 0
+                                        };
+                                    }
+
+                                    if (result.file) await UploadFileToKey(resp.key, result.file.type, result.file);
+
+                                    return {
+                                        success: 1,
+                                        file: {
+                                            url: resp.url
+                                        }
+                                    };
+                                } catch (e: Error) {
+                                    toast({
+                                        title: t('Error'),
+                                        // TODO: i18n
+                                        description: e.message || e
+                                    });
+                                }
+                            }
+                        }
+                    }
+                },
                 list: {
                     class: List,
                     inlineToolbar: true,

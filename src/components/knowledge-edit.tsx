@@ -101,7 +101,7 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
             } else {
                 await CreateKnowledge(knowledge.space_id, resource || defaultResource, content, 'blocks');
                 toast({
-                    title: 'Success',
+                    title: t('Success'),
                     description: 'Create new knowledge'
                 });
             }
