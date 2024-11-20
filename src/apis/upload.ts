@@ -9,8 +9,8 @@ export interface CreateUploadKeyResponse {
     key: string;
 }
 
-export async function CreateUploadKey(object_type: string, kind: string, file_name: string): Promise<CreateUploadKeyResponse> {
-    const resp = await instance.post(`/object/upload/key`, {
+export async function CreateUploadKey(spaceID: string, object_type: string, kind: string, file_name: string): Promise<CreateUploadKeyResponse> {
+    const resp = await instance.post(`/space/${spaceID}/object/upload/key`, {
         object_type,
         kind,
         file_name
@@ -20,13 +20,11 @@ export async function CreateUploadKey(object_type: string, kind: string, file_na
 }
 
 export async function UploadFileToKey(key: string, contentType: string, body: File): Promise<void> {
-    console.log(key, 'file', body);
-
-    const resp = await axios.put(key, body, {
+    await axios.put(key, body, {
         headers: {
             'Content-Type': contentType
         }
     });
-    console.log('upload result', resp);
+
     return;
 }

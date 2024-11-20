@@ -68,7 +68,7 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
 
         setLoading(true);
         try {
-            await CreateKnowledge(spaceStore.currentSelectedSpace, resource || defaultResource, 'markdown', knowledge);
+            await CreateKnowledge(spaceStore.currentSelectedSpace, resource || defaultResource, knowledge, 'markdown');
 
             if (props.onChanges) {
                 props.onChanges();

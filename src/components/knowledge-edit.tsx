@@ -129,8 +129,8 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
                                         className="text-xl text-gray-800 dark:text-gray-100"
                                         labelPlacement="outside"
                                         defaultValue={knowledge.title}
-                                        onValueChange={setTitle}
                                         classNames={{ label: 'text-white font-bold' }}
+                                        onValueChange={setTitle}
                                     />
                                 </div>
                                 <div className="flex flex-wrap gap-1 mb-5">
@@ -140,8 +140,8 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
                                         className="text-xl text-gray-800 dark:text-gray-100"
                                         labelPlacement="outside"
                                         defaultValue={knowledge.tags ? knowledge.tags.join('|') : ''}
-                                        onValueChange={setStringTags}
                                         classNames={{ label: 'text-white font-bold' }}
+                                        onValueChange={setStringTags}
                                     />
                                 </div>
                             </>
@@ -175,7 +175,9 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
                                 <Spacer y={2} />
                                 <Editor
                                     autofocus
-                                    data={knowledge.blocks || knowledge.content}
+                                    data={(() => {
+                                        return knowledge.blocks || knowledge.content;
+                                    })()}
                                     dataType={knowledge.content_type}
                                     placeholder={t('knowledgeCreateContentLabelPlaceholder')}
                                     onValueChange={onKnowledgeContentChanged}

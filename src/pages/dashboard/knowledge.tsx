@@ -204,7 +204,7 @@ export default memo(function Component() {
                     </div>
 
                     <Skeleton isLoaded={total > 0 || !isLoading} className="max-w-64 rounded-lg">
-                        <p className="text-small text-default-400">{t('memories count', { total: total, title: currentSelectedResource?.title})}</p>
+                        <p className="text-small text-default-400">{t('memories count', { total: total, title: currentSelectedResource?.title })}</p>
                     </Skeleton>
                 </div>
                 <KnowledgeList ref={ssDom} knowledgeList={dataList} onSelect={showKnowledge} onChanges={onChanges} onLoadMore={onLoadMore} />
@@ -479,14 +479,7 @@ const NormalCard = memo(function NormalCard({ title, content, tags, stage }: { t
                             </div>
                         )}
                         <div className="text-base dark:text-white/60 text-gray-500 h-full overflow-ellipsis overflow-hidden line-clamp-6 text-wrap break-words">
-                            <Markdown
-                                isLight
-                                urlTransform={() => {
-                                    return '#';
-                                }}
-                            >
-                                {content}
-                            </Markdown>
+                            <Markdown isLight>{content}</Markdown>
                         </div>
                     </div>
                 </CardBody>

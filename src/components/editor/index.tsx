@@ -12,12 +12,14 @@ import { Skeleton } from '@nextui-org/react';
 import { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import showdown from 'showdown';
+import { useSnapshot } from 'valtio';
 
 import './style.css';
 
 import { CreateUploadKey, UploadFileToKey } from '@/apis/upload';
 import { useToast } from '@/hooks/use-toast';
 import { compressImage } from '@/lib/compress';
+import spaceStore from '@/stores/space';
 
 export interface EditorProps {
     readOnly: boolean;
@@ -32,7 +34,8 @@ export const Editor = memo(function Editor({ data, dataType = '', autofocus = fa
     const { t } = useTranslation();
     const [isReady, setIsReady] = useState(false);
     const { toast } = useToast();
-    console.log('editor data', data, dataType);
+    const { currentSelectedSpace } = useSnapshot(spaceStore);
+    // console.log('editor data', data, dataType);
 
     useEffect(() => {
         const renderFunc = async function (editor: EditorJS, data: string | OutputData, dataType: string) {
@@ -123,7 +126,7 @@ export const Editor = memo(function Editor({ data, dataType = '', autofocus = fa
                             async uploadByFile(file: File): { success: number; file?: { url: string } } {
                                 try {
                                     const result = await compressImage(file);
-                                    const resp = await CreateUploadKey('knowledge', 'image', file.name);
+                                    const resp = await CreateUploadKey(currentSelectedSpace, 'knowledge', 'image', file.name);
 
                                     if (result.error) {
                                         toast({
@@ -134,6 +137,15 @@ export const Editor = memo(function Editor({ data, dataType = '', autofocus = fa
 
                                         return {
                                             success: 0
+                                        };
+                                    }
+
+                                    if (resp.status === 'exist') {
+                                        return {
+                                            success: 1,
+                                            file: {
+                                                url: resp.url
+                                            }
                                         };
                                     }
 
@@ -211,7 +223,7 @@ export const Editor = memo(function Editor({ data, dataType = '', autofocus = fa
                 onValueChange && onValueChange(await api.saver.save());
             }
         });
-    }, []);
+    }, [currentSelectedSpace]);
 
     return (
         <Skeleton isLoaded={isReady}>
