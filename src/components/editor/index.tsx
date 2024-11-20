@@ -4,7 +4,7 @@ import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
 import ImageTool from '@editorjs/image';
 import InlineCode from '@editorjs/inline-code';
-import List from '@editorjs/list';
+import EditorjsList from '@editorjs/list';
 import Marker from '@editorjs/marker';
 import Quote from '@editorjs/quote';
 import Table from '@editorjs/table';
@@ -169,7 +169,7 @@ export const Editor = memo(function Editor({ data, dataType = '', autofocus = fa
                     }
                 },
                 list: {
-                    class: List,
+                    class: EditorjsList,
                     inlineToolbar: true,
                     shortcut: 'CMD+SHIFT+L'
                 },
