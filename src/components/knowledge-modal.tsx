@@ -132,7 +132,7 @@ const ViewKnowledge = memo(
                                         {isEdit ? <KnowledgeEdit knowledge={knowledge} onChange={onChangeFunc} /> : <KnowledgeView knowledge={knowledge} />}
                                     </ModalBody>
                                     <ModalFooter className="flex justify-center">
-                                        <ButtonGroup variant="flat" size={isMobile ? 'sm' : 'lg'}>
+                                        <ButtonGroup variant="flat" size="base" className="mb-4">
                                             <Button isDisabled={knowledge.stage !== 3} onClick={changeEditable}>
                                                 {(() => {
                                                     if (knowledge.stage == 1) {
@@ -183,7 +183,7 @@ const ViewKnowledge = memo(
                                     </ModalBody>
                                     <ModalFooter className="flex justify-center">
                                         <Skeleton>
-                                            <ButtonGroup variant="flat" size={isMobile ? 'sm' : 'lg'}>
+                                            <ButtonGroup variant="flat" size="base">
                                                 <Button />
                                                 <Button />
                                                 <Button />

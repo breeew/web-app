@@ -1,6 +1,5 @@
 import instance from './request';
 
-
 export async function ListUserSpace(): Promise<UserSpace[]> {
     let resp = await instance.get(`/space/list`);
 

@@ -362,13 +362,13 @@ export default function Chat() {
                         ext: {}
                     });
                 });
-                
+
                 // waiting ws response
                 setAiTyping(true);
 
                 setTimeout(() => {
                     goToBottom();
-                }, 500)
+                }, 500);
             } catch (e: any) {
                 console.error(e);
                 throw e;

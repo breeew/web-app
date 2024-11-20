@@ -13,7 +13,7 @@ export default memo(function MarkdownComponent(props: Options & { isLight?: bool
     const { isDark } = useTheme();
     const cps = useMemo(() => {
         if (isLight) {
-            return undefined;
+            return { a: LightLink };
         }
 
         return { a: CustomLink, pre: Pre };
@@ -39,6 +39,10 @@ export default memo(function MarkdownComponent(props: Options & { isLight?: bool
         </>
     );
 });
+
+const LightLink = ({ children }) => {
+    return <a href="#">{children}</a>;
+};
 
 const CustomLink = ({ href, children }) => {
     return (

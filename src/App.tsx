@@ -49,6 +49,7 @@ export function App({ children }: { children: React.ReactNode }) {
         <NextUIProvider navigate={navigate}>
             <Outlet />
             <Toaster />
+            <span className="bg-zinc-800" />
         </NextUIProvider>
     );
 }
