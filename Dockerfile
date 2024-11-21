@@ -11,6 +11,7 @@ COPY . .
 
 # Build the project
 RUN npm run build-beta
+RUN chmod -R 755 /app/dist
 
 # Use Nginx as the production image
 FROM nginx:alpine
