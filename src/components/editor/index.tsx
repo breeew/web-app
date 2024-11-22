@@ -168,7 +168,7 @@ export const Editor = memo(function Editor({ data, dataType = '', autofocus = fa
                         }
                     }
                 },
-                list: {
+                listv2: {
                     class: EditorjsList,
                     inlineToolbar: true,
                     shortcut: 'CMD+SHIFT+L'
