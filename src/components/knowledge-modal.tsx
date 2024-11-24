@@ -128,7 +128,7 @@ const ViewKnowledge = memo(
                                             <BreadcrumbItem>{knowledge.id}</BreadcrumbItem>
                                         </Breadcrumbs>
                                     </ModalHeader>
-                                    <ModalBody className="w-full overflow-hidden flex flex-col items-center">
+                                    <ModalBody className="w-full overflow-hidden flex flex-col items-center px-0">
                                         {isEdit ? <KnowledgeEdit knowledge={knowledge} onChange={onChangeFunc} /> : <KnowledgeView knowledge={knowledge} />}
                                     </ModalBody>
                                     <ModalFooter className="flex justify-center">

@@ -248,6 +248,7 @@ const KnowledgeList = memo(
         const [onEvent, setEvent] = useState<FireTowerMsg | null>();
         const { currentSelectedSpace } = useSnapshot(spaceStore);
         const { subscribe, connectionStatus } = useSnapshot(socketStore);
+        const { isMobile } = useMedia();
 
         useEffect(() => {
             setDataList(knowledgeList);
@@ -344,15 +345,15 @@ const KnowledgeList = memo(
 
         return (
             <>
-                <ScrollShadow ref={ssDom} hideScrollBar className="w-full flex-grow box-border mb-6 p-6" onScroll={scrollChanged}>
+                <ScrollShadow ref={ssDom} hideScrollBar className="w-full flex-grow box-border mb-6 p-2" onScroll={scrollChanged}>
                     <div className={[isSafari ? 'm-auto w-full max-w-[900px]' : 'columns-1 sm:columns-2 lg:columns-3 xl:columns-4 2xl:columns-5 3xl:columns-5', 'gap-[24px]'].join(' ')}>
                         <div className="mb-[24px]">
-                            <CreateKnowledge onChanges={onChanges} />
+                            <CreateKnowledge shadow={isMobile ? 'none' : 'sm'} onChanges={onChanges} />
                         </div>
                         {dataList.map(item => {
                             return (
                                 <div key={item.id} role="button" tabIndex={0} className="mb-[24px] relative" onClick={() => onSelect(item)} onKeyDown={() => {}}>
-                                    <NormalCard content={item.content} tags={item.tags} title={item.title} stage={item.stage} />
+                                    <NormalCard shadow={isMobile ? 'none' : 'sm'} content={item.content} tags={item.tags} title={item.title} stage={item.stage} />
                                 </div>
                             );
                         })}
@@ -449,10 +450,23 @@ const CreateKnowledgeModal = memo(
 
 CreateKnowledgeModal.displayName = 'createKnowledgeModal';
 
-const NormalCard = memo(function NormalCard({ title, content, tags, stage }: { title: string; content: string; tags: string[] | undefined; stage: number }) {
+const NormalCard = memo(function NormalCard({
+    shadow,
+    title,
+    content,
+    tags,
+    stage
+}: {
+    shadow: 'none' | 'sm' | 'md' | 'lg' | undefined;
+    title: string;
+    content: string;
+    tags: string[] | undefined;
+    stage: number;
+}) {
     return (
         <>
             <Card
+                shadow={shadow}
                 className="w-full flex flex-col relative max-h-[460px] border-small border-foreground/10 bg-right-bottom bg-no-repeat
                 hover:border-indigo-500/50 hover:outset-1 hover:outset-x-1 hover:outset-y-1 hover:blur-2.5 hover:spread-1 cursor-pointer"
             >

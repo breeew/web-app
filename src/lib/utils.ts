@@ -14,3 +14,13 @@ export function isJsonString(input: string): boolean {
 
     return false;
 }
+
+const BREW_LOGIN_AUTO_DIRECT_KEY = 'brew-auto-login-direct';
+
+export function autoLoginDirect(): boolean {
+    return !sessionStorage.getItem(BREW_LOGIN_AUTO_DIRECT_KEY);
+}
+
+export function setNotAutoLoginDirect() {
+    sessionStorage.setItem(BREW_LOGIN_AUTO_DIRECT_KEY, 'true');
+}

@@ -8,7 +8,6 @@ import { useSnapshot } from 'valtio';
 
 import ManageSpaceComponent from '@/components/manage-space';
 import ResourceManage from '@/components/resource-modal';
-import { ThemeSwitch } from '@/components/theme-switch';
 import { useChatPageCondition } from '@/hooks/use-chat-page';
 import { triggerKnowledgeSearch } from '@/stores/knowledge';
 import { onKnowledgeSearchKeywordsChange } from '@/stores/knowledge';
@@ -161,11 +160,6 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
                         />
                     </NavbarItem>
                 )}
-                <NavbarItem className="flex">
-                    <Button isIconOnly radius="full" variant="light">
-                        <ThemeSwitch />
-                    </Button>
-                </NavbarItem>
                 {/* <NavbarItem className="flex">
                     <Popover offset={12} placement="bottom-end">
                         <PopoverTrigger>

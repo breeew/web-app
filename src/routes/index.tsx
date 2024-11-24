@@ -2,6 +2,8 @@ import { ReactNode, useEffect } from 'react';
 import { createBrowserRouter, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 
+
+
 import { LoginWithAccessToken } from '@/apis/user';
 import { App } from '@/App';
 import Dashboard from '@/pages/dashboard';
@@ -14,6 +16,8 @@ import Login from '@/pages/login';
 import { buildTower } from '@/stores/socket';
 import spaceStore, { setCurrentSelectedSpace } from '@/stores/space';
 import userStore, { setUserAccessToken, setUserInfo } from '@/stores/user';
+import { autoLoginDirect } from '@/lib/utils';
+
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
     const { accessToken, userInfo } = useSnapshot(userStore);
@@ -59,11 +63,21 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
     return accessToken ? children : <Navigate to="/login" />;
 }
 
-function PreLogin({ children }: { children: ReactNode }) {
+const IS_FIRST_VIEW_KEY = 'brew_login_auto_redirect';
+
+function PreLogin({ init, children }: { init: boolean; children: ReactNode }) {
     const { accessToken } = useSnapshot(userStore);
 
     if (accessToken) {
         setCurrentSelectedSpace('');
+
+        if (init) {
+            if (autoLoginDirect()) {
+                return <Navigate to="/dashboard" />;
+            }
+
+            return children;
+        }
     }
 
     return accessToken ? <Navigate to="/dashboard" /> : children;
@@ -81,7 +95,11 @@ const routes = createBrowserRouter([
             {
                 index: true,
                 path: '/',
-                element: <IndexPage />
+                element: (
+                    <PreLogin init>
+                        <IndexPage />
+                    </PreLogin>
+                )
             },
             {
                 path: '/login',

@@ -61,7 +61,7 @@
 .dark .ce-toolbar__settings-btn,
 .dark .ce-popover-item__title,
 .dark .ce-inline-tool .dark .ce-inline-tool--link .dark .ce-popover-item__icon {
-    color: var(--foreground);
+    color: var(--foreground) !important;
 }
 
 .dark .cdx-search-field.ce-popover__search {
@@ -111,7 +111,7 @@
 .dark .ce-toolbar__settings-btn:hover,
 .dark .ce-conversion-tool:hover,
 .dark .ce-popover-item:hover {
-    background-color: var(--accent);
+    background-color: var(--background);
 }
 
 .dark *::selection,
@@ -147,7 +147,7 @@
 @media (max-width: 650px) {
     .dark .ce-toolbar__settings-btn,
     .dark .ce-toolbar__plus {
-        background-color: var(--primary);
+        background-color: var(--background);
         border-color: var(--border);
         box-shadow: 0 3px 15px -3px var(--border);
     }
@@ -163,6 +163,20 @@
 @media (min-width: 651px) {
     .ce-toolbar__actions {
         left: -60px;
+    }
+}
+
+@media (max-width: 650px) {
+    .ce-popover .ce-popover__container {
+        --offset: 14px;
+        position: fixed;
+        max-width: none;
+        min-width: calc(100% - var(--offset) * 2);
+        left: var(--offset);
+        right: var(--offset);
+        bottom: calc(100px + env(safe-area-inset-bottom));
+        top: auto;
+        border-radius: 10px;
     }
 }
 
