@@ -50,17 +50,21 @@ export const Editor = memo(function Editor({ data, dataType = '', autofocus = fa
                     await editor.blocks.render(data);
                     break;
                 default: // default will be markdown
-                    // await editor.blocks.render({
-                    //     blocks: [
-                    //         {
-                    //             type: 'paragraph',
-                    //             data: {
-                    //                 text: data
-                    //             }
-                    //         }
-                    //     ]
-                    // });
-                    // return;
+                    if (data && data.split('\n').length === 1) {
+                        data = {
+                            blocks: [
+                                {
+                                    type: 'paragraph',
+                                    data: {
+                                        text: data
+                                    }
+                                }
+                            ]
+                        };
+                        await editor.blocks.render(data);
+
+                        return;
+                    }
                     showdown.extension('code', function () {
                         return [
                             {
@@ -169,13 +173,10 @@ export const Editor = memo(function Editor({ data, dataType = '', autofocus = fa
                     }
                 },
                 listv2: {
+                    // include check list
                     class: EditorjsList,
                     inlineToolbar: true,
                     shortcut: 'CMD+SHIFT+L'
-                },
-                checklist: {
-                    class: Checklist,
-                    inlineToolbar: true
                 },
                 quote: {
                     class: Quote,
@@ -216,8 +217,8 @@ export const Editor = memo(function Editor({ data, dataType = '', autofocus = fa
             },
             // or await editor.isReady
             onReady: async () => {
+                setIsReady(() => true);
                 await renderFunc(editor, data, dataType);
-                setIsReady(true);
             },
             onChange: async function (api, _) {
                 onValueChange && onValueChange(await api.saver.save());

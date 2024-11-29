@@ -7,6 +7,7 @@ import { useSnapshot } from 'valtio';
 
 import { LoginWithAccessToken } from '@/apis/user';
 import { Logo } from '@/components/icons';
+import { setCurrentSelectedSpace, setUserSpaces } from '@/stores/space';
 import userStore, { setHost, setUserAccessToken, setUserInfo } from '@/stores/user';
 
 export default function Component() {
@@ -80,6 +81,8 @@ export default function Component() {
         try {
             const resp = await LoginWithAccessToken(accessToken);
 
+            setCurrentSelectedSpace('');
+            setUserSpaces([]);
             setUserAccessToken(accessToken);
             setUserInfo({
                 userID: resp.user_id,

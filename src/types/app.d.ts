@@ -20,6 +20,7 @@ declare type SessionNamedEvent = {
 declare type SessionStore = {
     currentSelectedSession: Session | undefined;
     sessionNamedEvent: SessionNamedEvent | undefined;
+    sessionReload: string;
 };
 
 declare type ResourceStore = {

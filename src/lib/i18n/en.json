@@ -69,6 +69,8 @@
     "knowledgeCreateResourceLablePlaceholder": "Your memory resource type, default is knowledge",
     "showRelevanceDocs": "Show Relevance Docs",
     "Today": "Today",
+    "Yesterday": "Yesterday",
     "PreviousDays": "Previous {{day}} Days",
-    "Earlier": "Earlier"
+    "Earlier": "Earlier",
+    "UserMenu": "User Menu"
 }

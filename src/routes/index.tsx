@@ -2,10 +2,9 @@ import { ReactNode, useEffect } from 'react';
 import { createBrowserRouter, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 
-
-
 import { LoginWithAccessToken } from '@/apis/user';
 import { App } from '@/App';
+import { autoLoginDirect } from '@/lib/utils';
 import Dashboard from '@/pages/dashboard';
 import ChatSession from '@/pages/dashboard/chat/chat-session.tsx';
 import Chat from '@/pages/dashboard/chat/chat.tsx';
@@ -16,8 +15,6 @@ import Login from '@/pages/login';
 import { buildTower } from '@/stores/socket';
 import spaceStore, { setCurrentSelectedSpace } from '@/stores/space';
 import userStore, { setUserAccessToken, setUserInfo } from '@/stores/user';
-import { autoLoginDirect } from '@/lib/utils';
-
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
     const { accessToken, userInfo } = useSnapshot(userStore);

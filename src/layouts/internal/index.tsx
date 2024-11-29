@@ -1,5 +1,22 @@
 import { Icon } from '@iconify/react';
-import { Button, Card, CardBody, CardFooter, Chip, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Link, ScrollShadow, Skeleton, Spacer, useDisclosure, User } from '@nextui-org/react';
+import {
+    Button,
+    Card,
+    CardBody,
+    CardFooter,
+    Chip,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownSection,
+    DropdownTrigger,
+    Link,
+    ScrollShadow,
+    Skeleton,
+    Spacer,
+    useDisclosure,
+    User
+} from '@nextui-org/react';
 import { cn } from '@nextui-org/react';
 import React, { Key, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -362,20 +379,24 @@ export default function Component({ children }: { children: React.ReactNode }) {
                             )}
                         </DropdownTrigger>
                         <DropdownMenu aria-label="Account switcher" variant="flat" onAction={userAction}>
-                            <DropdownItem key="setting" textValue="setting">
-                                <div className="flex items-center gap-x-3">
-                                    <div className="flex flex-col">
-                                        <p className="text-small font-medium text-default-600">{t('Setting')}</p>
+                            <DropdownSection showDivider title={t('UserMenu')}>
+                                <DropdownItem key="setting" textValue="setting">
+                                    <div className="flex items-center gap-x-3">
+                                        <div className="flex flex-col">
+                                            <p className="text-small font-medium text-default-600">{t('Setting')}</p>
+                                        </div>
                                     </div>
-                                </div>
-                            </DropdownItem>
-                            <DropdownItem key="logout" color="danger" textValue="logout">
-                                <div className="flex items-center gap-x-3">
-                                    <div className="flex flex-col">
-                                        <p className="text-small font-medium text-default-600">{t('Logout')}</p>
+                                </DropdownItem>
+                            </DropdownSection>
+                            <DropdownSection>
+                                <DropdownItem key="logout" color="danger" textValue="logout">
+                                    <div className="flex items-center gap-x-3">
+                                        <div className="flex flex-col">
+                                            <p className="text-small font-medium text-default-600">{t('Logout')}</p>
+                                        </div>
                                     </div>
-                                </div>
-                            </DropdownItem>
+                                </DropdownItem>
+                            </DropdownSection>
                         </DropdownMenu>
                     </Dropdown>
                 </div>
@@ -421,7 +442,7 @@ function useResourceMode() {
                 let currentSelectedResourceAlreadyExist = currentSelectedResource && currentSelectedResource.id === '';
 
                 resp.forEach(v => {
-                    if (currentSelectedResource && v.id === currentSelectedResource.id &&  v.space_id === currentSelectedResource.space_id) {
+                    if (currentSelectedResource && v.id === currentSelectedResource.id && v.space_id === currentSelectedResource.space_id) {
                         currentSelectedResourceAlreadyExist = true;
                     }
                     items.push({
@@ -476,6 +497,10 @@ function categorizeTimestamp(timestamp: number): string {
         return 'today';
     }
 
+    if (isYesterday(date)) {
+        return 'yesterday';
+    }
+
     // 判断是否为前7天
     const sevenDaysAgo = new Date();
 
@@ -489,6 +514,13 @@ function categorizeTimestamp(timestamp: number): string {
     return 'earlier';
 }
 
+function isYesterday(date: Date): boolean {
+    const now = new Date();
+    const yesterday = new Date(now.setDate(now.getDate() - 1));
+
+    return date.toDateString() === yesterday.toDateString();
+}
+
 function useGroupSessions(): () => ChatSessionGroup[] {
     const { t } = useTranslation();
 
@@ -500,6 +532,12 @@ function useGroupSessions(): () => ChatSessionGroup[] {
         const todayGroup: ChatSessionGroup = {
             key: 'today',
             title: t('Today'),
+            items: []
+        };
+
+        const yesterdayGroup: ChatSessionGroup = {
+            key: 'yesterday',
+            title: t('Yesterday'),
             items: []
         };
 
@@ -522,6 +560,9 @@ function useGroupSessions(): () => ChatSessionGroup[] {
                 case 'today':
                     todayGroup.items.push(v);
                     break;
+                case 'yesterday':
+                    yesterdayGroup.items.push(v);
+                    break;
                 case 'previousDays':
                     previous7Days.items.push(v);
                     break;
@@ -532,6 +573,9 @@ function useGroupSessions(): () => ChatSessionGroup[] {
 
         if (todayGroup.items.length > 0) {
             result.push(todayGroup);
+        }
+        if (yesterdayGroup.items.length > 0) {
+            result.push(yesterdayGroup);
         }
         if (previous7Days.items.length > 0) {
             result.push(previous7Days);
@@ -567,7 +611,21 @@ function useChatMode() {
             });
         });
 
-        return unSubscribe;
+        const unSubscribe2 = subscribeKey(sessionStore, 'sessionReload', (sessionID: string) => {
+            if (!sessionList || !sessionList[0]) {
+                return;
+            }
+
+            console.log(sessionList[0].items[0].id);
+            if (sessionList[0].items && sessionList[0].items[0] && (sessionList[0].items[0].id !== sessionID || sessionList[0].key !== 'today')) {
+                reload(sessionList[0].items[0].space_id);
+            }
+        });
+
+        return () => {
+            unSubscribe();
+            unSubscribe2();
+        };
     }, [sessionList]);
 
     const loadData = useCallback(
