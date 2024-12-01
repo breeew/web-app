@@ -20,6 +20,7 @@ declare type SessionNamedEvent = {
 declare type SessionStore = {
     currentSelectedSession: Session | undefined;
     sessionNamedEvent: SessionNamedEvent | undefined;
+    sessionReload: string;
 };
 
 declare type ResourceStore = {
@@ -63,8 +64,16 @@ declare type UserStore = {
     host: string;
 };
 
+declare type TaskInfo = {
+    id: string;
+    title: string;
+    description: string;
+    status: string;
+};
+
 declare type EventStore = {
     themeChange: string;
+    taskModify: TaskInfo;
 };
 
 declare type KnowledgeStore = {

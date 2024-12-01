@@ -69,6 +69,15 @@
     "knowledgeCreateResourceLablePlaceholder": "输入你的资源类型，默认为knowledge",
     "showRelevanceDocs": "展示可能关联的内容",
     "Today": "今天",
+    "Yesterday": "昨天",
     "PreviousDays": "前{{day}}天",
-    "Earlier": "更早之前"
+    "Earlier": "更早之前",
+    "UserMenu": "个人菜单",
+    "AI Description": "AI生成描述",
+    "Notify": "提醒",
+    "AI Task Notify": "AI任务提醒",
+    "Please do not submit repeatedly": "请勿重复提交",
+    "AI is processing the image, please wait a moment": "AI 处理中，请稍后...",
+    "Done": "完成",
+    "Failed": "失败"
 }

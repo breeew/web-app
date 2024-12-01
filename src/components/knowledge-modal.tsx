@@ -88,15 +88,12 @@ const ViewKnowledge = memo(
             return '';
         }, [spaces, currentSelectedSpace]);
 
-        const changeEditable = useCallback(
-            function () {
-                const newState = !isEdit;
+        const changeEditable = useCallback(() => {
+            const newState = !isEdit;
 
-                setIsEdit(newState);
-                setCanEsc(!newState);
-            },
-            [isEdit]
-        );
+            setIsEdit(newState);
+            setCanEsc(!newState);
+        }, [isEdit]);
 
         const close = useCallback(function () {
             setIsEdit(false);

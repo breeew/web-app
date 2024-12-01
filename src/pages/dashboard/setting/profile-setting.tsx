@@ -110,7 +110,7 @@ const ProfileSetting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>
         <div ref={ref} className={cn('p-2', className)} {...props}>
             {/* Profile */}
             <div>
-                <p className="text-base font-medium text-default-700">{t('Profile')}</p>
+                <p className="text-lg font-medium text-default-700">{t('Profile')}</p>
                 <p className="mt-1 text-sm font-normal text-default-400">This displays your public profile on the site.</p>
                 {/* <Card className="mt-4 bg-default-100" shadow="none">
                     <CardBody>

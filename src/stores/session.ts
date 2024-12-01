@@ -2,7 +2,8 @@ import { proxy } from 'valtio';
 
 const sessionStore = proxy<SessionStore>({
     currentSelectedSession: undefined,
-    sessionNamedEvent: undefined
+    sessionNamedEvent: undefined,
+    sessionReload: ''
 });
 
 export const setCurrentSelectedSession = (data: Session) => {
@@ -11,6 +12,10 @@ export const setCurrentSelectedSession = (data: Session) => {
 
 export const notifySessionNamedEvent = (data: SessionNamedEvent) => {
     sessionStore.sessionNamedEvent = data;
+};
+
+export const notifySessionReload = (sessionID: string) => {
+    sessionStore.sessionReload = sessionID;
 };
 
 export default sessionStore;

@@ -12,7 +12,7 @@ import useUserAvatar from '@/hooks/use-user-avatar';
 import { FireTowerMsg } from '@/lib/firetower';
 import MessageCard, { type MessageExt } from '@/pages/dashboard/chat/message-card';
 import PromptInputWithEnclosedActions from '@/pages/dashboard/chat/prompt-input-with-enclosed-actions';
-import { notifySessionNamedEvent } from '@/stores/session';
+import { notifySessionNamedEvent, notifySessionReload } from '@/stores/session';
 import socketStore, { CONNECTION_OK } from '@/stores/socket';
 import spaceStore from '@/stores/space';
 import { EventType } from '@/types/chat';
@@ -365,6 +365,8 @@ export default function Chat() {
 
                 // waiting ws response
                 setAiTyping(true);
+
+                sessionID && notifySessionReload(sessionID);
 
                 setTimeout(() => {
                     goToBottom();

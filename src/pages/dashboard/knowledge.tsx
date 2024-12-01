@@ -425,7 +425,7 @@ const CreateKnowledgeModal = memo(
 
         return (
             <>
-                <Modal backdrop="blur" placement="bottom" scrollBehavior="inside" size={size} isOpen={isOpen} isKeyboardDismissDisabled={false} onClose={onCancelFunc}>
+                <Modal backdrop="blur" placement="bottom" scrollBehavior="inside" size={size} isOpen={isOpen} isKeyboardDismissDisabled={true} onClose={onCancelFunc}>
                     <ModalContent>
                         {onClose => (
                             <>

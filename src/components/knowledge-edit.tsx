@@ -6,6 +6,7 @@ import { useSnapshot } from 'valtio';
 
 import { CreateKnowledge, type Knowledge, UpdateKnowledge } from '@/apis/knowledge';
 import { Resource } from '@/apis/resource';
+import KnowledgeAITaskList from '@/components/ai-tasks-list';
 import { Editor } from '@/components/editor/index';
 import { useToast } from '@/hooks/use-toast';
 import resourceStore from '@/stores/resource';
@@ -119,6 +120,7 @@ export default memo(function KnowledgeEdit({ knowledge, onChange, onCancel }: { 
         <>
             {knowledge && (
                 <ScrollShadow hideScrollBar className="w-full flex-grow box-border p-4 flex justify-center">
+                    <KnowledgeAITaskList />
                     <div className="w-full h-full md:max-w-[650px]">
                         {knowledge.id && (
                             <>
