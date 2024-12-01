@@ -1,19 +1,68 @@
 import ImageTool from '@editorjs/image';
+import { useTranslation } from 'react-i18next';
+
+
 
 import { DescribeImage } from '@/apis/tools';
+import { toast } from '@/hooks/use-toast';
+import { notifyTaskProgress } from '@/stores/event';
+
 
 const genenrating = new Map<string, bool>();
 
-async function aiGenImageDescription(url: string): Promise<string | undefined> {
+let count = 0;
+
+function genId() {
+    count = (count + 1) % Number.MAX_SAFE_INTEGER;
+
+    return count.toString();
+}
+
+async function aiGenImageDescription(i18n: (string) => string, url: string): Promise<string | undefined> {
+    const id = genId();
+
     if (genenrating.get(url)) {
+        notifyTaskProgress({
+            id: id,
+            title: 'AI Task Notify',
+            description: 'Please do not submit repeatedly',
+            status: 'warning'
+        });
+
         return undefined;
     }
-    genenrating.set(url, true);
-    const result = await DescribeImage(url);
 
-    genenrating.delete(url);
+    try {
+        notifyTaskProgress({
+            id: id,
+            title: 'AI Task Notify',
+            description: 'AI is processing the image, please wait a moment',
+            status: 'processing'
+        });
+        genenrating.set(url, true);
+        const result = await DescribeImage(url);
 
-    return result;
+        genenrating.delete(url);
+
+        notifyTaskProgress({
+            id: id,
+            title: 'AI Task Notify',
+            description: 'Done',
+            status: 'success'
+        });
+
+        return result;
+    } catch (e: any) {
+        console.error(e);
+        notifyTaskProgress({
+            id: id,
+            title: 'AI Task Notify',
+            description: 'Failed',
+            status: 'failed'
+        });
+
+        return;
+    }
 }
 
 export default class CustomImage extends ImageTool {
@@ -26,7 +75,7 @@ export default class CustomImage extends ImageTool {
         switch (tuneName) {
             case 'aiGenImageDescript':
                 this._data[tuneName] = true;
-                const result = await aiGenImageDescription(this._data.file.url);
+                const result = await aiGenImageDescription(this.api.i18n.t, this._data.file.url);
 
                 if (result) {
                     this._data.caption = result;

@@ -72,5 +72,12 @@
     "Yesterday": "Yesterday",
     "PreviousDays": "Previous {{day}} Days",
     "Earlier": "Earlier",
-    "UserMenu": "User Menu"
+    "UserMenu": "User Menu",
+    "AI Description": "AI Description",
+    "Notify": "Notify",
+    "AI TaskNotify": "AI Task Notify",
+    "Please do not submit repeatedly": "Please do not submit repeatedly.",
+    "AI is processing the image, please wait a moment": "AI is processing the image, please wait a moment.",
+    "Done": "Done",
+    "Failed": "Failed"
 }
