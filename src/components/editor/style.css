@@ -69,8 +69,8 @@
     border-color: var(--border);
 }
 
-.dark .ce-popover-item-html input {
-    color: var(--foreground);
+.dark input {
+    color: var(--background);
 }
 .dark .cdx-search-field__input {
     color: var(--foreground);
@@ -181,6 +181,10 @@
         top: auto;
         border-radius: 10px;
     }
+}
+
+.tc-cell {
+    @apply break-words;
 }
 
 .ce-popover--open-left .ce-popover__container {

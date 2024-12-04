@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios';
 
 import { toast } from '@/hooks/use-toast';
+import i18n from '@/lib/i18n';
 import userStore from '@/stores/user';
 
 const instance = axios.create({
@@ -12,6 +13,7 @@ export function ChangeBaseURL(url: string) {
 }
 
 const ACCESS_TOKEN_KEY = 'X-Access-Token';
+const ACCEPT_LANGUAGE_KEY = 'Accept-Language';
 
 instance.interceptors.request.use(
     function (config) {
@@ -20,6 +22,7 @@ instance.interceptors.request.use(
         if (!config.headers.get(ACCESS_TOKEN_KEY)) {
             config.headers.set(ACCESS_TOKEN_KEY, userStore.accessToken);
         }
+        config.headers.set(ACCEPT_LANGUAGE_KEY, i18n.language);
 
         return config;
     },
