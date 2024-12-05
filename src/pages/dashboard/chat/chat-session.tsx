@@ -437,69 +437,68 @@ export default function Chat() {
 
     return (
         <>
-            <div className="overflow-hidden w-full h-full flex flex-col relative p-3 items-center">
-                <main className="h-full max-w-[760px] w-full relative gap-4 py-3 flex flex-col">
-                    <div className="flex overflow-hidden">
-                        <ScrollShadow ref={ssDom} hideScrollBar className="py-6 flex-grow">
-                            <div className="w-full overflow-hidden relative flex flex-col gap-6">
-                                {messages.map(({ key, role, message, status, ext }) => (
-                                    <MessageCard
-                                        key={key}
-                                        avatar={role === 'assistant' ? <Logo /> : <Avatar src={userAvatar} />}
-                                        message={message}
-                                        messageClassName={role === 'user' ? 'bg-content3 text-content3-foreground' : ''}
-                                        // showFeedback={role === 'assistant'}
-                                        status={status}
-                                        ext={ext}
-                                        role={role}
-                                        extContent={
-                                            role === 'assistant' &&
-                                            ext &&
-                                            ext.relDocs && (
-                                                <div className="mx-2 w-auto overflow-hidden">
-                                                    <Accordion isCompact variant="bordered">
-                                                        <AccordionItem
-                                                            key="1"
-                                                            aria-label="Relevance Detail"
-                                                            title={t('showRelevanceDocs')}
-                                                            classNames={{ title: 'dark:text-zinc-300 text-zinc-500 text-sm' }}
-                                                            className="overflow-hidden w-ful"
-                                                        >
-                                                            {ext.relDocs && (
-                                                                <Listbox
-                                                                    aria-label="rel docs"
-                                                                    title="docs id"
-                                                                    onAction={key => {
-                                                                        showKnowledge(key as string);
-                                                                    }}
-                                                                >
-                                                                    {ext.relDocs.map(v => {
-                                                                        return (
-                                                                            <ListboxItem
-                                                                                key={v.id}
-                                                                                aria-label={v.title}
-                                                                                className="overflow-hidden text-wrap break-words break-all flex flex-col items-start"
-                                                                            >
-                                                                                {v.title && <div>{v.title}</div>}
-                                                                                <div> {v.id}</div>
-                                                                            </ListboxItem>
-                                                                        );
-                                                                    })}
-                                                                </Listbox>
-                                                            )}
-                                                        </AccordionItem>
-                                                    </Accordion>
-                                                </div>
-                                            )
-                                        }
-                                    />
-                                ))}
-                                {aiTyping && <MessageCard key="aiTyping" isLoading attempts={1} currentAttempt={1} message={''} />}
-                            </div>
-                            <div className="pb-40" />
-                        </ScrollShadow>
-                    </div>
-                    <div className="mt-auto flex max-w-full flex-col gap-2">
+            <div className="overflow-hidden w-full h-full flex flex-col relative p-3">
+                <main className="h-full w-full relative gap-4 py-3 flex flex-col justify-center items-center">
+                    <ScrollShadow ref={ssDom} hideScrollBar className="w-full py-6 flex-grow items-center">
+                        <div className="w-full m-auto max-w-[760px] overflow-hidden relative flex flex-col gap-6">
+                            {messages.map(({ key, role, message, status, ext }) => (
+                                <MessageCard
+                                    key={key}
+                                    avatar={role === 'assistant' ? <Logo /> : <Avatar src={userAvatar} />}
+                                    message={message}
+                                    messageClassName={role === 'user' ? 'bg-content3 text-content3-foreground' : ''}
+                                    // showFeedback={role === 'assistant'}
+                                    status={status}
+                                    ext={ext}
+                                    role={role}
+                                    extContent={
+                                        role === 'assistant' &&
+                                        ext &&
+                                        ext.relDocs && (
+                                            <div className="mx-2 w-auto overflow-hidden">
+                                                <Accordion isCompact variant="bordered">
+                                                    <AccordionItem
+                                                        key="1"
+                                                        aria-label="Relevance Detail"
+                                                        title={t('showRelevanceDocs')}
+                                                        classNames={{ title: 'dark:text-zinc-300 text-zinc-500 text-sm' }}
+                                                        className="overflow-hidden w-ful"
+                                                    >
+                                                        {ext.relDocs && (
+                                                            <Listbox
+                                                                aria-label="rel docs"
+                                                                title="docs id"
+                                                                onAction={key => {
+                                                                    showKnowledge(key as string);
+                                                                }}
+                                                            >
+                                                                {ext.relDocs.map(v => {
+                                                                    return (
+                                                                        <ListboxItem
+                                                                            key={v.id}
+                                                                            aria-label={v.title}
+                                                                            className="overflow-hidden text-wrap break-words break-all flex flex-col items-start"
+                                                                        >
+                                                                            {v.title && <div>{v.title}</div>}
+                                                                            <div> {v.id}</div>
+                                                                        </ListboxItem>
+                                                                    );
+                                                                })}
+                                                            </Listbox>
+                                                        )}
+                                                    </AccordionItem>
+                                                </Accordion>
+                                            </div>
+                                        )
+                                    }
+                                />
+                            ))}
+                            {aiTyping && <MessageCard key="aiTyping" isLoading attempts={1} currentAttempt={1} message={''} />}
+                        </div>
+                        <div className="pb-40" />
+                    </ScrollShadow>
+
+                    <div className="mt-auto flex flex-col gap-2 max-w-[760px] w-full">
                         <PromptInputWithEnclosedActions
                             classNames={{
                                 button: 'bg-default-foreground opacity-100 w-[30px] h-[30px] !min-w-[30px] self-center',

@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { ReactNode, useEffect } from 'react';
 import { createBrowserRouter, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
@@ -47,9 +48,10 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
                         console.log('socket connected');
                     });
                 } catch (e: any) {
-                    console.error(e);
+                    if (axios.isAxiosError(e) && e.code === '403') {
+                        setUserAccessToken('');
+                    }
 
-                    setUserAccessToken('');
                     navigate('/');
                 }
             }
@@ -59,8 +61,6 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
 
     return accessToken ? children : <Navigate to="/login" />;
 }
-
-const IS_FIRST_VIEW_KEY = 'brew_login_auto_redirect';
 
 function PreLogin({ init, children }: { init: boolean; children: ReactNode }) {
     const { accessToken } = useSnapshot(userStore);

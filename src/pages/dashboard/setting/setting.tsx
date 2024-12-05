@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 import AppearanceSetting from './appearance-setting';
+import BillingSetting from './billing-setting';
 import ProfileSetting from './profile-setting';
 
 const Setting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>(({ className, ...props }, ref) => {
@@ -47,6 +48,9 @@ const Setting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>(({ cla
                     </Tab>
                     <Tab key="appearance" title={t('Appearance')}>
                         <AppearanceSetting />
+                    </Tab>
+                    <Tab key="billing" title={t('Billing')}>
+                        <BillingSetting />
                     </Tab>
                 </Tabs>
             </div>

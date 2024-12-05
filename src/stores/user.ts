@@ -1,4 +1,3 @@
-import { enableMapSet } from 'immer';
 import { proxy } from 'valtio';
 
 import { ChangeBaseURL } from '@/apis/request';
@@ -33,6 +32,7 @@ export const setUserInfo = (userInfo?: { userID: string; userName: string; email
             userName: '',
             avatar: ''
         };
+
         return;
     }
     userStore.userInfo = {
