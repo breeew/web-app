@@ -69,7 +69,7 @@
     border-color: var(--border);
 }
 
-.dark input {
+.dark .ce-popover__items input {
     color: var(--background);
 }
 .dark .cdx-search-field__input {
@@ -219,4 +219,10 @@
 
 .editor h5 {
     @apply !text-base;
+}
+
+video {
+    width: 100%;
+    height: auto;
+    object-fit: contain; /* 根据需求选择：cover / fill / contain */
 }

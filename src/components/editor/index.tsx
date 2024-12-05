@@ -1,4 +1,3 @@
-import Checklist from '@editorjs/checklist';
 import CodeTool from '@editorjs/code';
 import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
@@ -13,14 +12,73 @@ import { useTranslation } from 'react-i18next';
 import showdown from 'showdown';
 import { useSnapshot } from 'valtio';
 
-import { title } from '../primitives';
-import CustomImage, { GenImageDescriptionIcon } from './image-tool';
+import { ToastProps } from '../ui/toast';
+import CustomImage from './image-tool';
 import './style.css';
 
 import { CreateUploadKey, UploadFileToKey } from '@/apis/upload';
+import Video from '@/components/editor/video-component/video-tool';
 import { useToast } from '@/hooks/use-toast';
 import { compressImage } from '@/lib/compress';
 import spaceStore from '@/stores/space';
+
+function getUploader(toast: (d: ToastProps) => void, t: (d: string) => string, currentSelectedSpace: string) {
+    return {
+        async uploadByFile(file: File): { success: number; file?: { url: string } } {
+            try {
+                console.log('file type', file.type);
+                let result: CompressResult = {};
+                let fileKind = '';
+
+                if (file.type.startsWith('image')) {
+                    result = await compressImage(file);
+                    fileKind = 'image';
+                } else if (file.type.startsWith('video')) {
+                    fileKind = 'video';
+                }
+
+                const resp = await CreateUploadKey(currentSelectedSpace, 'knowledge', fileKind, file.name);
+
+                if (result.error) {
+                    toast({
+                        title: t('Error'),
+                        // TODO: i18n
+                        description: result.error
+                    });
+
+                    return {
+                        success: 0
+                    };
+                }
+
+                if (resp.status === 'exist') {
+                    return {
+                        success: 1,
+                        file: {
+                            url: resp.url
+                        }
+                    };
+                }
+
+                await UploadFileToKey(resp.key, file.type, result.file || file);
+
+                return {
+                    success: 1,
+                    file: {
+                        type: fileKind,
+                        url: resp.url
+                    }
+                };
+            } catch (e: Error) {
+                toast({
+                    title: t('Error'),
+                    // TODO: i18n
+                    description: e.message || e
+                });
+            }
+        }
+    };
+}
 
 export interface EditorProps {
     readOnly: boolean;
@@ -127,6 +185,7 @@ export const Editor = memo(function Editor({ data, dataType = '', autofocus = fa
                 image: {
                     class: CustomImage,
                     config: {
+                        types: 'image/*',
                         actions: [
                             {
                                 name: 'aiGenImageDescript',
@@ -143,50 +202,14 @@ export const Editor = memo(function Editor({ data, dataType = '', autofocus = fa
                                 title: t('AI Description')
                             }
                         ],
-                        uploader: {
-                            async uploadByFile(file: File): { success: number; file?: { url: string } } {
-                                try {
-                                    const result = await compressImage(file);
-                                    const resp = await CreateUploadKey(currentSelectedSpace, 'knowledge', 'image', file.name);
-
-                                    if (result.error) {
-                                        toast({
-                                            title: t('Error'),
-                                            // TODO: i18n
-                                            description: result.error
-                                        });
-
-                                        return {
-                                            success: 0
-                                        };
-                                    }
-
-                                    if (resp.status === 'exist') {
-                                        return {
-                                            success: 1,
-                                            file: {
-                                                url: resp.url
-                                            }
-                                        };
-                                    }
-
-                                    if (result.file) await UploadFileToKey(resp.key, result.file.type, result.file);
-
-                                    return {
-                                        success: 1,
-                                        file: {
-                                            url: resp.url
-                                        }
-                                    };
-                                } catch (e: Error) {
-                                    toast({
-                                        title: t('Error'),
-                                        // TODO: i18n
-                                        description: e.message || e
-                                    });
-                                }
-                            }
-                        }
+                        uploader: getUploader(toast, t, currentSelectedSpace)
+                    }
+                },
+                video: {
+                    class: Video,
+                    config: {
+                        types: 'video/*',
+                        uploader: getUploader(toast, t, currentSelectedSpace)
                     }
                 },
                 listv2: {

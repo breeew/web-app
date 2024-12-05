@@ -1,12 +1,7 @@
 import ImageTool from '@editorjs/image';
-import { useTranslation } from 'react-i18next';
-
-
 
 import { DescribeImage } from '@/apis/tools';
-import { toast } from '@/hooks/use-toast';
 import { notifyTaskProgress } from '@/stores/event';
-
 
 const genenrating = new Map<string, bool>();
 
