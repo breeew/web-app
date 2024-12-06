@@ -12,7 +12,6 @@ import { useTranslation } from 'react-i18next';
 import showdown from 'showdown';
 import { useSnapshot } from 'valtio';
 
-import { ToastProps } from '../ui/toast';
 import CustomImage from './image-tool';
 import './style.css';
 
@@ -32,12 +31,15 @@ function getUploader(toast: (d: ToastProps) => void, t: (d: string) => string, c
 
                 if (file.type.startsWith('image')) {
                     result = await compressImage(file);
+                    if (result.success) {
+                        file = result.file;
+                    }
                     fileKind = 'image';
                 } else if (file.type.startsWith('video')) {
                     fileKind = 'video';
                 }
 
-                const resp = await CreateUploadKey(currentSelectedSpace, 'knowledge', fileKind, file.name);
+                const resp = await CreateUploadKey(currentSelectedSpace, 'knowledge', fileKind, file.name, file.size);
 
                 if (result.error) {
                     toast({
