@@ -8,6 +8,7 @@ import KnowledgeDeletePopover from '@/components/knowledge-delete-popover';
 import KnowledgeEdit from '@/components/knowledge-edit';
 import KnowledgeView from '@/components/knowledge-view';
 import { useMedia } from '@/hooks/use-media';
+import { useRole } from '@/hooks/use-role';
 import spaceStore from '@/stores/space';
 
 export interface ViewKnowledgeProps {
@@ -25,6 +26,7 @@ const ViewKnowledge = memo(
         const [isEdit, setIsEdit] = useState(false);
         const { isMobile } = useMedia();
         const [canEsc, setCanEsc] = useState(true);
+        const { isSpaceViewer } = useRole();
 
         const { onChange, onDelete } = props;
 
@@ -129,30 +131,36 @@ const ViewKnowledge = memo(
                                         {isEdit ? <KnowledgeEdit knowledge={knowledge} onChange={onChangeFunc} /> : <KnowledgeView knowledge={knowledge} />}
                                     </ModalBody>
                                     <ModalFooter className="flex justify-center">
-                                        <ButtonGroup variant="flat" size="base" className="mb-4">
-                                            <Button isDisabled={knowledge.stage !== 3} onClick={changeEditable}>
-                                                {(() => {
-                                                    if (knowledge.stage == 1) {
-                                                        return 'Summarizing.';
-                                                    } else if (knowledge.stage == 2) {
-                                                        return 'Embedding.';
-                                                    }
-
-                                                    if (isEdit) {
-                                                        return t('View');
-                                                    } else {
-                                                        return t('Edit');
-                                                    }
-                                                })()}
-                                            </Button>
-                                            <KnowledgeDeletePopover knowledge={knowledge} onDelete={onDeleteFunc}>
-                                                <Button color="danger">{t('Delete')}</Button>
-                                            </KnowledgeDeletePopover>
-
+                                        {isSpaceViewer ? (
                                             <Button onPress={onClose}>
                                                 {t('Close')} {canEsc && <Kbd>Esc</Kbd>}
                                             </Button>
-                                        </ButtonGroup>
+                                        ) : (
+                                            <ButtonGroup variant="flat" size="base" className="mb-4">
+                                                <Button isDisabled={knowledge.stage !== 3} onClick={changeEditable}>
+                                                    {(() => {
+                                                        if (knowledge.stage == 1) {
+                                                            return 'Summarizing.';
+                                                        } else if (knowledge.stage == 2) {
+                                                            return 'Embedding.';
+                                                        }
+
+                                                        if (isEdit) {
+                                                            return t('View');
+                                                        } else {
+                                                            return t('Edit');
+                                                        }
+                                                    })()}
+                                                </Button>
+                                                <KnowledgeDeletePopover knowledge={knowledge} onDelete={onDeleteFunc}>
+                                                    <Button color="danger">{t('Delete')}</Button>
+                                                </KnowledgeDeletePopover>
+
+                                                <Button onPress={onClose}>
+                                                    {t('Close')} {canEsc && <Kbd>Esc</Kbd>}
+                                                </Button>
+                                            </ButtonGroup>
+                                        )}
                                     </ModalFooter>
                                 </>
                             )}

@@ -30,12 +30,14 @@ import KnowledgeModal from '@/components/knowledge-modal';
 import MainQuery from '@/components/main-query';
 import Markdown from '@/components/markdown';
 import { useMedia } from '@/hooks/use-media';
+import { useRole } from '@/hooks/use-role';
 import { useUserAgent } from '@/hooks/use-user-agent';
 import { FireTowerMsg } from '@/lib/firetower';
 import knowledgeStore from '@/stores/knowledge';
 import resourceStore from '@/stores/resource';
 import socketStore, { CONNECTION_OK } from '@/stores/socket';
 import spaceStore from '@/stores/space';
+import { Role } from '@/types';
 
 export default memo(function Component() {
     const { t } = useTranslation();
@@ -49,6 +51,8 @@ export default memo(function Component() {
     const [hasMore, setHasMore] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const { onKnowledgeSearch } = useSnapshot(knowledgeStore);
+
+    const { isSpaceViewer } = useRole();
 
     useEffect(() => {
         if (!currentSelectedResource || !currentSelectedSpace) {
@@ -194,6 +198,10 @@ export default memo(function Component() {
     //@ts-ignore
     const ssDom = useRef<{ goToTop: () => void }>();
 
+    const isShowCreate = useMemo(() => {
+        return !isMobile && !isSpaceViewer;
+    }, [isMobile, isSpaceViewer]);
+
     return (
         <>
             <div className="overflow-hidden w-full h-full flex flex-col relative p-3">
@@ -207,8 +215,8 @@ export default memo(function Component() {
                         <p className="text-small text-default-400">{t('memories count', { total: total, title: currentSelectedResource?.title })}</p>
                     </Skeleton>
                 </div>
-                <KnowledgeList ref={ssDom} knowledgeList={dataList} onSelect={showKnowledge} onChanges={onChanges} onLoadMore={onLoadMore} />
-                {isMobile || (
+                <KnowledgeList ref={ssDom} isShowCreate={isShowCreate} knowledgeList={dataList} onSelect={showKnowledge} onChanges={onChanges} onLoadMore={onLoadMore} />
+                {isShowCreate && (
                     <div className="absolute w-auto bottom-2 right-1/2 mr-[-130px]">
                         <MainQuery onClick={showCreate} />
                     </div>
@@ -237,13 +245,14 @@ export default memo(function Component() {
 
 interface KnowledgeListProps {
     knowledgeList: Knowledge[];
+    isShowCreate: boolean;
     onSelect: (data: Knowledge) => void;
     onChanges: () => void;
     onLoadMore: () => void;
 }
 
 const KnowledgeList = memo(
-    forwardRef(function KnowledgeList({ knowledgeList, onSelect, onChanges, onLoadMore }: KnowledgeListProps, ref: any) {
+    forwardRef(function KnowledgeList({ knowledgeList, onSelect, isShowCreate = true, onChanges, onLoadMore }: KnowledgeListProps, ref: any) {
         const [dataList, setDataList] = useState(knowledgeList);
         const [onEvent, setEvent] = useState<FireTowerMsg | null>();
         const { currentSelectedSpace } = useSnapshot(spaceStore);
@@ -347,9 +356,11 @@ const KnowledgeList = memo(
             <>
                 <ScrollShadow ref={ssDom} hideScrollBar className="w-full flex-grow box-border mb-6 p-2" onScroll={scrollChanged}>
                     <div className={[isSafari ? 'm-auto w-full max-w-[900px]' : 'columns-1 sm:columns-2 lg:columns-3 xl:columns-4 2xl:columns-5 3xl:columns-5', 'gap-[24px]'].join(' ')}>
-                        <div className="mb-[24px]">
-                            <CreateKnowledge shadow={isMobile ? 'none' : 'sm'} onChanges={onChanges} />
-                        </div>
+                        {isShowCreate && (
+                            <div className="mb-[24px]">
+                                <CreateKnowledge shadow={isMobile ? 'none' : 'sm'} onChanges={onChanges} />
+                            </div>
+                        )}
                         {dataList.map(item => {
                             return (
                                 <div key={item.id} role="button" tabIndex={0} className="mb-[24px] relative" onClick={() => onSelect(item)} onKeyDown={() => {}}>

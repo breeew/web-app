@@ -66,7 +66,6 @@ export default class CustomImage extends ImageTool {
      * @param tuneName - tune that has been clicked
      */
     private async tuneToggled(tuneName: keyof ImageToolData): void {
-        console.log(this);
         switch (tuneName) {
             case 'aiGenImageDescript':
                 this._data[tuneName] = true;

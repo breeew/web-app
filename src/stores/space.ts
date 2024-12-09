@@ -5,15 +5,30 @@ import { UserSpace } from '@/apis/space';
 
 const spaceStore = proxy<SpaceStore>({
     spaces: [],
-    currentSelectedSpace: ''
+    currentSelectedSpace: '',
+    spaceRole: 'role-viewer'
 });
 
 export const setUserSpaces = (spaces: UserSpace[]) => {
     spaceStore.spaces = spaces;
 };
 
+export const latestPickedSpace = (): string | undefined => {
+    return localStorage.getItem('brew-selected-space');
+};
+
 export const setCurrentSelectedSpace = (space: string) => {
     spaceStore.currentSelectedSpace = space;
+    if (space) {
+        localStorage.setItem('brew-selected-space', space);
+        const spaceInfo = spaceStore.spaces.find(v => v.space_id == space);
+
+        spaceInfo && setSpaceRole(spaceInfo?.role);
+    }
+};
+
+export const setSpaceRole = (role: string) => {
+    spaceStore.spaceRole = role;
 };
 
 export const loadUserSpaces = async () => {

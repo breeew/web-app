@@ -49,6 +49,7 @@ declare type UserSpace = {
 declare type SpaceStore = {
     spaces: UserSpace[];
     currentSelectedSpace: string;
+    spaceRole: string;
 };
 
 declare type UserInfo = {

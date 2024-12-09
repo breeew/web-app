@@ -9,7 +9,7 @@ import { subscribeKey } from 'valtio/utils';
 import { UserSpace } from '@/apis/space';
 import CreateSpace from '@/components/create-space';
 import { useChatPageCondition } from '@/hooks/use-chat-page';
-import spaceStore, { loadUserSpaces, setCurrentSelectedSpace } from '@/stores/space';
+import spaceStore, { latestPickedSpace, loadUserSpaces, setCurrentSelectedSpace } from '@/stores/space';
 
 interface WorkSpace {
     value: string;
@@ -41,6 +41,7 @@ export default function Component() {
     const navigate = useNavigate();
 
     function onSelected(key: string, redirect: boolean = false) {
+        console.log('on selected spacesssss');
         if (redirect) {
             if (isChat) {
                 navigate(`/dashboard/${key}/chat`);
@@ -60,8 +61,8 @@ export default function Component() {
             {
                 value: '0',
                 label: t('Workspace'),
-                items: datas.map((val: UserSpace, i: number) => {
-                    if ((!spaceID && i === 0) || val.space_id === spaceID) {
+                items: datas.map((val: UserSpace, _: number) => {
+                    if (val.space_id === spaceID) {
                         // default
                         onSelected(val.space_id);
                         selected = val.space_id;
@@ -78,8 +79,13 @@ export default function Component() {
         setWorkspaces(spacesSelector);
 
         if (!selected && spacesSelector[0].items) {
-            // on user deleted space
-            onSelected(spacesSelector[0].items[0].value, true);
+            const latestPicked = latestPickedSpace();
+
+            if (spacesSelector[0].items.find(v => v.value === latestPicked)) {
+                onSelected(latestPicked, true);
+            } else {
+                onSelected(spacesSelector[0].items[0].value, true);
+            }
         }
     }
 
