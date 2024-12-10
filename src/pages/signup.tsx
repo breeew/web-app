@@ -3,9 +3,14 @@ import { Button, Input, Tooltip } from '@nextui-org/react';
 import { AnimatePresence, domAnimation, LazyMotion, m } from 'framer-motion';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+
+import { SendVerifyEmail, Signup } from '@/apis/user';
+import { useToast } from '@/hooks/use-toast';
 
 export default function Component({ changeMode }: { changeMode: (v: string) => void }) {
     const { t } = useTranslation();
+    const { toast } = useToast();
 
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
@@ -77,7 +82,8 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
         paginate(1);
     };
 
-    const handlePasswordSubmit = () => {
+    const [isSendVerifyEmail, setIsSendVerifyEmail] = useState();
+    const handlePasswordSubmit = async () => {
         if (!password.length) {
             setIsPasswordValid(false);
 
@@ -90,15 +96,41 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
             return;
         }
         setIsConfirmPasswordValid(true);
-        // Submit logic or API call here
-
         setIsPasswordValid(true);
-        paginate(1);
+
+        // Submit logic or API call here
+        if (isSendVerifyEmail) {
+            paginate(1);
+
+            return;
+        }
+        try {
+            setIsLoading(true);
+            await SendVerifyEmail(email);
+            paginate(1);
+            setIsSendVerifyEmail(true);
+            setTimeout(() => {
+                setIsSendVerifyEmail(false);
+            }, 1000 * 60);
+        } catch (e: any) {
+            console.error(e);
+        }
+        setIsLoading(false);
     };
 
-    const handleSignUpSubmit = () => {
+    const handleSignUpSubmit = async () => {
         setIsLoading(true);
-        console.log(`Email: ${email}, Password: ${password}`);
+        try {
+            await Signup(email, userName, password, verifyCode);
+            toast({
+                title: t('Notify'),
+                description: t('Welcome to signup')
+            });
+            changeMode('login');
+        } catch (e: any) {
+            console.error(e);
+        }
+        setIsLoading(false);
     };
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -251,7 +283,7 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
                                         setVerifyCode(value);
                                     }}
                                 />
-                                <span className="text-sm text-zinc-300">{t('Please check your email for the verification code')}</span>
+                                <span className="text-sm dark:text-zinc-300 text-zinc-600">{t('Please check your email for the verification code')}</span>
                             </>
                         )}
                         <Button fullWidth color="primary" type="submit" className="mt-6" isLoading={isLoading}>

@@ -61,12 +61,12 @@
     "Already have an account": "已经注册过账号？",
     "Need to create an account": "还没有注册过账号？",
     "Email Address": "邮箱地址",
-    "Enter Password": "创建密码",
+    "Enter Password": "确认密码",
     "Password": "密码",
     "Confirm Password": "确认密码",
     "Forgot Password": "忘记密码",
     "Verify Code": "验证码",
-    "Please check your email for the verification code": "请登录邮箱查收验证码。",
+    "Please check your email for the verification code": "一封含有验证码的邮件已发送至您的注册邮箱，请注意查收",
     "Upgrade to Pro": "升级到 Pro",
     "Upgrade": "立即升级",
     "preProInfo": "解锁全部功能限制",
@@ -100,5 +100,6 @@
     "Please do not submit repeatedly": "请勿重复提交",
     "AI is processing the image, please wait a moment": "AI 处理中，请稍后...",
     "Done": "完成",
-    "Failed": "失败"
+    "Failed": "失败",
+    "Welcome to signup": "注册成功，欢迎使用Brew"
 }

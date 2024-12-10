@@ -29,3 +29,18 @@ export async function UpdateUserProfile(userName: string, email: string): Promis
         email: email
     });
 }
+
+export async function SendVerifyEmail(email: string): Promise<void> {
+    return await instance.post(`/signup/verify/email`, {
+        email: email
+    });
+}
+
+export async function Signup(email: string, userName: string, password: string, verifyCode: string): Promise<void> {
+    return await instance.post('/signup', {
+        email: email,
+        user_name: userName,
+        password: password,
+        verify_code: verifyCode
+    });
+}

@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from 'clsx';
+import * as CryptoJS from 'crypto-js';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
@@ -23,4 +24,8 @@ export function autoLoginDirect(): boolean {
 
 export function setNotAutoLoginDirect() {
     sessionStorage.setItem(BREW_LOGIN_AUTO_DIRECT_KEY, 'true');
+}
+
+export function md5(inputString: string): string {
+    return CryptoJS.MD5(inputString).toString();
 }
