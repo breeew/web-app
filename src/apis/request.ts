@@ -13,14 +13,18 @@ export function ChangeBaseURL(url: string) {
 }
 
 const ACCESS_TOKEN_KEY = 'X-Access-Token';
+const AUTH_TOKEN_KEY = 'X-Authorization';
 const ACCEPT_LANGUAGE_KEY = 'Accept-Language';
 
 instance.interceptors.request.use(
     function (config) {
         // Do something before request is sent
         config.headers.setContentType('application/json');
-        if (!config.headers.get(ACCESS_TOKEN_KEY)) {
+        if (!config.headers.get(ACCESS_TOKEN_KEY) && userStore.accessToken) {
             config.headers.set(ACCESS_TOKEN_KEY, userStore.accessToken);
+        }
+        if (!config.headers.get(AUTH_TOKEN_KEY) && userStore.loginToken) {
+            config.headers.set(AUTH_TOKEN_KEY, userStore.loginToken);
         }
         config.headers.set(ACCEPT_LANGUAGE_KEY, i18n.language);
 
