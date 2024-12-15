@@ -4,6 +4,7 @@ import { ChangeBaseURL } from '@/apis/request';
 
 const userStore = proxy<UserStore>({
     accessToken: localStorage.getItem('access_token'),
+    loginToken: localStorage.getItem('login_token'),
     userInfo: {
         userID: '',
         userName: '',
@@ -22,6 +23,11 @@ export const setHost = (host: string) => {
 export const setUserAccessToken = (token: string) => {
     userStore.accessToken = token;
     localStorage.setItem('access_token', token);
+};
+
+export const setUserLoginToken = (token: strint) => {
+    userStore.loginToken = token;
+    localStorage.setItem('login_token', token);
 };
 
 export const setUserInfo = (userInfo?: { userID: string; userName: string; email: string; avatar: string }) => {

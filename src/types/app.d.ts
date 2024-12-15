@@ -61,6 +61,7 @@ declare type UserInfo = {
 
 declare type UserStore = {
     accessToken: string | null;
+    loginToken: string | null;
     userInfo: UserInfo;
     host: string;
 };

@@ -1,7 +1,5 @@
 import instance from './request';
 
-export async function Login() {}
-
 export interface LoginResponse {
     email: string;
     user_name: string;
@@ -19,6 +17,21 @@ export async function LoginWithAccessToken(accessToken: string): Promise<LoginRe
             }
         }
     );
+
+    return resp.data.data;
+}
+
+export interface EmailLoginResponse {
+    meta: LoginResponse;
+    token: string;
+    expire_at: number;
+}
+
+export async function Login(email: string, password: string): Promise<EmailLoginResponse> {
+    const resp = await instance.post(`/login`, {
+        email: email,
+        password: password
+    });
 
     return resp.data.data;
 }

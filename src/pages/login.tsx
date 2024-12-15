@@ -5,11 +5,12 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 
-import { LoginWithAccessToken } from '@/apis/user';
+import { Login, LoginWithAccessToken } from '@/apis/user';
 import { Logo } from '@/components/icons';
+import { md5 } from '@/lib/utils';
 import SignUp from '@/pages/signup';
 import { setCurrentSelectedSpace, setUserSpaces } from '@/stores/space';
-import userStore, { setHost, setUserAccessToken, setUserInfo } from '@/stores/user';
+import userStore, { setHost, setUserAccessToken, setUserInfo, setUserLoginToken } from '@/stores/user';
 
 export default function Component() {
     const { t } = useTranslation();
@@ -138,12 +139,36 @@ const LoginComponent = memo(function LoginComponent({ changeMode }: { changeMode
 
     const [useSelfHost, setUseSelfHost] = useState(false);
 
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    async function login() {
+        setLoading(true);
+        try {
+            const resp = await Login(email, md5(password));
+
+            setCurrentSelectedSpace('');
+            setUserSpaces([]);
+            setUserLoginToken(resp.token);
+            setUserInfo({
+                userID: resp.meta.user_id,
+                // avatar: resp.avatar,
+                avatar: 'https://avatar.vercel.sh/' + resp.meta.user_id,
+                userName: resp.meta.user_name,
+                email: resp.meta.email
+            });
+        } catch (e: any) {
+            console.error(e);
+        }
+        setLoading(false);
+    }
+
     return (
         <div className="flex w-full max-w-sm flex-col gap-4 rounded-large bg-content1 p-6 shadow-small">
             <p className="pb-2 text-xl font-medium">{t('LogIn')}</p>
             {!useTokenLogin ? (
                 <form className="flex flex-col gap-3" onSubmit={e => e.preventDefault()}>
-                    <Input label={t('Email Address')} name="email" placeholder="Enter your email" type="email" variant="bordered" />
+                    <Input label={t('Email Address')} name="email" placeholder="Enter your email" type="email" variant="bordered" onValueChange={setEmail} />
                     <Input
                         endContent={
                             <button type="button" onClick={toggleVisibility}>
@@ -159,6 +184,7 @@ const LoginComponent = memo(function LoginComponent({ changeMode }: { changeMode
                         placeholder="Enter your password"
                         type={isVisible ? 'text' : 'password'}
                         variant="bordered"
+                        onValueChange={setPassword}
                     />
                     <div className="flex items-center justify-end px-1 py-2">
                         {/* <Checkbox name="remember" size="sm">
