@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useMemo } from 'react';
 import { createBrowserRouter, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 
@@ -18,10 +18,14 @@ import spaceStore, { setCurrentSelectedSpace } from '@/stores/space';
 import userStore, { setUserAccessToken, setUserInfo } from '@/stores/user';
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
-    const { accessToken, userInfo } = useSnapshot(userStore);
+    const { accessToken,loginToken, userInfo } = useSnapshot(userStore);
     const navigate = useNavigate();
     const { pathname } = useLocation();
     const { currentSelectedSpace } = useSnapshot(spaceStore);
+
+    const isLogin = useMemo(() => {
+        return accessToken || loginToken
+    }, [accessToken, loginToken])
 
     useEffect(() => {
         if (pathname === '/dashboard' && currentSelectedSpace) {
@@ -30,7 +34,7 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
             return;
         }
 
-        if (accessToken && (!userInfo || !userInfo.userID)) {
+        if (isLogin && (!userInfo || !userInfo.userID)) {
             // load user info
             async function Login(accessToken: string) {
                 try {
@@ -57,9 +61,9 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
             }
             Login(accessToken);
         }
-    }, [accessToken, currentSelectedSpace]);
+    }, [isLogin, currentSelectedSpace]);
 
-    return accessToken ? children : <Navigate to="/login" />;
+    return isLogin ? children : <Navigate to="/login" />;
 }
 
 function PreLogin({ init, children }: { init: boolean; children: ReactNode }) {

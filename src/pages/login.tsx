@@ -157,6 +157,8 @@ const LoginComponent = memo(function LoginComponent({ changeMode }: { changeMode
                 userName: resp.meta.user_name,
                 email: resp.meta.email
             });
+
+            navigate('/dashboard');
         } catch (e: any) {
             console.error(e);
         }
@@ -194,7 +196,7 @@ const LoginComponent = memo(function LoginComponent({ changeMode }: { changeMode
                             {t('Forgot Password')}?
                         </Link>
                     </div>
-                    <Button color="primary" type="submit">
+                    <Button color="primary" isLoading={isLoading} onClick={login}>
                         {t('LogIn')}
                     </Button>
                 </form>
@@ -231,7 +233,7 @@ const LoginComponent = memo(function LoginComponent({ changeMode }: { changeMode
                         </Button>
                     )}
 
-                    <Button color="primary" isLoading={isLoading} onClick={accessTokenLogin}>
+                    <Button color="primary" isLoading={isLoading} onClick={ accessTokenLogin}>
                         {t('LogIn')}
                     </Button>
                 </>
