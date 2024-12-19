@@ -55,7 +55,9 @@
     "Back to chat": "返回对话",
     "LogIn": "登录",
     "SignUp": "注册",
+    "ResetPassword": "重置密码",
     "Logout": "登出",
+    "Passwords do not match": "密码不匹配",
     "UserName": "用户昵称",
     "Continue": "继续",
     "Already have an account": "已经注册过账号？",
@@ -101,5 +103,6 @@
     "AI is processing the image, please wait a moment": "AI 处理中，请稍后...",
     "Done": "完成",
     "Failed": "失败",
-    "Welcome to signup": "注册成功，欢迎使用Brew"
+    "Welcome to signup": "注册成功，欢迎使用",
+    "ResetEmailSended": "一封包含重置密码链接的邮件已发送至您的邮箱，请注意查收"
 }

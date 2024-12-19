@@ -1,6 +1,4 @@
-import { Button } from '@nextui-org/button';
-import { Link } from '@nextui-org/link';
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle } from '@nextui-org/navbar';
+import { Button, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle } from '@nextui-org/react';
 import type { NavbarProps } from '@nextui-org/react';
 import { useTranslation } from 'react-i18next';
 

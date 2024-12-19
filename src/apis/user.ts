@@ -1,3 +1,5 @@
+import { TokensIcon } from '@radix-ui/react-icons';
+
 import instance from './request';
 
 export interface LoginResponse {
@@ -56,4 +58,20 @@ export async function Signup(email: string, userName: string, password: string, 
         password: password,
         verify_code: verifyCode
     });
+}
+
+export async function ResetPassword(token: string, password: string): Promise<void> {
+    return await instance.put('/profile/password/reset', {
+        token: token,
+        password: password
+    });
+}
+
+export async function RequestResetPassword(endpoint: string, email: string): Promise<string> {
+    const resp = await instance.post('/profile/password/request_reset', {
+        endpoint: endpoint,
+        email: email
+    });
+
+    resp.data.data;
 }

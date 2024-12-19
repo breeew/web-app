@@ -1,4 +1,6 @@
-import { NextUIProvider } from '@nextui-org/system';
+'use client';
+
+import { NextUIProvider } from '@nextui-org/react';
 import { enableMapSet } from 'immer';
 import { useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';

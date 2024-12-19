@@ -252,7 +252,7 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
                                             )}
                                         </button>
                                     }
-                                    errorMessage={!isConfirmPasswordValid ? 'Passwords do not match' : undefined}
+                                    errorMessage={!isConfirmPasswordValid ? t('Passwords do not match') : undefined}
                                     variant="bordered"
                                     label={t('Confirm Password')}
                                     name="confirmPassword"

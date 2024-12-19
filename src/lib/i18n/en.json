@@ -55,7 +55,9 @@
     "Back to chat": "Back to chat",
     "LogIn": "Login",
     "SignUp": "Sign Up",
+    "ResetPassword": "Reset Password",
     "Logout": "Logout",
+    "Passwords do not match": "Passwords do not match",
     "UserName": "User Name",
     "Continue": "Continue",
     "Already have an account": "Already have an account?",
@@ -101,5 +103,6 @@
     "AI is processing the image, please wait a moment": "AI is processing the image, please wait a moment.",
     "Done": "Done",
     "Failed": "Failed",
-    "Welcome to signup": "Welcome to sign-up."
+    "Welcome to signup": "Welcome to sign-up.",
+    "ResetEmailSended": "An email containing the password reset link has been sent to your mailbox. Please check it."
 }

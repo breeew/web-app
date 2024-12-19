@@ -11,21 +11,23 @@ import ChatSession from '@/pages/dashboard/chat/chat-session.tsx';
 import Chat from '@/pages/dashboard/chat/chat.tsx';
 import Knowledge from '@/pages/dashboard/knowledge';
 import Setting from '@/pages/dashboard/setting/setting';
+import Forgot from '@/pages/forgot';
 import IndexPage from '@/pages/index';
 import Login from '@/pages/login';
+import Reset from '@/pages/reset';
 import { buildTower } from '@/stores/socket';
 import spaceStore, { setCurrentSelectedSpace } from '@/stores/space';
 import userStore, { setUserAccessToken, setUserInfo } from '@/stores/user';
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
-    const { accessToken,loginToken, userInfo } = useSnapshot(userStore);
+    const { accessToken, loginToken, userInfo } = useSnapshot(userStore);
     const navigate = useNavigate();
     const { pathname } = useLocation();
     const { currentSelectedSpace } = useSnapshot(spaceStore);
 
     const isLogin = useMemo(() => {
-        return accessToken || loginToken
-    }, [accessToken, loginToken])
+        return accessToken || loginToken;
+    }, [accessToken, loginToken]);
 
     useEffect(() => {
         if (pathname === '/dashboard' && currentSelectedSpace) {
@@ -109,6 +111,14 @@ const routes = createBrowserRouter([
                         <Login />
                     </PreLogin>
                 )
+            },
+            {
+                path: '/reset/password/:token',
+                element: <Reset />
+            },
+            {
+                path: '/forgot/password',
+                element: <Forgot />
             },
             {
                 path: '/dashboard/',

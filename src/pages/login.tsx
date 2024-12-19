@@ -137,6 +137,10 @@ const LoginComponent = memo(function LoginComponent({ changeMode }: { changeMode
         setLoading(false);
     }
 
+    const navigateToForgot = useCallback(() => {
+        navigate('/forgot/password');
+    });
+
     const [useSelfHost, setUseSelfHost] = useState(false);
 
     const [email, setEmail] = useState('');
@@ -192,11 +196,11 @@ const LoginComponent = memo(function LoginComponent({ changeMode }: { changeMode
                         {/* <Checkbox name="remember" size="sm">
                                 Remember me
                             </Checkbox> */}
-                        <Link className="text-default-500" href="#" size="sm">
+                        <Link className="text-default-500" href="/forgot/password" size="sm">
                             {t('Forgot Password')}?
                         </Link>
                     </div>
-                    <Button color="primary" isLoading={isLoading} onClick={login}>
+                    <Button color="primary" isLoading={isLoading} onPress={login}>
                         {t('LogIn')}
                     </Button>
                 </form>
@@ -225,7 +229,7 @@ const LoginComponent = memo(function LoginComponent({ changeMode }: { changeMode
                         <Button
                             variant="bordered"
                             size="lg"
-                            onClick={() => {
+                            onPress={() => {
                                 setUseSelfHost(e => !e);
                             }}
                         >
@@ -233,7 +237,7 @@ const LoginComponent = memo(function LoginComponent({ changeMode }: { changeMode
                         </Button>
                     )}
 
-                    <Button color="primary" isLoading={isLoading} onClick={ accessTokenLogin}>
+                    <Button color="primary" isLoading={isLoading} onPress={accessTokenLogin}>
                         {t('LogIn')}
                     </Button>
                 </>
@@ -244,7 +248,7 @@ const LoginComponent = memo(function LoginComponent({ changeMode }: { changeMode
                 <Divider className="flex-1" />
             </div>
             <div className="flex flex-col gap-2">
-                <Button startContent={<Icon icon="bitcoin-icons:relay-filled" width={24} />} variant="bordered" onClick={() => setUseTokenLogin(prev => !prev)}>
+                <Button startContent={<Icon icon="bitcoin-icons:relay-filled" width={24} />} variant="bordered" onPress={() => setUseTokenLogin(prev => !prev)}>
                     Continue with {useTokenLogin ? 'Email' : 'Brew-Token'}
                 </Button>
                 {/* <Button startContent={<Icon icon="flat-color-icons:google" width={24} />} variant="bordered">
