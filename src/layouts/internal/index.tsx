@@ -184,14 +184,25 @@ export default function Component({ children }: { children: React.ReactNode }) {
 
                     <div className="flex flex-col gap-y-2">
                         <WorkSpaceSelection />
-                        <Spacer y={4} />
+                        {!isChat && (
+                            <>
+                                <Spacer y={4} />
+                                <Button className="mx-1" startContent={<Icon icon="stash:data-date" width={24} />} onPress={() => navigate(`/dashboard/${currentSelectedSpace}/journal/2024-12-20`)}>
+                                    {t('Journal')}
+                                </Button>
+                            </>
+                        )}
+                    </div>
+
+                    <div className="flex flex-col gap-y-2">
+                        <div className="pt-6 pb-2 px-2 text-zinc-500 text-sm">{isChat ? t('Chat Sessions') : t('Resource List')}</div>
                         {isChat ? (
-                            <Button className="mx-1" startContent={<Icon icon="material-symbols:forum-rounded" width={24} />} onClick={createNewSession}>
+                            <Button className="mx-1" variant="ghost" startContent={<Icon icon="bx:chat" width={24} />} onClick={createNewSession}>
                                 {t('New Session')}
                             </Button>
                         ) : (
                             <>
-                                <Button className="mx-1" startContent={<Icon icon="material-symbols:auto-awesome-motion" width={24} />} onClick={showCreateResource}>
+                                <Button className="mx-1" variant="ghost" startContent={<Icon icon="ic:outline-create-new-folder" width={24} />} onClick={showCreateResource}>
                                     {t('New Resource')}
                                 </Button>
                                 <ResourceManage ref={resourceManage} onModify={onResourceModify} />
@@ -211,8 +222,6 @@ export default function Component({ children }: { children: React.ReactNode }) {
                             </>
                         )}
                     </div>
-
-                    <div className="pt-6 px-2 text-zinc-500 text-sm">{isChat ? t('Chat Sessions') : t('Resource List')}</div>
                     <Spacer y={1} />
 
                     <ScrollShadow hideScrollBar className="-mr-6 h-full max-h-full py-3 pr-6">

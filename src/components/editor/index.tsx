@@ -1,5 +1,5 @@
 import CodeTool from '@editorjs/code';
-import EditorJS from '@editorjs/editorjs';
+import EditorJS, { BlockToolData, OutputBlockData, OutputData } from '@editorjs/editorjs';
 import Header from '@editorjs/header';
 import InlineCode from '@editorjs/inline-code';
 import EditorjsList from '@editorjs/list';
@@ -7,7 +7,7 @@ import Marker from '@editorjs/marker';
 import Quote from '@editorjs/quote';
 import Table from '@editorjs/table';
 import { Skeleton } from '@nextui-org/react';
-import { memo, useEffect, useState } from 'react';
+import { forwardRef, memo, useEffect, useImperativeHandle, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import showdown from 'showdown';
 import { useSnapshot } from 'valtio';
@@ -91,107 +91,109 @@ export interface EditorProps {
     onValueChange?: () => void;
 }
 
-export const Editor = memo(function Editor({ data, dataType = '', autofocus = false, placeholder, readOnly, onValueChange }: EditorProps) {
-    const { t } = useTranslation();
-    const [isReady, setIsReady] = useState(false);
-    const { toast } = useToast();
-    const { currentSelectedSpace } = useSnapshot(spaceStore);
-    // console.log('editor data', data, dataType);
+export const Editor = memo(
+    forwardRef(({ data, dataType = '', autofocus = false, placeholder, readOnly, onValueChange }: EditorProps, ref: any) => {
+        const { t } = useTranslation();
+        const [isReady, setIsReady] = useState(false);
+        const { toast } = useToast();
+        const { currentSelectedSpace } = useSnapshot(spaceStore);
+        // console.log('editor data', data, dataType);
+        const [editor, setEditor] = useState<EditorJS>();
 
-    useEffect(() => {
-        const renderFunc = async function (editor: EditorJS, data: string | OutputData, dataType: string) {
-            if (!data) {
-                return;
-            }
-            switch (dataType.toLowerCase()) {
-                case 'html':
-                    await editor.blocks.renderFromHTML(data);
-                    break;
-                case 'blocks':
-                    await editor.blocks.render(data);
-                    break;
-                default: // default will be markdown
-                    if (data && data.split('\n').length === 1) {
-                        data = {
-                            blocks: [
+        useEffect(() => {
+            const renderFunc = async function (editor: EditorJS, data: string | OutputData, dataType: string) {
+                if (!data) {
+                    return;
+                }
+                switch (dataType.toLowerCase()) {
+                    case 'html':
+                        await editor.blocks.renderFromHTML(data);
+                        break;
+                    case 'blocks':
+                        await editor.blocks.render(data);
+                        break;
+                    default: // default will be markdown
+                        if (data && data.split('\n').length === 1) {
+                            data = {
+                                blocks: [
+                                    {
+                                        type: 'paragraph',
+                                        data: {
+                                            text: data
+                                        }
+                                    }
+                                ]
+                            };
+                            await editor.blocks.render(data);
+
+                            return;
+                        }
+                        showdown.extension('code', function () {
+                            return [
                                 {
-                                    type: 'paragraph',
-                                    data: {
-                                        text: data
+                                    type: 'output',
+                                    filter: function (text, converter, options) {
+                                        return text.replace(/<pre(?: class="[^"]*")?>([\s\S]+?)<\/pre>/g, function (fullMatch, inCode) {
+                                            return '<code contenteditable="true">' + inCode + '</code>';
+                                        });
                                     }
                                 }
-                            ]
-                        };
-                        await editor.blocks.render(data);
+                            ];
+                        });
 
-                        return;
-                    }
-                    showdown.extension('code', function () {
-                        return [
-                            {
-                                type: 'output',
-                                filter: function (text, converter, options) {
-                                    return text.replace(/<pre(?: class="[^"]*")?>([\s\S]+?)<\/pre>/g, function (fullMatch, inCode) {
-                                        return '<code contenteditable="true">' + inCode + '</code>';
-                                    });
+                        const converter = new showdown.Converter({ extensions: ['code'] });
+                        let htmlDoms = converter.makeHtml(data);
+
+                        if (!htmlDoms.trim().startsWith('<div>')) {
+                            htmlDoms = '<div>' + htmlDoms + '</div>';
+                        }
+
+                        try {
+                            await editor.blocks.renderFromHTML(htmlDoms);
+                        } catch (e: any) {
+                            console.error('editor render error', e);
+                            await editor.render([
+                                {
+                                    type: 'paragraph',
+                                    data: { text: data || '' }
                                 }
-                            }
-                        ];
-                    });
+                            ]);
+                        }
+                }
+            };
 
-                    const converter = new showdown.Converter({ extensions: ['code'] });
-                    let htmlDoms = converter.makeHtml(data);
-
-                    if (!htmlDoms.trim().startsWith('<div>')) {
-                        htmlDoms = '<div>' + htmlDoms + '</div>';
-                    }
-
-                    try {
-                        await editor.blocks.renderFromHTML(htmlDoms);
-                    } catch (e: any) {
-                        console.error('editor render error', e);
-                        await editor.render([
-                            {
-                                type: 'paragraph',
-                                data: { text: data || '' }
-                            }
-                        ]);
-                    }
-            }
-        };
-
-        const editor = new EditorJS({
-            minHeight: 50, // https://github.com/codex-team/editor.js/issues/1300
-            placeholder: placeholder,
-            readOnly: readOnly,
-            autofocus: !readOnly && autofocus,
-            /**
-             * Id of Element that should contain the Editor
-             */
-            holder: 'brew-editor',
-            tools: {
+            const editor = new EditorJS({
+                minHeight: 620, // https://github.com/codex-team/editor.js/issues/1300
+                placeholder: placeholder,
+                readOnly: readOnly,
+                autofocus: !readOnly && autofocus,
                 /**
-                 * Each Tool is a Plugin. Pass them via 'class' option with necessary settings {@link docs/tools.md}
+                 * Id of Element that should contain the Editor
                  */
-                header: {
-                    class: Header,
-                    inlineToolbar: ['marker', 'link'],
-                    config: {
-                        placeholder: 'Header'
+                holder: 'brew-editor',
+                tools: {
+                    /**
+                     * Each Tool is a Plugin. Pass them via 'class' option with necessary settings {@link docs/tools.md}
+                     */
+                    header: {
+                        class: Header,
+                        inlineToolbar: ['marker', 'link'],
+                        config: {
+                            placeholder: 'Header'
+                        },
+                        shortcut: 'CMD+SHIFT+H'
                     },
-                    shortcut: 'CMD+SHIFT+H'
-                },
-                /**
-                 * Or pass class directly without any configuration
-                 */
-                image: {
-                    class: CustomImage,
-                    config: {
-                        types: 'image/*',
-                        actions: [
-                            {
-                                name: 'aiGenImageDescript',
-                                icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    /**
+                     * Or pass class directly without any configuration
+                     */
+                    image: {
+                        class: CustomImage,
+                        config: {
+                            types: 'image/*',
+                            actions: [
+                                {
+                                    name: 'aiGenImageDescript',
+                                    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                         <g fill="none">
                                             <path d="m12.594 23.258l-.012.002l-.071.035l-.02.004l-.014-.004l-.071-.036q-.016-.004-.024.006l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.016-.018m.264-.113l-.014.002l-.184.093l-.01.01l-.003.011l.018.43l.005.012l.008.008l.201.092q.019.005.029-.008l.004-.014l-.034-.614q-.005-.019-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.003-.011l.018-.43l-.003-.012l-.01-.01z" />
 
@@ -201,76 +203,94 @@ export const Editor = memo(function Editor({ data, dataType = '', autofocus = fa
                                             />
                                         </g>
                                     </svg>`,
-                                title: t('AI Description')
-                            }
-                        ],
-                        uploader: getUploader(toast, t, currentSelectedSpace)
-                    }
-                },
-                video: {
-                    class: Video,
-                    config: {
-                        types: 'video/*',
-                        uploader: getUploader(toast, t, currentSelectedSpace)
-                    }
-                },
-                listv2: {
-                    // include check list
-                    class: EditorjsList,
-                    inlineToolbar: true,
-                    shortcut: 'CMD+SHIFT+L'
-                },
-                quote: {
-                    class: Quote,
-                    inlineToolbar: true,
-                    config: {
-                        quotePlaceholder: 'Enter a quote',
-                        captionPlaceholder: "Quote's author"
-                    },
-                    shortcut: 'CMD+SHIFT+O'
-                },
-                marker: {
-                    class: Marker,
-                    shortcut: 'CMD+SHIFT+M'
-                },
-                codeBox: {
-                    class: CodeTool,
-                    inlineToolbar: true,
-                    shortcut: 'CMD+SHIFT+C',
-                    conversionConfig: {
-                        import(str: string): string {
-                            return str;
-                        },
-                        export(data): string {
-                            return data.code;
+                                    title: t('AI Description')
+                                }
+                            ],
+                            uploader: getUploader(toast, t, currentSelectedSpace)
                         }
+                    },
+                    video: {
+                        class: Video,
+                        config: {
+                            types: 'video/*',
+                            uploader: getUploader(toast, t, currentSelectedSpace)
+                        }
+                    },
+                    listv2: {
+                        // include check list
+                        class: EditorjsList,
+                        inlineToolbar: true,
+                        shortcut: 'CMD+SHIFT+L'
+                    },
+                    quote: {
+                        class: Quote,
+                        inlineToolbar: true,
+                        config: {
+                            quotePlaceholder: 'Enter a quote',
+                            captionPlaceholder: "Quote's author"
+                        },
+                        shortcut: 'CMD+SHIFT+O'
+                    },
+                    marker: {
+                        class: Marker,
+                        shortcut: 'CMD+SHIFT+M'
+                    },
+                    codeBox: {
+                        class: CodeTool,
+                        inlineToolbar: true,
+                        shortcut: 'CMD+SHIFT+C',
+                        conversionConfig: {
+                            import(str: string): string {
+                                return str;
+                            },
+                            export(data): string {
+                                return data.code;
+                            }
+                        }
+                    },
+                    inlineCode: {
+                        class: InlineCode,
+                        inlineToolbar: true
+                    },
+                    // link: LinkTool, import LinkTool from '@editorjs/link';
+                    table: {
+                        class: Table,
+                        inlineToolbar: true,
+                        shortcut: 'CMD+ALT+T'
                     }
                 },
-                inlineCode: {
-                    class: InlineCode,
-                    inlineToolbar: true
+                // or await editor.isReady
+                onReady: async () => {
+                    setIsReady(() => true);
+                    await renderFunc(editor, data, dataType);
                 },
-                // link: LinkTool, import LinkTool from '@editorjs/link';
-                table: {
-                    class: Table,
-                    inlineToolbar: true,
-                    shortcut: 'CMD+ALT+T'
+                onChange: async function (api, _) {
+                    onValueChange && onValueChange(await api.saver.save());
                 }
-            },
-            // or await editor.isReady
-            onReady: async () => {
-                setIsReady(() => true);
-                await renderFunc(editor, data, dataType);
-            },
-            onChange: async function (api, _) {
-                onValueChange && onValueChange(await api.saver.save());
-            }
-        });
-    }, [currentSelectedSpace]);
+            });
 
-    return (
-        <Skeleton isLoaded={isReady}>
-            <div id="brew-editor" className="editor" />
-        </Skeleton>
-    );
-});
+            setEditor(editor);
+        }, [currentSelectedSpace]);
+
+        async function reRender(data: OutputData) {
+            await editor.blocks.render(data);
+        }
+
+        async function update(id: string, data: BlockToolData) {
+            await editor.blocks.update(id, data);
+        }
+
+        useImperativeHandle(ref, () => {
+            return {
+                reRender,
+                update
+            };
+        });
+
+        return (
+            <Skeleton isLoaded={isReady}>
+                <div id="brew-editor" className="editor" />
+            </Skeleton>
+        );
+    })
+);

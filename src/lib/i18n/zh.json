@@ -17,6 +17,7 @@
     "Cancel": "取消",
     "Close": "关闭",
     "Delete": "删除",
+    "Save": "保存",
     "Setting": "设置",
     "Resource Setting": "资源设置",
     "Space Setting": "空间设置",
@@ -93,6 +94,7 @@
     "showRelevanceDocs": "展示可能关联的内容",
     "Today": "今天",
     "Yesterday": "昨天",
+    "Journal": "日记",
     "PreviousDays": "前{{day}}天",
     "Earlier": "更早之前",
     "UserMenu": "个人菜单",
@@ -104,5 +106,7 @@
     "Done": "完成",
     "Failed": "失败",
     "Welcome to signup": "注册成功，欢迎使用",
-    "ResetEmailSended": "一封包含重置密码链接的邮件已发送至您的邮箱，请注意查收"
+    "ResetEmailSended": "一封包含重置密码链接的邮件已发送至您的邮箱，请注意查收",
+    "Previous": "向前",
+    "Next": "向后"
 }

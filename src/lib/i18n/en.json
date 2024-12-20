@@ -17,6 +17,7 @@
     "Cancel": "Cancel",
     "Close": "Close",
     "Delete": "Delete",
+    "Save": "Save",
     "Setting": "Settings",
     "Resource Setting": "Resource Setting",
     "Space Setting": "Space Setting",
@@ -93,6 +94,7 @@
     "showRelevanceDocs": "Show Relevance Docs",
     "Today": "Today",
     "Yesterday": "Yesterday",
+    "Journal": "Journal",
     "PreviousDays": "Previous {{day}} Days",
     "Earlier": "Earlier",
     "UserMenu": "User Menu",
@@ -104,5 +106,7 @@
     "Done": "Done",
     "Failed": "Failed",
     "Welcome to signup": "Welcome to sign-up.",
-    "ResetEmailSended": "An email containing the password reset link has been sent to your mailbox. Please check it."
+    "ResetEmailSended": "An email containing the password reset link has been sent to your mailbox. Please check it.",
+    "Previous": "Previous",
+    "Next": "Next"
 }

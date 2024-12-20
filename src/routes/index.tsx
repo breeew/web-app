@@ -9,6 +9,7 @@ import { autoLoginDirect } from '@/lib/utils';
 import Dashboard from '@/pages/dashboard';
 import ChatSession from '@/pages/dashboard/chat/chat-session.tsx';
 import Chat from '@/pages/dashboard/chat/chat.tsx';
+import Journal from '@/pages/dashboard/journal/journal';
 import Knowledge from '@/pages/dashboard/knowledge';
 import Setting from '@/pages/dashboard/setting/setting';
 import Forgot from '@/pages/forgot';
@@ -38,7 +39,7 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
 
         if (isLogin && (!userInfo || !userInfo.userID)) {
             // load user info
-            async function Login(accessToken: string) {
+            async function Login(type: string, accessToken: string) {
                 try {
                     const resp = await LoginWithAccessToken(accessToken);
 
@@ -50,6 +51,9 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
                         userName: resp.user_name
                     });
 
+                    if (type == 'authorization') {
+                        accessToken = `${accessToken}&token-type=authorization`;
+                    }
                     buildTower(resp.user_id, accessToken, () => {
                         console.log('socket connected');
                     });
@@ -61,7 +65,7 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
                     navigate('/');
                 }
             }
-            Login(accessToken);
+            Login(accessToken ? '' : 'authorization', accessToken || loginToken);
         }
     }, [isLogin, currentSelectedSpace]);
 
@@ -69,9 +73,12 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
 }
 
 function PreLogin({ init, children }: { init: boolean; children: ReactNode }) {
-    const { accessToken } = useSnapshot(userStore);
+    const { accessToken, loginToken } = useSnapshot(userStore);
+    const isLogin = useMemo(() => {
+        return accessToken || loginToken;
+    }, [accessToken, loginToken]);
 
-    if (accessToken) {
+    if (isLogin) {
         setCurrentSelectedSpace('');
 
         if (init) {
@@ -83,7 +90,7 @@ function PreLogin({ init, children }: { init: boolean; children: ReactNode }) {
         }
     }
 
-    return accessToken ? <Navigate to="/dashboard" /> : children;
+    return isLogin ? <Navigate to="/dashboard" /> : children;
 }
 
 const routes = createBrowserRouter([
@@ -119,6 +126,14 @@ const routes = createBrowserRouter([
             {
                 path: '/forgot/password',
                 element: <Forgot />
+            },
+            {
+                path: '/dashboard/:spaceID/journal/:selectDate',
+                element: (
+                    <ProtectedRoute>
+                        <Journal />
+                    </ProtectedRoute>
+                )
             },
             {
                 path: '/dashboard/',

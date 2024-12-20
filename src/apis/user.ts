@@ -7,17 +7,18 @@ export interface LoginResponse {
     user_name: string;
     user_id: string;
     avatar: string;
+    service_mode: string;
 }
 
 export async function LoginWithAccessToken(accessToken: string): Promise<LoginResponse> {
     const resp = await instance.post(
         `/login/token`,
-        {},
-        {
-            headers: {
-                'X-Access-Token': accessToken
-            }
-        }
+        {}
+        // {
+        //     headers: {
+        //         'X-Access-Token': accessToken
+        //     }
+        // }
     );
 
     return resp.data.data;

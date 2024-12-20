@@ -41,7 +41,6 @@ export default function Component() {
     const navigate = useNavigate();
 
     function onSelected(key: string, redirect: boolean = false) {
-        console.log('on selected spacesssss');
         if (redirect) {
             if (isChat) {
                 navigate(`/dashboard/${key}/chat`);

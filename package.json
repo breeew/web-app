@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@coolbytes/editorjs-delimiter": "^1.0.3",
     "@editorjs/checklist": "^1.6.0",
     "@editorjs/code": "^2.9.2",
     "@editorjs/editorjs": "^2.30.7",

@@ -7,7 +7,8 @@
     /* 隐藏滚动条 */
 }
 
-.markdown-box option li, .markdown-box ul li,
+.markdown-box option li,
+.markdown-box ul li,
 .markdown-box ol li {
     list-style-type: disc;
     list-style-position: inside;
@@ -19,7 +20,8 @@
     display: inline;
 }
 
-.markdown-box ol, .markdown-box ul {
+.markdown-box ol,
+.markdown-box ul {
     white-space-collapse: collapse;
     white-space: normal;
 }
@@ -29,4 +31,19 @@ pre code.hljs {
     display: block;
     overflow-x: auto;
     padding: 1em;
+}
+
+.journal__todo ul {
+    margin-left: calc(10px * var(--level, 0)); /* 动态缩进 */
+}
+
+/* 手动设置层级 */
+.journal__todo ul:nth-child(2) {
+    --level: 1;
+}
+.journal__todo ul:nth-child(3) {
+    --level: 2;
+}
+.journal__todo ul:nth-child(4) {
+    --level: 3;
 }
