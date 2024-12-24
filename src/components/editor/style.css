@@ -158,8 +158,8 @@
 
 @media (min-width: 651px) {
     .codex-editor__redactor {
-        margin-left: 0;
-        margin-right: 0;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
     }
 }
 

@@ -19,6 +19,7 @@ import { CreateUploadKey, UploadFileToKey } from '@/apis/upload';
 import Video from '@/components/editor/video-component/video-tool';
 import { useToast } from '@/hooks/use-toast';
 import { compressImage } from '@/lib/compress';
+import { cn } from '@/lib/utils';
 import spaceStore from '@/stores/space';
 
 function getUploader(toast: (d: ToastProps) => void, t: (d: string) => string, currentSelectedSpace: string) {
@@ -88,11 +89,12 @@ export interface EditorProps {
     dataType?: string;
     placeholder?: string;
     autofocus?: boolean;
+    className?: string;
     onValueChange?: () => void;
 }
 
 export const Editor = memo(
-    forwardRef(({ data, dataType = '', autofocus = false, placeholder, readOnly, onValueChange }: EditorProps, ref: any) => {
+    forwardRef(({ data, dataType = '', autofocus = false, placeholder, readOnly, className, onValueChange }: EditorProps, ref: any) => {
         const { t } = useTranslation();
         const [isReady, setIsReady] = useState(false);
         const { toast } = useToast();
@@ -288,9 +290,9 @@ export const Editor = memo(
         });
 
         return (
-            <Skeleton isLoaded={isReady}>
-                <div id="brew-editor" className="editor" />
-            </Skeleton>
+            <div id="brew-editor" className={cn(className, 'editor')} />
+            //     <Skeleton isLoaded={isReady}>
+            // </Skeleton>
         );
     })
 );

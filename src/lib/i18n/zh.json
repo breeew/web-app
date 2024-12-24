@@ -108,5 +108,8 @@
     "Welcome to signup": "注册成功，欢迎使用",
     "ResetEmailSended": "一封包含重置密码链接的邮件已发送至您的邮箱，请注意查收",
     "Previous": "向前",
-    "Next": "向后"
+    "Next": "向后",
+    "Please retry": "请重试",
+    "Journal Todos": "日代办",
+    "CreateKnowledge": "创建新的记忆"
 }

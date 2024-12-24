@@ -108,5 +108,8 @@
     "Welcome to signup": "Welcome to sign-up.",
     "ResetEmailSended": "An email containing the password reset link has been sent to your mailbox. Please check it.",
     "Previous": "Previous",
-    "Next": "Next"
+    "Next": "Next",
+    "Please retry": "Please retry",
+    "Journal Todos": "Journal Todos",
+    "CreateKnowledge": "New Memory"
 }

@@ -1,8 +1,9 @@
 import axios, { AxiosError } from 'axios';
+import { UNSAFE_ErrorResponseImpl } from 'react-router-dom';
 
 import { toast } from '@/hooks/use-toast';
 import i18n from '@/lib/i18n';
-import userStore from '@/stores/user';
+import userStore, { logout } from '@/stores/user';
 
 const instance = axios.create({
     baseURL: userStore.host
@@ -55,6 +56,10 @@ instance.interceptors.response.use(
 );
 
 function handleAxiosError(error: AxiosError) {
+    if (error.status && error.status === 403) {
+        setUserInfo(undefined);
+        logout();
+    }
     toast({
         title: 'Request Error',
         // @ts-ignore

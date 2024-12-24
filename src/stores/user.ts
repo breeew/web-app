@@ -20,16 +20,22 @@ export const setHost = (host: string) => {
     ChangeBaseURL(host);
 };
 
+export const logout = () => {
+    userStore.accessToken = '';
+    userStore.loginToken = '';
+    userStore.userInfo = {};
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('login_token');
+};
+
 export const setUserAccessToken = (token: string) => {
     userStore.accessToken = token;
     localStorage.setItem('access_token', token);
-    setUserLoginToken('');
 };
 
 export const setUserLoginToken = (token: strint) => {
     userStore.loginToken = token;
     localStorage.setItem('login_token', token);
-    setUserAccessToken('');
 };
 
 export const setUserInfo = (userInfo?: { userID: string; userName: string; email: string; avatar: string }) => {

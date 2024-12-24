@@ -17,8 +17,8 @@ import IndexPage from '@/pages/index';
 import Login from '@/pages/login';
 import Reset from '@/pages/reset';
 import { buildTower } from '@/stores/socket';
-import spaceStore, { setCurrentSelectedSpace } from '@/stores/space';
-import userStore, { setUserAccessToken, setUserInfo } from '@/stores/user';
+import spaceStore, { loadUserSpaces, setCurrentSelectedSpace } from '@/stores/space';
+import userStore, { logout, setUserInfo } from '@/stores/user';
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
     const { accessToken, loginToken, userInfo } = useSnapshot(userStore);
@@ -51,6 +51,8 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
                         userName: resp.user_name
                     });
 
+                    await loadUserSpaces();
+
                     if (type == 'authorization') {
                         accessToken = `${accessToken}&token-type=authorization`;
                     }
@@ -58,11 +60,11 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
                         console.log('socket connected');
                     });
                 } catch (e: any) {
-                    if (axios.isAxiosError(e) && e.code === '403') {
-                        setUserAccessToken('');
+                    if (axios.isAxiosError(e) && e.status === 403) {
+                        logout();
                     }
 
-                    navigate('/');
+                    navigate('/login');
                 }
             }
             Login(accessToken ? '' : 'authorization', accessToken || loginToken);
@@ -73,12 +75,12 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
 }
 
 function PreLogin({ init, children }: { init: boolean; children: ReactNode }) {
-    const { accessToken, loginToken } = useSnapshot(userStore);
+    const { accessToken, loginToken, userInfo } = useSnapshot(userStore);
     const isLogin = useMemo(() => {
         return accessToken || loginToken;
     }, [accessToken, loginToken]);
 
-    if (isLogin) {
+    if (userInfo) {
         setCurrentSelectedSpace('');
 
         if (init) {

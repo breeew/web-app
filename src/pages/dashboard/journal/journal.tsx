@@ -14,6 +14,7 @@ import {
     Popover,
     PopoverContent,
     PopoverTrigger,
+    Progress,
     ScrollShadow,
     select,
     Select,
@@ -26,10 +27,13 @@ import { Calendar } from '@nextui-org/react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useSnapshot } from 'valtio';
 
-import { Journal } from '@/apis/journal';
+import { GetJournal, Journal, UpsertJournal } from '@/apis/journal';
 import KnowledgeAITaskList from '@/components/ai-tasks-list';
 import { Editor } from '@/components/editor/index';
+import { toast } from '@/hooks/use-toast';
+import spaceStore, { setCurrentSelectedSpace } from '@/stores/space';
 
 const Test_Text = `
 <div>
@@ -152,7 +156,8 @@ export default function Component() {
 
     const [journal, setJournal] = useState<Journal>({});
     const [blocks, setBlocks] = useState<OutputData>();
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isUpdating, setIsUpdating] = useState(false);
 
     const [currentSelectedDate, setCurrentSelectedDate] = useState<CalendarDate>(parseDate(selectDate));
 
@@ -168,55 +173,114 @@ export default function Component() {
         return t.day > currentSelectedDate.day; // 比较日期
     }, [currentSelectedDate]);
 
-    useEffect(() => {
+    const { spaces, currentSelectedSpace } = useSnapshot(spaceStore);
+    const currentSpace = useMemo(() => {
+        return spaces.find(v => v.space_id === spaceID);
+    }, [spaceID, spaces]);
+
+    async function loadData(spaceID: string, selectDate: string) {
         setIsLoading(true);
         try {
-            onBlocksChanged({ blocks: [] });
+            const journal = await GetJournal(spaceID, selectDate);
+            if (journal && journal.content) {
+                onBlocksChanged(journal.content, false);
+                setJournal(journal);
+                if (editor.current) {
+                    editor.current.reRender(journal.content);
+                }
+            } else {
+                onBlocksChanged({ blocks: [] }, false);
+            }
         } catch (e: any) {
-            console.error(e);
+            console.error('get date journal error', e);
+            toast({
+                title: t('Error'),
+                description: t('Please retry')
+            });
         }
         setIsLoading(false);
-    }, [currentSelectedDate]);
+    }
+
+    useEffect(() => {
+        if (!currentSpace) {
+            return;
+        }
+        if (!currentSelectedSpace) {
+            setCurrentSelectedSpace(currentSpace.space_id);
+        }
+
+        if (editor.current) {
+            editor.current.reRender({ blocks: [] });
+            setJournal({});
+        }
+
+        loadData(currentSpace.space_id, selectDate);
+    }, [currentSpace, selectDate]);
 
     const [journalTodos, setJournalTodos] = useState<TodoList[]>([]);
 
-    const onBlocksChanged = useCallback((blocks: OutputData) => {
-        setBlocks(blocks);
-        if (!blocks.blocks) {
-            return;
-        }
-
-        // patch todo list
-        let todos: TodoList[] = [];
-        let previousBlock: OutputBlockData = {};
-        let isConsecutive = false;
-        for (const item of blocks.blocks) {
-            if (item.type === 'listv2' && item.data.style === 'checklist') {
-                if (!isConsecutive) {
-                    // 如果不是连续的checklist，则新增一个todo组
-                    let title = '';
-                    if (previousBlock && previousBlock.type === 'header') {
-                        title = previousBlock.data.text;
-                    }
-                    todos.push({
-                        title: title,
-                        list: []
-                    });
-                }
-                for (const i in item.data.items) {
-                    if (item.data.items[i]) {
-                        todos[todos.length - 1].list.push(parserCheckList(item.id, [i], item.data.items[i]));
-                    }
-                }
-
-                isConsecutive = true;
-            } else {
-                isConsecutive = false;
+    const onBlocksChanged = useCallback(
+        (blocks: OutputData, needToUpdate = true) => {
+            setBlocks(blocks);
+            if (!blocks.blocks) {
+                return;
             }
-            previousBlock = item;
-        }
-        setJournalTodos(todos);
-    }, []);
+
+            if (needToUpdate) {
+                setIsUpdating(true);
+                UpsertJournal(currentSelectedSpace, selectDate, blocks)
+                    .then(res => {
+                        if (!journal) {
+                            GetJournal(currentSelectedSpace, selectDate);
+                        }
+                    })
+                    .catch(e => {
+                        console.error('upert journal error', e);
+                        toast({
+                            title: t('Error'),
+                            description: t('Please retry')
+                        });
+                    })
+                    .finally(e => {
+                        setIsUpdating(false);
+                    });
+            }
+
+            // patch todo list
+            let todos: TodoList[] = [];
+            let previousBlock: OutputBlockData = {};
+            let isConsecutive = false;
+            for (const item of blocks.blocks) {
+                if (item.type === 'listv2' && item.data.style === 'checklist') {
+                    if (!isConsecutive) {
+                        // 如果不是连续的checklist，则新增一个todo组
+                        let title = '';
+                        if (previousBlock && previousBlock.type === 'header') {
+                            title = previousBlock.data.text;
+                        }
+                        todos.push({
+                            title: title,
+                            list: []
+                        });
+                    }
+                    for (const i in item.data.items) {
+                        if (item.data.items[i]) {
+                            todos[todos.length - 1].list.push(parserCheckList(item.id, [i], item.data.items[i]));
+                        }
+                    }
+
+                    isConsecutive = true;
+                } else {
+                    isConsecutive = false;
+                }
+                if (item.type === 'header') {
+                    previousBlock = item;
+                }
+            }
+            setJournalTodos(todos);
+        },
+        [selectDate, UpsertJournal]
+    );
 
     // 通过date跳转
     const redirectTo = useCallback((date: CalendarDate) => {
@@ -247,13 +311,14 @@ export default function Component() {
                     onChange={v => {
                         redirectTo(v);
                     }}
+                    classNames={{ base: '!bg-content2 shadow-none border-none', headerWrapper: 'bg-content2', gridWrapper: 'bg-content2', gridHeader: 'bg-content2' }}
                 />
-                <div className="mt-2 flex w-full flex-col gap-2 px-1">
-                    {journalTodos.length > 0 && <div className="pb-2 px-2 text-zinc-500 text-sm">{t('Journal Todos')}</div>}
+                <div className="mt-2 flex w-full flex-col gap-2 px-4 overflow-hidden text-wrap break-words">
+                    {journalTodos.length > 0 && <div className="pb-2 text-zinc-500 text-sm">{t('Journal Todos')}</div>}
                     {journalTodos.map(v => {
                         return (
                             <>
-                                <h1>{v.title}</h1>
+                                <h1>{v.title.replace(/&nbsp;/gi, '').trim()}</h1>
                                 <div className="journal__todo">{renderTodoListItem(false, v.list)}</div>
                             </>
                         );
@@ -301,15 +366,20 @@ export default function Component() {
     }
 
     function renderTodoListItem(isChild: boolean, list: TodoListItem[]) {
+        if (!list || list.length === 0) {
+            return;
+        }
         return (
-            <ul>
+            <ul key={'todo_title_' + list[0].content}>
                 {list.map(v => {
                     return (
                         <>
                             <li key={v.content} className="cdx-list__item">
                                 <Checkbox
+                                    key={v.content}
                                     value={v.content}
                                     isSelected={v.checked}
+                                    radius="sm"
                                     onChange={e => {
                                         onJournalTodoChanged(blocks, v.id, v.index);
                                     }}
@@ -328,12 +398,19 @@ export default function Component() {
 
     const [readonly, setReadonly] = useState(false);
     return (
-        <section className="h-screen flex flex-col w-full p-4 overflow-hidden items-center">
+        <section className="h-screen flex flex-col w-full p-4 overflow-hidden items-center bg-content2">
+            <KnowledgeAITaskList />
             <header className="flex w-full flex-col items-center gap-4 pb-6 lg:flex-row lg:justify-between">
                 <div className="flex items-center gap-2">
                     <h1 className="">
                         <Breadcrumbs size="lg">
-                            <BreadcrumbItem>Main</BreadcrumbItem>
+                            <BreadcrumbItem
+                                onPress={() => {
+                                    navigate('/dashboard');
+                                }}
+                            >
+                                {currentSpace?.title}
+                            </BreadcrumbItem>
                             <BreadcrumbItem>{t('Journal')}</BreadcrumbItem>
                         </Breadcrumbs>
                     </h1>
@@ -346,54 +423,63 @@ export default function Component() {
                         <PopoverContent className="fle-col flex max-h-[40vh] w-[300px] justify-start gap-3 overflow-scroll p-4">{controlsContent}</PopoverContent>
                     </Popover>
                 </div>
-                <div className="flex items-center gap-2">
-                    <Button size="sm" variant="flat">
-                        Save
-                    </Button>
-                    <Button color="danger" size="sm" variant="flat">
-                        Delete
-                    </Button>
-                </div>
+                <div className="flex items-center gap-2">{(isUpdating || isLoading) && <Progress isIndeterminate size="sm" aria-label="Loading..." className="w-14" />}</div>
             </header>
 
-            <main className="flex gap-10 w-full max-w-[1400px] h-full justify-center overflow-hidden relative">
+            <main className="flex gap-6 w-full max-w-[1400px] h-full justify-center overflow-hidden relative">
                 {/* Controls */}
-                <div className="hidden max-w-[300px] w-[300px] overflow-hidden flex-col gap-4 lg:flex">{controlsContent}</div>
+
+                <div className="hidden max-w-[300px] min-w-[260px] overflow-hidden flex-col gap-4 lg:flex">{controlsContent}</div>
                 {/* Chat */}
-                <div className="relative flex flex-col h-full gap-2 w-full md:max-w-[720px]">
-                    <div className="flex flex-grow w-full max-w-full flex-col gap-2 overflow-hidden relative">
-                        <div className="flex w-full h-[40px] flex-wrap items-center justify-center gap-2 border-b-small border-divider pb-2 sm:justify-between">
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                startContent={<Icon icon="ooui:previous-ltr" width={14} />}
-                                onPress={() => {
-                                    redirectToNumber(-1);
-                                }}
-                            >
-                                {t('Previous')}
-                            </Button>
-                            <p className="text-2xl font-medium">{selectDate}</p>
+                <div className="relative flex flex-col h-full gap-2 pt-10 w-full md:max-w-[720px] rounded-xl bg-content1">
+                    <div className="flex flex-grow w-full max-w-full flex-col box-border px-1 gap-2 overflow-hidden relative">
+                        <div className="flex h-[40px] border-b-small border-divider mx-[52px] flex-wrap items-center justify-center gap-2 pb-12 sm:justify-between">
+                            <p className="text-2xl font-medium">
+                                {selectDate}
+                                {!journal.id && <span className=" text-sm text-zinc-400">&nbsp;(new)</span>}
+                            </p>
 
-                            <Button
-                                variant="ghost"
-                                isDisabled={!haveNextDay}
-                                size="sm"
-                                endContent={<Icon icon="ooui:previous-rtl" width={14} />}
-                                onPress={() => {
-                                    redirectToNumber(1);
-                                }}
-                            >
-                                {t('Next')}
-                            </Button>
+                            <ButtonGroup>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    startContent={<Icon icon="ooui:previous-ltr" width={14} />}
+                                    onPress={() => {
+                                        redirectToNumber(-1);
+                                    }}
+                                >
+                                    {t('Previous')}
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    isDisabled={!haveNextDay}
+                                    size="sm"
+                                    endContent={<Icon icon="ooui:previous-rtl" width={14} />}
+                                    onPress={() => {
+                                        redirectToNumber(1);
+                                    }}
+                                >
+                                    {t('Next')}
+                                </Button>
+                            </ButtonGroup>
                         </div>
 
-                        <div className="flex-1 overflow-hidden">
-                            <ScrollShadow hideScrollBar className="flex flex-col h-full flex-grow pl-[60px]">
-                                {blocks && <Editor ref={editor} autofocus data={blocks} dataType="blocks" placeholder={t('knowledgeCreateContentLabelPlaceholder')} onValueChange={onBlocksChanged} />}
-                            </ScrollShadow>
+                        <div className="flex-1 overflow-hidden overflow-y-auto ">
+                            {/* <ScrollShadow hideScrollBar className="flex flex-col h-full flex-grow px-[60px]">
+                                </ScrollShadow> */}
+                            {isLoading || (
+                                <Editor
+                                    ref={editor}
+                                    className="px-[60px]"
+                                    autofocus
+                                    data={blocks}
+                                    dataType="blocks"
+                                    placeholder={t('knowledgeCreateContentLabelPlaceholder')}
+                                    onValueChange={onBlocksChanged}
+                                />
+                            )}
                         </div>
-                        <div className="flex h-13 justify-center items-center">
+                        <div className="flex h-10 justify-center items-center">
                             <ButtonGroup variant="flat" size="base" className="mb-4">
                                 <Button color="primary">{t('Save')}</Button>
                                 <Button color="danger">{t('Delete')}</Button>
@@ -408,9 +494,9 @@ export default function Component() {
                         </div>
                     </div>
                 </div>
-                <div className="hidden max-w-[300px] w-[300px] gap-4 xl:flex justify-end">
-                    <KnowledgeAITaskList />
-                    <Button variant="ghost">快速创建记忆</Button>
+                <div className="hidden max-w-[300px] min-w-[260px] gap-4 xl:flex justify-end">
+                    {/* TODO: New Knowledge & AI QA */}
+                    {/* <Button variant="ghost">{t("CreateKnowledge")}</Button> */}
                 </div>
             </main>
         </section>
