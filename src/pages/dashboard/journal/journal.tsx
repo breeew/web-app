@@ -394,9 +394,7 @@ export default function Component() {
             </ul>
         );
     }
-    const todoRender = useMemo(() => {}, [journalTodos]);
-
-    const [readonly, setReadonly] = useState(false);
+    
     return (
         <section className="h-screen flex flex-col w-full p-4 overflow-hidden items-center bg-content2">
             <KnowledgeAITaskList />
