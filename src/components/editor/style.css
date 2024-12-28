@@ -226,3 +226,14 @@ video {
     height: auto;
     object-fit: contain; /* 根据需求选择：cover / fill / contain */
 }
+
+.editor .ce-delimiter-line {
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.editor .ce-delimiter-line hr {
+    border-color: var(--color-border);
+}

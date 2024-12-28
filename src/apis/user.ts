@@ -13,12 +13,12 @@ export interface LoginResponse {
 export async function LoginWithAccessToken(accessToken: string): Promise<LoginResponse> {
     const resp = await instance.post(
         `/login/token`,
-        {}
-        // {
-        //     headers: {
-        //         'X-Access-Token': accessToken
-        //     }
-        // }
+        {},
+        {
+            headers: {
+                'X-Access-Token': accessToken
+            }
+        }
     );
 
     return resp.data.data;

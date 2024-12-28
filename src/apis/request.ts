@@ -3,7 +3,7 @@ import { UNSAFE_ErrorResponseImpl } from 'react-router-dom';
 
 import { toast } from '@/hooks/use-toast';
 import i18n from '@/lib/i18n';
-import userStore, { logout } from '@/stores/user';
+import userStore from '@/stores/user';
 
 const instance = axios.create({
     baseURL: userStore.host
@@ -13,9 +13,9 @@ export function ChangeBaseURL(url: string) {
     instance.defaults.baseURL = url;
 }
 
-const ACCESS_TOKEN_KEY = 'X-Access-Token';
-const AUTH_TOKEN_KEY = 'X-Authorization';
-const ACCEPT_LANGUAGE_KEY = 'Accept-Language';
+export const ACCESS_TOKEN_KEY = 'X-Access-Token';
+export const AUTH_TOKEN_KEY = 'X-Authorization';
+export const ACCEPT_LANGUAGE_KEY = 'Accept-Language';
 
 instance.interceptors.request.use(
     function (config) {
@@ -56,10 +56,10 @@ instance.interceptors.response.use(
 );
 
 function handleAxiosError(error: AxiosError) {
-    if (error.status && error.status === 403) {
-        setUserInfo(undefined);
-        logout();
-    }
+    // if (error.status && error.status === 403) {
+    //     setUserInfo(undefined);
+    //     logout();
+    // }
     toast({
         title: 'Request Error',
         // @ts-ignore

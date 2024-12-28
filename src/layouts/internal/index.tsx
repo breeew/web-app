@@ -1,10 +1,12 @@
 import { Icon } from '@iconify/react';
+import { getLocalTimeZone, today } from '@internationalized/date';
 import {
     Button,
     Card,
     CardBody,
     CardFooter,
     Chip,
+    cn,
     Dropdown,
     DropdownItem,
     DropdownMenu,
@@ -17,7 +19,6 @@ import {
     useDisclosure,
     User
 } from '@nextui-org/react';
-import { cn } from '@nextui-org/react';
 import React, { Key, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -40,7 +41,7 @@ import resourceStore, { setCurrentSelectedResource, setSpaceResource } from '@/s
 import sessionStore, { setCurrentSelectedSession } from '@/stores/session';
 import { closeSocket } from '@/stores/socket';
 import spaceStore from '@/stores/space';
-import userStore, { setUserAccessToken, setUserInfo } from '@/stores/user';
+import userStore, { logout, setUserAccessToken, setUserInfo } from '@/stores/user';
 
 interface SidebarItem {
     id: string;
@@ -129,8 +130,7 @@ export default function Component({ children }: { children: React.ReactNode }) {
         switch (actionName) {
             case 'logout':
                 closeSocket();
-                setUserInfo(undefined);
-                setUserAccessToken('');
+                logout();
                 navigate('/');
                 break;
             case 'setting':
@@ -150,6 +150,11 @@ export default function Component({ children }: { children: React.ReactNode }) {
         },
         [currentSelectedSpace]
     );
+
+    function goJournal() {
+        const t = today(getLocalTimeZone()).toString();
+        navigate(`/dashboard/${currentSelectedSpace}/journal/${t}`);
+    }
 
     return (
         <div className="flex h-dvh w-full gap-4 dark:bg-zinc-900">
@@ -187,7 +192,7 @@ export default function Component({ children }: { children: React.ReactNode }) {
                         {!isChat && (
                             <>
                                 <Spacer y={4} />
-                                <Button className="mx-1" startContent={<Icon icon="stash:data-date" width={24} />} onPress={() => navigate(`/dashboard/${currentSelectedSpace}/journal/2024-12-20`)}>
+                                <Button className="mx-1" startContent={<Icon icon="stash:data-date" width={24} />} onPress={goJournal}>
                                     {t('Journal')}
                                 </Button>
                             </>

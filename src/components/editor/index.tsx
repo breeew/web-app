@@ -1,3 +1,4 @@
+import Delimiter from '@coolbytes/editorjs-delimiter';
 import CodeTool from '@editorjs/code';
 import EditorJS, { BlockToolData, OutputBlockData, OutputData } from '@editorjs/editorjs';
 import Header from '@editorjs/header';
@@ -165,7 +166,7 @@ export const Editor = memo(
             };
 
             const editor = new EditorJS({
-                minHeight: 620, // https://github.com/codex-team/editor.js/issues/1300
+                minHeight: 360, // https://github.com/codex-team/editor.js/issues/1300
                 placeholder: placeholder,
                 readOnly: readOnly,
                 autofocus: !readOnly && autofocus,
@@ -232,6 +233,16 @@ export const Editor = memo(
                             captionPlaceholder: "Quote's author"
                         },
                         shortcut: 'CMD+SHIFT+O'
+                    },
+                    delimiter: {
+                        class: Delimiter,
+                        config: {
+                            styleSptions: ['line'],
+                            defaultStyle: 'line',
+                            lineWidthOptions: [25, 50, 60, 100],
+                            defaultLineWidth: 60,
+                            defaultLineThickness: 1
+                        }
                     },
                     marker: {
                         class: Marker,

@@ -23,7 +23,7 @@
     "@editorjs/marker": "^1.4.0",
     "@editorjs/quote": "^2.7.2",
     "@editorjs/simple-image": "^1.6.0",
-    "@editorjs/table": "^2.4.2",
+    "@editorjs/table": "file:../../opensource/editorjs/table",
     "@iconify/react": "4.1.1",
     "@nextui-org/framer-utils": "^2.1.4",
     "@nextui-org/react": "^2.6.8",

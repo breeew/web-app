@@ -88,7 +88,7 @@
     "createSpaceDescriptionLabel": "空间描述",
     "knowledgeCreateButtonTitle": "开始酝酿你的记忆",
     "knowledgeCreateContentLabel": "记忆内容",
-    "knowledgeCreateContentLabelPlaceholder": "输入你的想法或知识点来生成新的记忆，通过\"/\"唤起命令栏",
+    "knowledgeCreateContentLabelPlaceholder": "键入 \"/\" 快速唤起命令栏",
     "knowledgeCreateResourceLable": "资源类型",
     "knowledgeCreateResourceLablePlaceholder": "输入你的资源类型，默认为knowledge",
     "showRelevanceDocs": "展示可能关联的内容",
@@ -111,5 +111,6 @@
     "Next": "向后",
     "Please retry": "请重试",
     "Journal Todos": "日代办",
-    "CreateKnowledge": "创建新的记忆"
+    "CreateKnowledge": "创建新的记忆",
+    "Quick Create Knowledge": "快速创建新记忆"
 }

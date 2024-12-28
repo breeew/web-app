@@ -88,7 +88,7 @@
     "createSpaceDescriptionLabel": "Space Description",
     "knowledgeCreateButtonTitle": "Brew your memory.",
     "knowledgeCreateContentLabel": "Memory Content",
-    "knowledgeCreateContentLabelPlaceholder": "Type ideas or knowledges to create new memory. Press \"/\" for commands",
+    "knowledgeCreateContentLabelPlaceholder": "Press \"/\" for commands",
     "knowledgeCreateResourceLable": "Resource",
     "knowledgeCreateResourceLablePlaceholder": "Your memory resource type, default is knowledge",
     "showRelevanceDocs": "Show Relevance Docs",
@@ -111,5 +111,6 @@
     "Next": "Next",
     "Please retry": "Please retry",
     "Journal Todos": "Journal Todos",
-    "CreateKnowledge": "New Memory"
+    "CreateKnowledge": "New Memory",
+    "Quick Create Knowledge": "Quick Create Memory"
 }
