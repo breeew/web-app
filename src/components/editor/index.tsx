@@ -20,7 +20,7 @@ import { CreateUploadKey, UploadFileToKey } from '@/apis/upload';
 import Video from '@/components/editor/video-component/video-tool';
 import { useToast } from '@/hooks/use-toast';
 import { compressImage } from '@/lib/compress';
-import { cn } from '@/lib/utils';
+import { cn, randomString } from '@/lib/utils';
 import spaceStore from '@/stores/space';
 
 function getUploader(toast: (d: ToastProps) => void, t: (d: string) => string, currentSelectedSpace: string) {
@@ -103,6 +103,8 @@ export const Editor = memo(
         // console.log('editor data', data, dataType);
         const [editor, setEditor] = useState<EditorJS>();
 
+        const [randomID, setRandomID] = useState(randomString(6));
+
         useEffect(() => {
             const renderFunc = async function (editor: EditorJS, data: string | OutputData, dataType: string) {
                 if (!data) {
@@ -173,7 +175,7 @@ export const Editor = memo(
                 /**
                  * Id of Element that should contain the Editor
                  */
-                holder: 'brew-editor',
+                holder: 'brew-editor-' + randomID,
                 tools: {
                     /**
                      * Each Tool is a Plugin. Pass them via 'class' option with necessary settings {@link docs/tools.md}
@@ -301,7 +303,7 @@ export const Editor = memo(
         });
 
         return (
-            <div id="brew-editor" className={cn(className, 'editor')} />
+            <div id={'brew-editor-' + randomID} className={cn('editor mx-[60px]', className)} />
             //     <Skeleton isLoaded={isReady}>
             // </Skeleton>
         );

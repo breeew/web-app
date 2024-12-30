@@ -150,7 +150,6 @@ const LoginComponent = memo(function LoginComponent({ changeMode }: { changeMode
         setLoading(true);
         try {
             const resp = await Login(email, md5(password));
-            console.log('login resp', resp);
             setCurrentSelectedSpace('');
             setUserSpaces([]);
             setUserLoginToken(resp.token);

@@ -3,7 +3,7 @@ import { ReactNode, useEffect, useMemo } from 'react';
 import { createBrowserRouter, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 
-import { LoginWithAccessToken } from '@/apis/user';
+import { GetUserInfo, LoginWithAccessToken } from '@/apis/user';
 import { App } from '@/App';
 import { autoLoginDirect } from '@/lib/utils';
 import Dashboard from '@/pages/dashboard';
@@ -41,14 +41,13 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
             // load user info
             async function Login(type: string, accessToken: string) {
                 try {
-                    const resp = await LoginWithAccessToken(accessToken);
-
+                    const resp = await GetUserInfo();
                     setUserInfo({
                         userID: resp.user_id,
-                        email: resp.email,
                         // avatar: resp.avatar,
                         avatar: 'https://avatar.vercel.sh/' + resp.user_id,
-                        userName: resp.user_name
+                        userName: resp.user_name,
+                        email: resp.email
                     });
 
                     await loadUserSpaces();

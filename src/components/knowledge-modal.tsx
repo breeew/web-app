@@ -4,11 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { useSnapshot } from 'valtio';
 
 import { GetKnowledge, type Knowledge } from '@/apis/knowledge';
+import { type Resource } from '@/apis/resource';
+import { ListResources } from '@/apis/resource';
 import KnowledgeDeletePopover from '@/components/knowledge-delete-popover';
 import KnowledgeEdit from '@/components/knowledge-edit';
 import KnowledgeView from '@/components/knowledge-view';
 import { useMedia } from '@/hooks/use-media';
 import { useRole } from '@/hooks/use-role';
+import resourceStore, { loadSpaceResource } from '@/stores/resource';
 import spaceStore from '@/stores/space';
 
 export interface ViewKnowledgeProps {
@@ -106,6 +109,32 @@ const ViewKnowledge = memo(
             onClose();
         }, []);
 
+        const { currentSpaceResources } = useSnapshot(resourceStore);
+        const reloadSpaceResource = useCallback(async (spaceID: string) => {
+            try {
+                await loadSpaceResource(spaceID);
+            } catch (e: any) {
+                console.error(e);
+            }
+        }, []);
+
+        useEffect(() => {
+            if (!currentSelectedSpace || currentSpaceResources) {
+                return;
+            }
+            loadSpaceResource(currentSelectedSpace);
+        }, [currentSelectedSpace, currentSpaceResources]);
+
+        const knowledgeResource = useMemo(() => {
+            if (!knowledge) {
+                return '';
+            }
+
+            const resource = currentSpaceResources.find((v: Resource) => v.id === knowledge.resource);
+
+            return resource ? resource.title : knowledge.resource;
+        }, [knowledge, currentSpaceResources]);
+
         useImperativeHandle(ref, () => {
             return {
                 show
@@ -123,12 +152,12 @@ const ViewKnowledge = memo(
                                         <Breadcrumbs>
                                             <BreadcrumbItem>Home</BreadcrumbItem>
                                             <BreadcrumbItem onClick={onClose}>{spaceTitle === 'Main' ? t('MainSpace') : spaceTitle}</BreadcrumbItem>
-                                            <BreadcrumbItem>{knowledge.resource}</BreadcrumbItem>
+                                            <BreadcrumbItem>{knowledgeResource}</BreadcrumbItem>
                                             <BreadcrumbItem>{knowledge.id}</BreadcrumbItem>
                                         </Breadcrumbs>
                                     </ModalHeader>
                                     <ModalBody className="w-full overflow-hidden flex flex-col items-center px-0">
-                                        {isEdit ? <KnowledgeEdit knowledge={knowledge} onChange={onChangeFunc} /> : <KnowledgeView knowledge={knowledge} />}
+                                        {isEdit ? <KnowledgeEdit classNames={{ editor: 'mx-0' }} knowledge={knowledge} onChange={onChangeFunc} /> : <KnowledgeView knowledge={knowledge} />}
                                     </ModalBody>
                                     <ModalFooter className="flex justify-center">
                                         {isSpaceViewer ? (

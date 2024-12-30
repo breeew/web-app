@@ -1,24 +1,6 @@
 import { Icon } from '@iconify/react';
 import { getLocalTimeZone, today } from '@internationalized/date';
-import {
-    Button,
-    Card,
-    CardBody,
-    CardFooter,
-    Chip,
-    cn,
-    Dropdown,
-    DropdownItem,
-    DropdownMenu,
-    DropdownSection,
-    DropdownTrigger,
-    Link,
-    ScrollShadow,
-    Skeleton,
-    Spacer,
-    useDisclosure,
-    User
-} from '@nextui-org/react';
+import { Button, Card, CardBody, CardFooter, Chip, cn, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Link, ScrollShadow, Skeleton, Spacer, useDisclosure, User } from '@nextui-org/react';
 import React, { Key, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -26,10 +8,14 @@ import { useImmer } from 'use-immer';
 import { useSnapshot } from 'valtio';
 import { subscribeKey } from 'valtio/utils';
 
+
+
 import NavBar from './navbar';
 import Sidebar from './sidebar';
 import SidebarDrawer from './sidebar-drawer';
 import WorkSpaceSelection from './space-selection';
+
+
 
 import { ChatSession, GetChatSessionList } from '@/apis/chat';
 import { ListResources } from '@/apis/resource';
@@ -37,11 +23,12 @@ import { GithubIcon, Logo } from '@/components/icons';
 import ResourceManage from '@/components/resource-modal';
 import { useChatPageCondition } from '@/hooks/use-chat-page';
 import { useMedia } from '@/hooks/use-media';
-import resourceStore, { setCurrentSelectedResource, setSpaceResource } from '@/stores/resource';
+import resourceStore, { loadSpaceResource, setCurrentSelectedResource, setSpaceResource } from '@/stores/resource';
 import sessionStore, { setCurrentSelectedSession } from '@/stores/session';
 import { closeSocket } from '@/stores/socket';
 import spaceStore from '@/stores/space';
 import userStore, { logout, setUserAccessToken, setUserInfo } from '@/stores/user';
+
 
 interface SidebarItem {
     id: string;
@@ -445,7 +432,7 @@ function useResourceMode() {
         async function (spaceID: string) {
             setResourceLoading(true);
             try {
-                let resp = await ListResources(spaceID);
+                let resp = await loadSpaceResource(spaceID);
                 const items: SidebarItem[] = [
                     {
                         id: '',
@@ -473,7 +460,6 @@ function useResourceMode() {
                     setCurrentSelectedResource(items[0]);
                 }
 
-                setSpaceResource(items);
                 setResourceList(items);
             } catch (e: any) {
                 console.error(e);

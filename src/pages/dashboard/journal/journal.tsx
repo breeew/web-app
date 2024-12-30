@@ -32,6 +32,7 @@ import { useSnapshot } from 'valtio';
 import { GetJournal, Journal, UpsertJournal } from '@/apis/journal';
 import KnowledgeAITaskList from '@/components/ai-tasks-list';
 import { Editor } from '@/components/editor/index';
+import KnowledgeDrawer from '@/components/knowledge-drawer';
 import { toast } from '@/hooks/use-toast';
 import spaceStore, { setCurrentSelectedSpace } from '@/stores/space';
 
@@ -240,26 +241,28 @@ export default function Component() {
     const controlsContent = useMemo(
         () => (
             <div className="flex flex-col gap-6">
-                <Calendar
-                    aria-label="Date (Max Date Value)"
-                    value={currentSelectedDate}
-                    minValue={today(getLocalTimeZone()).add({ days: -31 })}
-                    maxValue={today(getLocalTimeZone())}
-                    onChange={v => {
-                        redirectTo(v);
-                    }}
-                    classNames={{ base: '!bg-content2 shadow-none border-none', headerWrapper: 'bg-content2', gridWrapper: 'bg-content2', gridHeader: 'bg-content2 shadow-none' }}
-                />
-                <div className="mt-2 flex w-full flex-col gap-2 px-4 overflow-hidden text-wrap break-words">
-                    {journalTodos.length > 0 && <div className="pb-2 text-zinc-500 text-sm">{t('Journal Todos')}</div>}
-                    {journalTodos.map(v => {
-                        return (
-                            <>
-                                <h1>{v.title.replace(/&nbsp;/gi, '').trim()}</h1>
-                                <div className="journal__todo">{renderTodoListItem(false, v.list)}</div>
-                            </>
-                        );
-                    })}
+                <div className="mx-auto relative">
+                    <Calendar
+                        aria-label="Date (Max Date Value)"
+                        value={currentSelectedDate}
+                        minValue={today(getLocalTimeZone()).add({ days: -31 })}
+                        maxValue={today(getLocalTimeZone())}
+                        onChange={v => {
+                            redirectTo(v);
+                        }}
+                        classNames={{ base: '!bg-content2 shadow-none border-none mx-auto !block', headerWrapper: 'bg-content2', gridWrapper: 'bg-content2', gridHeader: 'bg-content2 shadow-none' }}
+                    />
+                    <div className="mt-2 flex w-full flex-col gap-2 px-4 overflow-hidden text-wrap break-words">
+                        {journalTodos.length > 0 && <div className="pb-2 text-zinc-500 text-sm">{t('Journal Todos')}</div>}
+                        {journalTodos.map(v => {
+                            return (
+                                <>
+                                    <h1>{v.title.replace(/&nbsp;/gi, '').trim()}</h1>
+                                    <div className="journal__todo">{renderTodoListItem(false, v.list)}</div>
+                                </>
+                            );
+                        })}
+                    </div>
                 </div>
             </div>
         ),
@@ -332,10 +335,14 @@ export default function Component() {
         );
     }
 
+    const editorRender = useMemo(() => {
+        return <>{isLoading || <Editor ref={editor} autofocus data={blocks} dataType="blocks" placeholder={t('knowledgeCreateContentLabelPlaceholder')} onValueChange={onBlocksChanged} />}</>;
+    }, [isLoading]);
+
     return (
         <section className="h-screen flex flex-col w-full p-4 overflow-hidden items-center bg-content2">
             <KnowledgeAITaskList />
-            <header className="flex w-full flex-col items-center gap-4 sm:pb-6 lg:flex-row lg:justify-between">
+            <header className="flex w-full flex-col items-center gap-2 sm:gap-4 pb-4 lg:flex-row lg:justify-between">
                 <div className="flex items-center gap-2">
                     <h1 className="">
                         <Breadcrumbs size="lg">
@@ -358,7 +365,9 @@ export default function Component() {
                         <PopoverContent className="fle-col flex max-h-[40vh] w-[300px] justify-start gap-3 overflow-scroll p-4">{controlsContent}</PopoverContent>
                     </Popover>
                 </div>
-                <div className="flex items-center gap-2">{(isUpdating || isLoading) && <Progress isIndeterminate size="sm" aria-label="Loading..." className="w-14" />}</div>
+                <div className="flex items-center gap-2">
+                    {(isUpdating || isLoading) && <Progress isIndeterminate size="sm" aria-label="Loading..." className="w-14" />} <KnowledgeDrawer temporaryStorage="journal-knowledge" />
+                </div>
             </header>
 
             <main className="flex gap-6 w-full max-w-[1400px] h-full items-stretch justify-center relative">
@@ -403,19 +412,7 @@ export default function Component() {
                         {/* 
                                 </ScrollShadow> */}
 
-                        <div className="flex-1 basis-0 min-h-0 overflow-y-auto overflow-x-hidden">
-                            {isLoading || (
-                                <Editor
-                                    ref={editor}
-                                    className="sm:px-[60px] px-4"
-                                    autofocus
-                                    data={blocks}
-                                    dataType="blocks"
-                                    placeholder={t('knowledgeCreateContentLabelPlaceholder')}
-                                    onValueChange={onBlocksChanged}
-                                />
-                            )}
-                        </div>
+                        <div className="flex-1 basis-0 min-h-0 overflow-y-auto overflow-x-hidden">{editorRender}</div>
 
                         {/* </div> */}
                         <div className="flex h-10 justify-center items-center">

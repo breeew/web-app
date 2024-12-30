@@ -94,9 +94,9 @@
 .dark .ce-conversion-toolbar,
 .dark .ce-inline-toolbar,
 .dark .tc-popover {
-    background-color: hsl(var(--popover));
-    border-color: hsl(var(--border));
-    box-shadow: 0 3px 15px -3px hsl(var(--border) / 0.2);
+    background-color: var(--background);
+    border-color: var(--border);
+    box-shadow: 0 3px 15px -3px var(--border);
 }
 
 .dark .ce-stub {
@@ -165,7 +165,8 @@
 
 @media (min-width: 651px) {
     .ce-toolbar__actions {
-        left: -60px;
+        right: 0 !important;
+        left: -60px !important;
     }
 }
 
@@ -236,4 +237,8 @@ video {
 
 .editor .ce-delimiter-line hr {
     border-color: var(--color-border);
+}
+
+.editor .ce-toolbar {
+    right: auto;
 }

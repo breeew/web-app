@@ -448,7 +448,7 @@ const CreateKnowledgeModal = memo(
                                     </Breadcrumbs>
                                 </ModalHeader>
                                 <ModalBody className="w-full overflow-hidden flex flex-col items-center">
-                                    <KnowledgeEdit knowledge={knowledge} onChange={onChangeFunc} onCancel={onCancelFunc} />
+                                    <KnowledgeEdit classNames={{ editor: 'mx-0' }} knowledge={knowledge} onChange={onChangeFunc} onCancel={onCancelFunc} />
                                 </ModalBody>
                             </>
                         )}

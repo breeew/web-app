@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { ResetPassword } from '@/apis/user';
+import { md5 } from '@/lib/utils';
 
 export default function Component() {
     const [isVisible, setIsVisible] = useState(false);
@@ -31,7 +32,7 @@ export default function Component() {
                 return;
             }
             setIsLoading(true);
-            await ResetPassword(token);
+            await ResetPassword(token, md5(password));
             setIsSuccess(true);
         } catch (e: any) {
             console.error(e);

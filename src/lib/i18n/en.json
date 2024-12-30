@@ -112,5 +112,7 @@
     "Please retry": "Please retry",
     "Journal Todos": "Journal Todos",
     "CreateKnowledge": "New Memory",
-    "Quick Create Knowledge": "Quick Create Memory"
+    "Quick Create Knowledge": "Quick Create Memory",
+    "reset": "Reset {{title}}",
+    "editor": "Editor"
 }

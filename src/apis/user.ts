@@ -11,15 +11,17 @@ export interface LoginResponse {
 }
 
 export async function LoginWithAccessToken(accessToken: string): Promise<LoginResponse> {
-    const resp = await instance.post(
-        `/login/token`,
-        {},
-        {
-            headers: {
-                'X-Access-Token': accessToken
-            }
+    const resp = await instance.get(`/user/info`, {
+        headers: {
+            'X-Access-Token': accessToken
         }
-    );
+    });
+
+    return resp.data.data;
+}
+
+export async function GetUserInfo(): Promise<LoginResponse> {
+    const resp = await instance.get(`/user/info`);
 
     return resp.data.data;
 }
