@@ -114,5 +114,6 @@
     "CreateKnowledge": "创建新的记忆",
     "Quick Create Knowledge": "快速创建新记忆",
     "reset": "重置{{title}}",
-    "editor": "编辑器"
+    "editor": "编辑器",
+    "RelKnowledge": "关联记忆"
 }

@@ -11,6 +11,9 @@ import {
     Checkbox,
     CheckboxGroup,
     cn,
+    Listbox,
+    ListboxItem,
+    ListboxSection,
     Popover,
     PopoverContent,
     PopoverTrigger,
@@ -30,9 +33,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 
 import { GetJournal, Journal, UpsertJournal } from '@/apis/journal';
+import { GetTimeRangeLiteKnowledges } from '@/apis/knowledge';
 import KnowledgeAITaskList from '@/components/ai-tasks-list';
 import { Editor } from '@/components/editor/index';
 import KnowledgeDrawer from '@/components/knowledge-drawer';
+import KnowledgeModal from '@/components/knowledge-modal';
 import { toast } from '@/hooks/use-toast';
 import spaceStore, { setCurrentSelectedSpace } from '@/stores/space';
 
@@ -110,6 +115,18 @@ export default function Component() {
         return t.day > currentSelectedDate.day; // 比较日期
     }, [currentSelectedDate]);
 
+    const havePreviousDay = useMemo(() => {
+        const t = today(getLocalTimeZone()).add({ days: -31 });
+
+        if (t.year !== currentSelectedDate.year) {
+            return t.year < currentSelectedDate.year; // 比较年份
+        }
+        if (t.month !== currentSelectedDate.month) {
+            return t.month < currentSelectedDate.month; // 比较月份
+        }
+        return t.day < currentSelectedDate.day; // 比较日期
+    }, [currentSelectedDate]);
+
     const { spaces, currentSelectedSpace } = useSnapshot(spaceStore);
     const currentSpace = useMemo(() => {
         return spaces.find(v => v.space_id === spaceID);
@@ -156,31 +173,51 @@ export default function Component() {
 
     const [journalTodos, setJournalTodos] = useState<TodoList[]>([]);
 
+    const updateJouranl = useCallback(
+        (blocks: any) => {
+            if (!blocks.blocks) {
+                return;
+            }
+            setIsUpdating(true);
+            UpsertJournal(currentSelectedSpace, selectDate, blocks)
+                .then(res => {
+                    if (!journal) {
+                        GetJournal(currentSelectedSpace, selectDate);
+                    }
+                })
+                .catch(e => {
+                    console.error('upert journal error', e);
+                    toast({
+                        title: t('Error'),
+                        description: t('Please retry')
+                    });
+                })
+                .finally(e => {
+                    setIsUpdating(false);
+                });
+        },
+        [journal, blocks, selectDate, currentSelectedSpace]
+    );
+
+    const [isChanged, setIsChanged] = useState();
+    const [canAutoUpdate, setCanAutoUpdate] = useState(true);
+
     const onBlocksChanged = useCallback(
         (blocks: OutputData, needToUpdate = true) => {
             setBlocks(blocks);
             if (!blocks.blocks) {
                 return;
             }
-
-            if (needToUpdate) {
-                setIsUpdating(true);
-                UpsertJournal(currentSelectedSpace, selectDate, blocks)
-                    .then(res => {
-                        if (!journal) {
-                            GetJournal(currentSelectedSpace, selectDate);
-                        }
-                    })
-                    .catch(e => {
-                        console.error('upert journal error', e);
-                        toast({
-                            title: t('Error'),
-                            description: t('Please retry')
-                        });
-                    })
-                    .finally(e => {
-                        setIsUpdating(false);
-                    });
+            console.log('can', canAutoUpdate);
+            if (needToUpdate && canAutoUpdate) {
+                setCanAutoUpdate(false);
+                setIsChanged(false);
+                setTimeout(() => {
+                    setCanAutoUpdate(true);
+                }, 10000);
+                updateJouranl(blocks);
+            } else {
+                setIsChanged(true);
             }
 
             // patch todo list
@@ -190,15 +227,18 @@ export default function Component() {
             for (const item of blocks.blocks) {
                 if (item.type === 'listv2' && item.data.style === 'checklist') {
                     if (!isConsecutive) {
-                        // 如果不是连续的checklist，则新增一个todo组
+                        // 如果不是连续的checklist
                         let title = '';
                         if (previousBlock && previousBlock.type === 'header') {
                             title = previousBlock.data.text;
                         }
-                        todos.push({
-                            title: title,
-                            list: []
-                        });
+                        // 且Title不同，则新增一个todo组
+                        if (todos.length == 0 || todos[todos.length - 1].title !== title) {
+                            todos.push({
+                                title: title,
+                                list: []
+                            });
+                        }
                     }
                     for (const i in item.data.items) {
                         if (item.data.items[i]) {
@@ -216,7 +256,7 @@ export default function Component() {
             }
             setJournalTodos(todos);
         },
-        [selectDate, currentSelectedSpace]
+        [selectDate, currentSelectedSpace, canAutoUpdate]
     );
 
     // 通过date跳转
@@ -240,7 +280,7 @@ export default function Component() {
 
     const controlsContent = useMemo(
         () => (
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-6  overflow-y-auto pb-16">
                 <div className="mx-auto relative">
                     <Calendar
                         aria-label="Date (Max Date Value)"
@@ -253,7 +293,7 @@ export default function Component() {
                         classNames={{ base: '!bg-content2 shadow-none border-none mx-auto !block', headerWrapper: 'bg-content2', gridWrapper: 'bg-content2', gridHeader: 'bg-content2 shadow-none' }}
                     />
                     <div className="mt-2 flex w-full flex-col gap-2 px-4 overflow-hidden text-wrap break-words">
-                        {journalTodos.length > 0 && <div className="pb-2 text-zinc-500 text-sm">{t('Journal Todos')}</div>}
+                        {journalTodos.length > 0 && <div className="pb-2 text-zinc-500 text-sm font-bold">{t('Journal Todos')}</div>}
                         {journalTodos.map(v => {
                             return (
                                 <>
@@ -267,6 +307,40 @@ export default function Component() {
             </div>
         ),
         [journalTodos]
+    );
+
+    const [knowledges, setKnowledges] = useState();
+    const getTodayKnowledges = useCallback(
+        async (st: number, et: number) => {
+            try {
+                const list = await GetTimeRangeLiteKnowledges(currentSelectedSpace, st, et);
+                setKnowledges(list);
+            } catch (e: any) {
+                console.error(e);
+            }
+        },
+        [currentSelectedSpace]
+    );
+
+    useEffect(() => {
+        if (!currentSelectedDate || !currentSelectedSpace) {
+            return;
+        }
+        const st = currentSelectedDate.toDate(getLocalTimeZone()).getTime() / 1000;
+
+        getTodayKnowledges(st, st + 86400);
+    }, [currentSelectedDate, currentSelectedSpace]);
+
+    const viewKnowledge = useRef(null);
+
+    const showKnowledge = useCallback(
+        (knowledgeID: string) => {
+            if (viewKnowledge && viewKnowledge.current) {
+                // @ts-ignore
+                viewKnowledge.current.show(knowledgeID);
+            }
+        },
+        [viewKnowledge]
     );
 
     const editor = useRef();
@@ -387,6 +461,7 @@ export default function Component() {
                                 <Button
                                     variant="ghost"
                                     size="sm"
+                                    isDisabled={!havePreviousDay}
                                     startContent={<Icon icon="ooui:previous-ltr" width={14} />}
                                     onPress={() => {
                                         redirectToNumber(-1);
@@ -417,8 +492,9 @@ export default function Component() {
                         {/* </div> */}
                         <div className="flex h-10 justify-center items-center">
                             <ButtonGroup variant="ghost" size="base" className="mb-4">
-                                <Button>{t('Save')}</Button>
-                                <Button>{t('Delete')}</Button>
+                                <Button onPress={updateJouranl} color={isChanged ? 'primary' : ''}>
+                                    {t('Save')}
+                                </Button>
                                 <Button
                                     onPress={() => {
                                         navigate(`/dashboard/${spaceID}/knowledge`);
@@ -431,10 +507,35 @@ export default function Component() {
                     </div>
                 </div>
                 <div className="hidden w-[260px] gap-4 xl:flex justify-end">
+                    <Listbox
+                        aria-label="rel docs"
+                        variant="faded"
+                        onAction={key => {
+                            showKnowledge(key as string);
+                        }}
+                        virtualization={{
+                            maxListboxHeight: 600,
+                            itemHeight: 40
+                        }}
+                    >
+                        <ListboxSection title={t('RelKnowledge')} classNames={{ heading: 'text-zinc-500 text-sm font-bold' }}>
+                            {knowledges &&
+                                knowledges.map(v => {
+                                    return (
+                                        <ListboxItem key={v.id} aria-label={v.title} className="overflow-hidden text-wrap break-words break-all flex flex-col items-start">
+                                            {v.title && <div>{v.title}</div>}
+                                            <div> {v.id}</div>
+                                        </ListboxItem>
+                                    );
+                                })}
+                        </ListboxSection>
+                    </Listbox>
                     {/* TODO: New Knowledge & AI QA */}
                     {/* <Button variant="ghost">{t("CreateKnowledge")}</Button> */}
                 </div>
             </main>
+
+            <KnowledgeModal ref={viewKnowledge} />
         </section>
     );
 }

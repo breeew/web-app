@@ -114,5 +114,6 @@
     "CreateKnowledge": "New Memory",
     "Quick Create Knowledge": "Quick Create Memory",
     "reset": "Reset {{title}}",
-    "editor": "Editor"
+    "editor": "Editor",
+    "RelKnowledge": "Relevance Memory"
 }
