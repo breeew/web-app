@@ -173,11 +173,17 @@ export default function Component() {
 
     const [journalTodos, setJournalTodos] = useState<TodoList[]>([]);
 
-    const updateJouranl = useCallback(
+    const updateJournal = useCallback(
         (blocks: any) => {
             if (!blocks.blocks) {
                 return;
             }
+
+            if (updateJournalDebounce.current) {
+                clearTimeout(updateJournalDebounce.current);
+            }
+
+            setIsChanged(false);
             setIsUpdating(true);
             UpsertJournal(currentSelectedSpace, selectDate, blocks)
                 .then(res => {
@@ -199,8 +205,9 @@ export default function Component() {
         [journal, blocks, selectDate, currentSelectedSpace]
     );
 
-    const [isChanged, setIsChanged] = useState();
-    const [canAutoUpdate, setCanAutoUpdate] = useState(true);
+    const [isChanged, setIsChanged] = useState(false);
+    const canAutoUpdate = useRef(true);
+    const updateJournalDebounce = useRef(null);
 
     const onBlocksChanged = useCallback(
         (blocks: OutputData, needToUpdate = true) => {
@@ -208,16 +215,22 @@ export default function Component() {
             if (!blocks.blocks) {
                 return;
             }
-            console.log('can', canAutoUpdate);
-            if (needToUpdate && canAutoUpdate) {
-                setCanAutoUpdate(false);
-                setIsChanged(false);
+
+            if (updateJournalDebounce.current) {
+                clearTimeout(updateJournalDebounce.current);
+            }
+
+            if (needToUpdate && canAutoUpdate.current) {
+                canAutoUpdate.current = false;
                 setTimeout(() => {
-                    setCanAutoUpdate(true);
+                    canAutoUpdate.current = true;
                 }, 10000);
-                updateJouranl(blocks);
-            } else {
+                updateJournal(blocks);
+            } else if (!canAutoUpdate.current) {
                 setIsChanged(true);
+                updateJournalDebounce.current = setTimeout(() => {
+                    updateJournal(blocks);
+                }, 10000);
             }
 
             // patch todo list
@@ -256,7 +269,7 @@ export default function Component() {
             }
             setJournalTodos(todos);
         },
-        [selectDate, currentSelectedSpace, canAutoUpdate]
+        [selectDate, currentSelectedSpace]
     );
 
     // 通过date跳转
@@ -492,7 +505,7 @@ export default function Component() {
                         {/* </div> */}
                         <div className="flex h-10 justify-center items-center">
                             <ButtonGroup variant="ghost" size="base" className="mb-4">
-                                <Button onPress={updateJouranl} color={isChanged ? 'primary' : ''}>
+                                <Button onPress={() => updateJournal(blocks)} isDisabled={!isChanged} color={isChanged ? 'primary' : undefined}>
                                     {t('Save')}
                                 </Button>
                                 <Button
