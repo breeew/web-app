@@ -310,8 +310,10 @@ export default function Component() {
                         {journalTodos.map(v => {
                             return (
                                 <>
-                                    <h1>{v.title.replace(/&nbsp;/gi, '').trim()}</h1>
-                                    <div className="journal__todo">{renderTodoListItem(false, v.list)}</div>
+                                    <h1 key={v.title}>{v.title.replace(/&nbsp;/gi, '').trim()}</h1>
+                                    <div className="journal__todo" key={'todo_title_' + v.title}>
+                                        {renderTodoListItem(false, v.list)}
+                                    </div>
                                 </>
                             );
                         })}
@@ -459,7 +461,6 @@ export default function Component() {
 
             <main className="flex gap-6 w-full max-w-[1400px] h-full items-stretch justify-center relative">
                 {/* Controls */}
-
                 <div className="hidden w-[260px] overflow-hidden flex-col gap-4 lg:flex sticky top-0">{controlsContent}</div>
                 {/* Chat */}
                 <div className="relative flex flex-col h-full gap-2 pt-4 sm:pt-10 w-full md:max-w-[720px] rounded-xl bg-content1 overflow-hidden">

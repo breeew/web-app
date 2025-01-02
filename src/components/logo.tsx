@@ -2,18 +2,7 @@ import React from 'react';
 
 import type { IconSvgProps } from '@/types';
 
-// export const AcmeIcon: React.FC<IconSvgProps> = ({ size = 32, width, height, ...props }) => (
-//     <svg fill="none" height={size || height} viewBox="0 0 32 32" width={size || width} {...props}>
-//         <path
-//             clipRule="evenodd"
-//             d="M17.6482 10.1305L15.8785 7.02583L7.02979 22.5499H10.5278L17.6482 10.1305ZM19.8798 14.0457L18.11 17.1983L19.394 19.4511H16.8453L15.1056 22.5499H24.7272L19.8798 14.0457Z"
-//             fill="currentColor"
-//             fillRule="evenodd"
-//         />
-//     </svg>
-// );
-
-export const AcmeIcon: React.FC<IconSvgProps> = ({ size = 32, width, height, ...props }) => (
+export const LogoIcon: React.FC<IconSvgProps> = ({ size = 32, width, height, ...props }) => (
     <svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="792.000000pt" height="717.000000pt" viewBox="0 0 792.000000 717.000000" preserveAspectRatio="xMidYMid meet">
         <g transform="translate(0.000000,717.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
             <path
@@ -38,3 +27,5 @@ l1049 0 1428 2615 c785 1438 1435 2629 1444 2645 l16 30 -442 810 c-243 445
         </g>
     </svg>
 );
+
+export const Name = import.meta.env.VITE_APP_NAME || 'Brew';

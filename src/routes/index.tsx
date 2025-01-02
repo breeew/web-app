@@ -16,6 +16,7 @@ import Forgot from '@/pages/forgot';
 import IndexPage from '@/pages/index';
 import Login from '@/pages/login';
 import Reset from '@/pages/reset';
+import ShareKnowledge from '@/pages/share/knowledge';
 import { buildTower } from '@/stores/socket';
 import spaceStore, { loadUserSpaces, setCurrentSelectedSpace } from '@/stores/space';
 import userStore, { logout, setUserInfo } from '@/stores/user';
@@ -127,6 +128,10 @@ const routes = createBrowserRouter([
             {
                 path: '/forgot/password',
                 element: <Forgot />
+            },
+            {
+                path: '/s/k/:token', // /share/knowledge
+                element: <ShareKnowledge />
             },
             {
                 path: '/dashboard/:spaceID/journal/:selectDate',

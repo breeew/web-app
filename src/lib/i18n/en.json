@@ -115,5 +115,10 @@
     "Quick Create Knowledge": "Quick Create Memory",
     "reset": "Reset {{title}}",
     "editor": "Editor",
-    "RelKnowledge": "Relevance Memory"
+    "RelKnowledge": "Relevance Memory",
+    "Home": "Home",
+    "Share": "Share",
+    "ShareLink": "Share Link",
+    "StartCyberMemory": "Start your cyber memory",
+    "LinkCopied": "Link Copied"
 }

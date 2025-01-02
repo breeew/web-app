@@ -172,7 +172,13 @@ const LoginComponent = memo(function LoginComponent({ changeMode }: { changeMode
         <div className="flex w-full max-w-sm flex-col gap-4 rounded-large bg-content1 p-6 shadow-small">
             <p className="pb-2 text-xl font-medium">{t('LogIn')}</p>
             {!useTokenLogin ? (
-                <form className="flex flex-col gap-3" onSubmit={e => e.preventDefault()}>
+                <form
+                    className="flex flex-col gap-3"
+                    onSubmit={e => {
+                        e.preventDefault();
+                        login();
+                    }}
+                >
                     <Input label={t('Email Address')} name="email" placeholder="Enter your email" type="email" variant="bordered" onValueChange={setEmail} />
                     <Input
                         endContent={
@@ -199,12 +205,18 @@ const LoginComponent = memo(function LoginComponent({ changeMode }: { changeMode
                             {t('Forgot Password')}?
                         </Link>
                     </div>
-                    <Button color="primary" isLoading={isLoading} onPress={login}>
+                    <Button color="primary" type="submit" isLoading={isLoading}>
                         {t('LogIn')}
                     </Button>
                 </form>
             ) : (
-                <>
+                <form
+                    className="flex flex-col gap-3"
+                    onSubmit={e => {
+                        e.preventDefault();
+                        accessTokenLogin();
+                    }}
+                >
                     <Input
                         label="Access Token"
                         placeholder="Enter your access-token"
@@ -236,10 +248,10 @@ const LoginComponent = memo(function LoginComponent({ changeMode }: { changeMode
                         </Button>
                     )}
 
-                    <Button color="primary" isLoading={isLoading} onPress={accessTokenLogin}>
+                    <Button color="primary" isLoading={isLoading} type="submit">
                         {t('LogIn')}
                     </Button>
-                </>
+                </form>
             )}
             <div className="flex items-center gap-4 py-2">
                 <Divider className="flex-1" />

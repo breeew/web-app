@@ -1,11 +1,15 @@
+import { Icon } from '@iconify/react';
 import { BreadcrumbItem, Breadcrumbs, Button, ButtonGroup, Kbd, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Skeleton, Spacer, useDisclosure } from '@nextui-org/react';
-import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react';
+import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSnapshot } from 'valtio';
+
+import ShareLinkModal from './share-link';
 
 import { GetKnowledge, type Knowledge } from '@/apis/knowledge';
 import { type Resource } from '@/apis/resource';
 import { ListResources } from '@/apis/resource';
+import { CreateKnowledgeShareURL } from '@/apis/share';
 import KnowledgeDeletePopover from '@/components/knowledge-delete-popover';
 import KnowledgeEdit from '@/components/knowledge-edit';
 import KnowledgeView from '@/components/knowledge-view';
@@ -141,6 +145,23 @@ const ViewKnowledge = memo(
             };
         });
 
+        const [shareURL, setShareURL] = useState('');
+        const [createShareLoading, setCreateShareLoading] = useState(false);
+        const shareLink = useRef();
+        const createShareURL = useCallback(async () => {
+            setCreateShareLoading(true);
+            try {
+                const url = await CreateKnowledgeShareURL(knowledge?.space_id, window.location.origin + '/s/k/{token}', knowledge?.id);
+                setShareURL(url);
+                if (shareLink.current) {
+                    shareLink.current.show(url);
+                }
+            } catch (e: any) {
+                console.error(e);
+            }
+            setCreateShareLoading(false);
+        }, [knowledge, shareLink]);
+
         return (
             <>
                 <Modal hideCloseButton backdrop="blur" placement="top-center" size={size} isOpen={isOpen} isKeyboardDismissDisabled={!canEsc} scrollBehavior="inside" onClose={close}>
@@ -148,13 +169,16 @@ const ViewKnowledge = memo(
                         <ModalContent>
                             {onClose => (
                                 <>
-                                    <ModalHeader className="flex flex-col gap-1 dark:text-gray-100 text-gray-800">
+                                    <ModalHeader className="flex gap-1 items-center justify-between dark:text-gray-100 text-gray-800">
                                         <Breadcrumbs>
-                                            <BreadcrumbItem>Home</BreadcrumbItem>
+                                            <BreadcrumbItem>{t('Home')}</BreadcrumbItem>
                                             <BreadcrumbItem onClick={onClose}>{spaceTitle === 'Main' ? t('MainSpace') : spaceTitle}</BreadcrumbItem>
                                             <BreadcrumbItem>{knowledgeResource}</BreadcrumbItem>
                                             <BreadcrumbItem>{knowledge.id}</BreadcrumbItem>
                                         </Breadcrumbs>
+                                        <Button size="sm" variant="faded" endContent={<Icon icon="mingcute:share-3-line" />} isLoading={createShareLoading} onPress={createShareURL}>
+                                            {t('Share')}
+                                        </Button>
                                     </ModalHeader>
                                     <ModalBody className="w-full overflow-hidden flex flex-col items-center px-0">
                                         {isEdit ? <KnowledgeEdit classNames={{ editor: 'mx-0' }} knowledge={knowledge} onChange={onChangeFunc} /> : <KnowledgeView knowledge={knowledge} />}
@@ -228,6 +252,7 @@ const ViewKnowledge = memo(
                             )}
                         </ModalContent>
                     )}
+                    <ShareLinkModal ref={shareLink} />
                 </Modal>
             </>
         );
