@@ -74,7 +74,7 @@
     "Upgrade": "立即升级",
     "preProInfo": "解锁全部功能限制",
     "chatNotice": "对话生成的内容并不一定正确，请核查。",
-    "chatToBrew": "与Brew对话",
+    "chatToBrew": "与{{name}}对话",
     "memories count": "关于{{title}}的记忆共有{{total}}条",
     "createCardTag1": "自动为您生成记忆标题及标签",
     "createCardTag2": "自动为您的记忆进行嵌入",
@@ -120,5 +120,6 @@
     "Share": "分享",
     "ShareLink": "分享链接",
     "StartCyberMemory": "开启你的赛博记忆",
-    "LinkCopied": "链接复制成功"
+    "LinkCopied": "链接复制成功",
+    "Shared on": "分享于"
 }

@@ -1,12 +1,14 @@
 import { Icon } from '@iconify/react';
 import { Button, Divider, Input, Link } from '@nextui-org/react';
+import { AxiosError } from 'axios';
 import { memo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 
 import { Login, LoginWithAccessToken } from '@/apis/user';
-import { Logo } from '@/components/icons';
+import { LogoIcon, Name } from '@/components/logo';
+import { toast } from '@/hooks/use-toast';
 import { md5 } from '@/lib/utils';
 import SignUp from '@/pages/signup';
 import { setCurrentSelectedSpace, setUserSpaces } from '@/stores/space';
@@ -29,8 +31,8 @@ export default function Component() {
             <div className="absolute left-10 top-10">
                 <div className="flex items-center">
                     <Link href="/">
-                        <Logo className="text-white mr-2" size={18} />
-                        <p className="font-medium text-white">Brew</p>
+                        <LogoIcon className="text-white mr-2" size={18} />
+                        <p className="font-medium text-white">{Name}</p>
                     </Link>
                 </div>
             </div>
@@ -162,7 +164,13 @@ const LoginComponent = memo(function LoginComponent({ changeMode }: { changeMode
             });
 
             navigate('/dashboard');
-        } catch (e: any) {
+        } catch (e: AxiosError) {
+            if (e.response?.status === 403) {
+                toast({
+                    title: t('Notify'),
+                    description: e.response.data.meta.message
+                });
+            }
             console.error(e);
         }
         setLoading(false);
@@ -260,7 +268,7 @@ const LoginComponent = memo(function LoginComponent({ changeMode }: { changeMode
             </div>
             <div className="flex flex-col gap-2">
                 <Button startContent={<Icon icon="bitcoin-icons:relay-filled" width={24} />} variant="bordered" onPress={() => setUseTokenLogin(prev => !prev)}>
-                    Continue with {useTokenLogin ? 'Email' : 'Brew-Token'}
+                    Continue with {useTokenLogin ? 'Email' : 'Access Token'}
                 </Button>
                 {/* <Button startContent={<Icon icon="flat-color-icons:google" width={24} />} variant="bordered">
                         Continue with Google

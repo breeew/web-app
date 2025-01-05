@@ -1,7 +1,7 @@
 import { Button, Kbd, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarProps } from '@nextui-org/react';
 import { useTranslation } from 'react-i18next';
 
-import { Logo } from './icons';
+import { LogoIcon } from './logo';
 
 import { useMedia } from '@/hooks/use-media';
 
@@ -26,7 +26,7 @@ export default function Component(props: NavbarProps) {
                 {/* Logo */}
                 <NavbarBrand className="mr-1 w-[40vw] md:w-auto md:max-w-fit">
                     <div className="rounded-full ml-2">
-                        <Logo size={22} />
+                        <LogoIcon size={22} />
                     </div>
                     <span className="ml-2 font-medium md:hidden">Brew</span>
                 </NavbarBrand>

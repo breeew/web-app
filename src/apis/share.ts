@@ -3,6 +3,7 @@ import instance from './request';
 export interface SharedKnowledge {
     user_id: string;
     user_name: string;
+    user_avatar: string;
     knowledge_id: string;
     space_id: string;
     kind: string;
@@ -19,11 +20,16 @@ export async function GetSharedKnowledge(token: string): Promise<SharedKnowledge
     return resp.data.data;
 }
 
-export async function CreateKnowledgeShareURL(spaceID: string, embeddingURL: string, knowledgeID: string): Promise<string> {
+export interface CreateKnowledgeShareURLResponse {
+    token: string;
+    url: string;
+}
+
+export async function CreateKnowledgeShareURL(spaceID: string, embeddingURL: string, knowledgeID: string): Promise<CreateKnowledgeShareURLResponse> {
     let resp = await instance.post(`/space/${spaceID}/knowledge/share`, {
         embedding_url: embeddingURL,
         knowledge_id: knowledgeID
     });
 
-    return embeddingURL.replace('{token}', resp.data.data);
+    return resp.data.data;
 }

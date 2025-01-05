@@ -59,6 +59,7 @@ const ShareLinkModal = memo(
                                         />
                                     )}
                                 </ModalBody>
+                                <ModalFooter></ModalFooter>
                             </>
                         )}
                     </ModalContent>

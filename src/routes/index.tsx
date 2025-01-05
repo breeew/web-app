@@ -17,6 +17,7 @@ import IndexPage from '@/pages/index';
 import Login from '@/pages/login';
 import Reset from '@/pages/reset';
 import ShareKnowledge from '@/pages/share/knowledge';
+import TestIframe from '@/pages/share/test-iframe';
 import { buildTower } from '@/stores/socket';
 import spaceStore, { loadUserSpaces, setCurrentSelectedSpace } from '@/stores/space';
 import userStore, { logout, setUserInfo } from '@/stores/user';
@@ -112,6 +113,11 @@ const routes = createBrowserRouter([
                         <IndexPage />
                     </PreLogin>
                 )
+            },
+            {
+                index: true,
+                path: '/test',
+                element: <TestIframe />
             },
             {
                 path: '/login',

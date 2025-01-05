@@ -1,6 +1,24 @@
 import { Icon } from '@iconify/react';
 import { getLocalTimeZone, today } from '@internationalized/date';
-import { Button, Card, CardBody, CardFooter, Chip, cn, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Link, ScrollShadow, Skeleton, Spacer, useDisclosure, User } from '@nextui-org/react';
+import {
+    Button,
+    Card,
+    CardBody,
+    CardFooter,
+    Chip,
+    cn,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownSection,
+    DropdownTrigger,
+    Link,
+    ScrollShadow,
+    Skeleton,
+    Spacer,
+    useDisclosure,
+    User
+} from '@nextui-org/react';
 import React, { Key, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -8,18 +26,15 @@ import { useImmer } from 'use-immer';
 import { useSnapshot } from 'valtio';
 import { subscribeKey } from 'valtio/utils';
 
-
-
 import NavBar from './navbar';
 import Sidebar from './sidebar';
 import SidebarDrawer from './sidebar-drawer';
 import WorkSpaceSelection from './space-selection';
 
-
-
 import { ChatSession, GetChatSessionList } from '@/apis/chat';
 import { ListResources } from '@/apis/resource';
-import { GithubIcon, Logo } from '@/components/icons';
+import { GithubIcon } from '@/components/icons';
+import { LogoIcon, Name } from '@/components/logo';
 import ResourceManage from '@/components/resource-modal';
 import { useChatPageCondition } from '@/hooks/use-chat-page';
 import { useMedia } from '@/hooks/use-media';
@@ -28,7 +43,6 @@ import sessionStore, { setCurrentSelectedSession } from '@/stores/session';
 import { closeSocket } from '@/stores/socket';
 import spaceStore from '@/stores/space';
 import userStore, { logout, setUserAccessToken, setUserInfo } from '@/stores/user';
-
 
 interface SidebarItem {
     id: string;
@@ -155,9 +169,9 @@ export default function Component({ children }: { children: React.ReactNode }) {
                     <div className="flex items-center justify-between">
                         <Link color="foreground" href="/" className="cursor-pointer">
                             <div className="flex items-center gap-2 px-2">
-                                <Logo size={20} />
+                                <LogoIcon size={20} />
 
-                                <span className="text-lg font-bold">Brew</span>
+                                <span className="text-lg font-bold">{Name}</span>
                             </div>
                         </Link>
                         {/* <div className="flex items-center justify-end">

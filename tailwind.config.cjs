@@ -14,7 +14,37 @@ export default {
   		screens: {
   			xl: '1540px',
   			'2xl': '1860px'
-  		}
+  		},
+		animation: {
+			"shiny-text": "shiny-text 8s infinite",
+			shine: "shine var(--duration) infinite linear",
+			"background-position-spin": "background-position-spin 3000ms infinite alternate"
+		},
+		keyframes: {
+			"shiny-text": {
+				"0%, 90%, 100%": {
+					"background-position": "calc(-100% - var(--shiny-width)) 0",
+				},
+				"30%, 60%": {
+					"background-position": "calc(100% + var(--shiny-width)) 0",
+				}
+			},
+			shine: {
+				"0%": {
+					"background-position": "0% 0%",
+				},
+				"50%": {
+					"background-position": "100% 100%",
+				},
+				to: {
+					"background-position": "0% 0%",
+				}
+			},
+			"background-position-spin": {
+				"0%": { backgroundPosition: "top center" },
+				"100%": { backgroundPosition: "bottom center" }
+			}
+		}
   		// borderRadius: {
   		// 	lg: 'var(--radius)',
   		// 	md: 'calc(var(--radius) - 2px)',

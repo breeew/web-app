@@ -303,7 +303,7 @@ export const Editor = memo(
         });
 
         return (
-            <div id={'brew-editor-' + randomID} className={cn('editor mx-[60px]', className)} />
+            <div id={'brew-editor-' + randomID} className={cn('editor lg:mx-[60px]', className)} />
             //     <Skeleton isLoaded={isReady}>
             // </Skeleton>
         );

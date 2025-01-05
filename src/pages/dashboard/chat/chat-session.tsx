@@ -6,8 +6,8 @@ import { useImmer } from 'use-immer';
 import { useSnapshot } from 'valtio';
 
 import { GenChatMessageID, GetChatSessionHistory, GetMessageExt, MessageDetail, NamedChatSession, SendMessage } from '@/apis/chat';
-import { Logo } from '@/components/icons';
 import KnowledgeModal from '@/components/knowledge-modal';
+import { LogoIcon, Name } from '@/components/logo';
 import useUserAvatar from '@/hooks/use-user-avatar';
 import { FireTowerMsg } from '@/lib/firetower';
 import MessageCard, { type MessageExt } from '@/pages/dashboard/chat/message-card';
@@ -444,7 +444,7 @@ export default function Chat() {
                             {messages.map(({ key, role, message, status, ext }) => (
                                 <MessageCard
                                     key={key}
-                                    avatar={role === 'assistant' ? <Logo /> : <Avatar src={userAvatar} />}
+                                    avatar={role === 'assistant' ? <LogoIcon /> : <Avatar src={userAvatar} />}
                                     message={message}
                                     messageClassName={role === 'user' ? 'bg-content3 text-content3-foreground' : ''}
                                     // showFeedback={role === 'assistant'}
@@ -505,7 +505,7 @@ export default function Chat() {
                                 buttonIcon: 'text-background',
                                 input: 'placeholder:text-default-500'
                             }}
-                            placeholder={t('chatToBrew')}
+                            placeholder={t('chatToBrew', { name: Name })}
                             onSubmitFunc={query}
                         />
                         <p className="p-2 text-center text-small font-medium leading-5 text-default-500">{t('chatNotice')}</p>

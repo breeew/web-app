@@ -8,6 +8,7 @@ import PromptInputWithEnclosedActions from './prompt-input-with-enclosed-actions
 import { CreateChatSession } from '@/apis/chat';
 import { Logo } from '@/components/icons';
 import spaceStore from '@/stores/space';
+import { Name } from '@/components/logo';
 
 export default function Chat() {
     const navigate = useNavigate();
@@ -57,7 +58,7 @@ export default function Chat() {
                                 buttonIcon: 'text-background',
                                 input: 'placeholder:text-default-500'
                             }}
-                            placeholder={t('chatToBrew')}
+                            placeholder={t('chatToBrew', {name: Name})}
                             onSubmitFunc={onSubmit}
                         />
                         <p className="p-2 text-center text-small font-medium leading-5 text-default-500">{t('chatNotice')}</p>

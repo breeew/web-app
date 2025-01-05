@@ -151,16 +151,30 @@ const ViewKnowledge = memo(
         const createShareURL = useCallback(async () => {
             setCreateShareLoading(true);
             try {
-                const url = await CreateKnowledgeShareURL(knowledge?.space_id, window.location.origin + '/s/k/{token}', knowledge?.id);
-                setShareURL(url);
+                const res = await CreateKnowledgeShareURL(knowledge?.space_id, window.location.origin + '/s/k/{token}', knowledge?.id);
+                setShareURL(res.url);
                 if (shareLink.current) {
-                    shareLink.current.show(url);
+                    shareLink.current.show(res.url);
                 }
             } catch (e: any) {
                 console.error(e);
             }
             setCreateShareLoading(false);
         }, [knowledge, shareLink]);
+
+        const editor = useRef();
+        const [saveLoading, setSaveLoading] = useState(false);
+        const submit = useCallback(async () => {
+            if (editor.current) {
+                setSaveLoading(true);
+                try {
+                    await editor.current.submit();
+                } catch (e: any) {
+                    console.error(e);
+                }
+                setSaveLoading(false);
+            }
+        });
 
         return (
             <>
@@ -181,7 +195,11 @@ const ViewKnowledge = memo(
                                         </Button>
                                     </ModalHeader>
                                     <ModalBody className="w-full overflow-hidden flex flex-col items-center px-0">
-                                        {isEdit ? <KnowledgeEdit classNames={{ editor: 'mx-0' }} knowledge={knowledge} onChange={onChangeFunc} /> : <KnowledgeView knowledge={knowledge} />}
+                                        {isEdit ? (
+                                            <KnowledgeEdit ref={editor} hideSubmit classNames={{ editor: 'mx-0' }} knowledge={knowledge} onChange={onChangeFunc} />
+                                        ) : (
+                                            <KnowledgeView knowledge={knowledge} />
+                                        )}
                                     </ModalBody>
                                     <ModalFooter className="flex justify-center">
                                         {isSpaceViewer ? (
@@ -205,9 +223,15 @@ const ViewKnowledge = memo(
                                                         }
                                                     })()}
                                                 </Button>
-                                                <KnowledgeDeletePopover knowledge={knowledge} onDelete={onDeleteFunc}>
-                                                    <Button color="danger">{t('Delete')}</Button>
-                                                </KnowledgeDeletePopover>
+                                                {isEdit ? (
+                                                    <Button color="primary" onPress={submit}>
+                                                        {t('Save')}
+                                                    </Button>
+                                                ) : (
+                                                    <KnowledgeDeletePopover knowledge={knowledge} onDelete={onDeleteFunc}>
+                                                        <Button color="danger">{t('Delete')}</Button>
+                                                    </KnowledgeDeletePopover>
+                                                )}
 
                                                 <Button onPress={onClose}>
                                                     {t('Close')} {canEsc && <Kbd>Esc</Kbd>}

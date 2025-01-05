@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, User, useState } from 'react';
+import { User } from '@nextui-org/react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
@@ -16,6 +17,9 @@ export default function () {
         setIsLoading(true);
         try {
             let data = await GetSharedKnowledge(token);
+            if (data.user_avatar === '') {
+                data.user_avatar = 'https://avatar.vercel.sh/' + data.user_id;
+            }
             console.log(data);
             setKnowledge(data);
         } catch (e: any) {
@@ -34,11 +38,12 @@ export default function () {
                 {knowledge && knowledge.user_name && (
                     <div className="flex flex-col gap-4">
                         <User
+                            className="mt-4"
                             avatarProps={{
-                                src: 'https://i.pravatar.cc/150?u=a04258114e29026702d'
+                                src: knowledge.user_avatar
                             }}
-                            description="Product Designer"
-                            name="Jane Doe"
+                            description={t('Shared on') + ' ' + new Date(knowledge.created_at * 1000).toLocaleDateString()}
+                            name={knowledge.user_name}
                         />
                     </div>
                 )}
@@ -52,15 +57,13 @@ export default function () {
                 {/* Controls */}
                 <div className="hidden w-[260px] overflow-hidden flex-col gap-4 lg:flex sticky top-0">{controlsContent}</div>
                 {/* Chat */}
-                <div className="relative flex flex-col h-full gap-2 pt-4 sm:pt-10 w-full md:max-w-[720px] rounded-xl bg-content1 overflow-hidden">
-                    <div className="flex flex-grow w-full max-w-full flex-col box-border px-1 gap-2 relative overflow-hidden">
-                        <div className="flex sm:h-[40px] border-b-small border-divider flex-col sm:flex-row mx-4 sm:mx-[52px] flex-wrap items-center justify-center gap-2 pb-4 sm:pb-12 sm:justify-between">
+                <div className="relative flex flex-col h-full gap-2 w-full md:max-w-[720px] rounded-xl bg-content1 overflow-hidden">
+                    <div className="flex flex-grow w-full max-w-full flex-col box-border px-1 gap-2 relative overflow-y-auto overflow-x-hidden">
+                        <div className="flex sm:h-[40px] pt-10 border-b-small border-divider flex-col sm:flex-row mx-4 sm:mx-[52px] flex-wrap items-center justify-center gap-2 pb-4 sm:pb-12 sm:justify-between">
                             <p className="text-2xl font-medium">{knowledge.title}</p>
                         </div>
 
-                        <div className="flex-1 basis-0 min-h-0 overflow-y-auto overflow-x-hidden">
-                            {knowledge.content && <Editor readOnly data={knowledge.content} dataType={knowledge.content_type} />}
-                        </div>
+                        <div className="flex-1 basis-0 min-h-0 mx-4 lg:mx-0">{knowledge.content && <Editor readOnly data={knowledge.content} dataType={knowledge.content_type} />}</div>
                     </div>
                 </div>
                 <div className="hidden w-[260px] gap-4 xl:flex justify-end">

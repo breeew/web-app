@@ -3,6 +3,7 @@ import type { NavbarProps } from '@nextui-org/react';
 import { useTranslation } from 'react-i18next';
 
 import { Logo } from '@/components/icons';
+import { LogoIcon, Name } from '@/components/logo';
 import { ThemeSwitch } from '@/components/theme-switch';
 import { useMedia } from '@/hooks/use-media';
 
@@ -35,9 +36,9 @@ export default function Component(props: NavbarProps) {
                     {/* Logo */}
                     <NavbarBrand className="ml-2 w-[40vw] md:w-auto md:max-w-fit">
                         <div className="rounded-full">
-                            <Logo size={24} />
+                            <LogoIcon size={24} />
                         </div>
-                        <span className="ml-2 font-medium md:hidden">Brew</span>
+                        <span className="ml-2 font-medium md:hidden">{Name}</span>
                     </NavbarBrand>
 
                     {/* Items */}
