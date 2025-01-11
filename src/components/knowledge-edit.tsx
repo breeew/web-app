@@ -292,7 +292,7 @@ export default memo(
                             {hideSubmit || (
                                 <div className="flex gap-4 justify-end">
                                     {onCancel && (
-                                        <Button className="mt-6 float-right w-32 text-white bg-zinc-400 dark:bg-zinc-500" onClick={onCancel}>
+                                        <Button className="mt-6 float-right w-32 text-white bg-zinc-400 dark:bg-zinc-500" onPress={onCancel}>
                                             {t('Cancel')}
                                         </Button>
                                     )}
@@ -300,7 +300,7 @@ export default memo(
                                     <Button
                                         className="mt-6 float-right w-32 text-white bg-gradient-to-br from-pink-400 to-indigo-400 dark:from-indigo-500 dark:to-pink-500"
                                         isLoading={isLoading}
-                                        onClick={submit}
+                                        onPress={submit}
                                     >
                                         {t('Submit')}
                                     </Button>

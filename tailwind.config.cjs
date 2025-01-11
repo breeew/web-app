@@ -18,7 +18,9 @@ export default {
 		animation: {
 			"shiny-text": "shiny-text 8s infinite",
 			shine: "shine var(--duration) infinite linear",
-			"background-position-spin": "background-position-spin 3000ms infinite alternate"
+			"background-position-spin": "background-position-spin 3000ms infinite alternate",
+			marquee: "marquee var(--duration) linear infinite",
+	        "marquee-vertical": "marquee-vertical var(--duration) linear infinite",
 		},
 		keyframes: {
 			"shiny-text": {
@@ -43,6 +45,14 @@ export default {
 			"background-position-spin": {
 				"0%": { backgroundPosition: "top center" },
 				"100%": { backgroundPosition: "bottom center" }
+			},
+			marquee: {
+				from: { transform: "translateX(0)" },
+				to: { transform: "translateX(calc(-100% - var(--gap)))" },
+			},
+			"marquee-vertical": {
+				from: { transform: "translateY(0)" },
+				to: { transform: "translateY(calc(-100% - var(--gap)))" },
 			}
 		}
   		// borderRadius: {

@@ -72,7 +72,7 @@ export default function Component(props: TextAreaProps & { classNames?: Record<'
                                 isDisabled={!prompt}
                                 radius="full"
                                 variant={!prompt ? 'flat' : 'solid'}
-                                onClick={() => {
+                                onPress={() => {
                                     props.onSubmitFunc(prompt);
                                     setPrompt('');
                                 }}

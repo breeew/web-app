@@ -168,7 +168,7 @@ const ResourceManage = memo(
                                         <Button
                                             className="mt-6 float-right w-32 text-white bg-gradient-to-br from-pink-300 to-indigo-300 dark:from-indigo-500 dark:to-pink-500"
                                             isLoading={isLoading}
-                                            onClick={isCreate ? create : update}
+                                            onPress={isCreate ? create : update}
                                         >
                                             {isCreate ? t('Submit') : t('Update')}
                                         </Button>

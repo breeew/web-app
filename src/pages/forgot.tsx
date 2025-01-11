@@ -70,7 +70,7 @@ export default function Component() {
                             onValueChange={setEmail}
                         />
                         <div className="flex w-full items-center justify-between px-1 py-2"></div>
-                        <Button className="w-full" color="primary" isLoading={isLoading} isDisabled={!email} onClick={requestReset}>
+                        <Button className="w-full" color="primary" isLoading={isLoading} isDisabled={!email} onPress={requestReset}>
                             {t('ResetPassword')}
                         </Button>
                     </div>

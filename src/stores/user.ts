@@ -9,7 +9,9 @@ const userStore = proxy<UserStore>({
         userID: '',
         userName: '',
         avatar: '',
-        email: ''
+        email: '',
+        planID: '',
+        serviceMode: ''
     },
     host: localStorage.getItem('self-host') || import.meta.env.VITE_BASE_URL
 });
@@ -38,13 +40,15 @@ export const setUserLoginToken = (token: strint) => {
     localStorage.setItem('login_token', token);
 };
 
-export const setUserInfo = (userInfo?: { userID: string; userName: string; email: string; avatar: string }) => {
+export const setUserInfo = (userInfo?: UserInfo) => {
     if (!userInfo) {
         userStore.userInfo = {
             email: '',
             userID: '',
             userName: '',
-            avatar: ''
+            avatar: '',
+            planID: '',
+            serviceMode: ''
         };
 
         return;
@@ -53,7 +57,9 @@ export const setUserInfo = (userInfo?: { userID: string; userName: string; email
         userID: userInfo.userID,
         userName: userInfo.userName,
         avatar: userInfo.avatar,
-        email: userInfo.email
+        email: userInfo.email,
+        planID: userInfo.planID,
+        serviceMode: userInfo.serviceMode
     };
 };
 

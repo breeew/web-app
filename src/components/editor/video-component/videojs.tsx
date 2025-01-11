@@ -36,7 +36,7 @@ export default function VideoComponent(props: VideoProps) {
         <>
             {props.src && (
                 <video ref={videoEl} controls className="video-js" preload="auto" crossOrigin="anonymous">
-                    <source src={props.src} />
+                    <source src={props.src + '#t=0.1'} />
                 </video>
             )}
         </>

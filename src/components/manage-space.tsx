@@ -69,7 +69,7 @@ const ManageSpaceComponent = forwardRef(({ space, className, label, variant, rad
 
     return (
         <>
-            <Button {...{ className, variant, radius }} onClick={trigger}>
+            <Button {...{ className, variant, radius }} onPress={trigger}>
                 {label}
             </Button>
             <Modal backdrop="blur" className="z-[1000000]" isOpen={isOpen} onClose={onClose}>

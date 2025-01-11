@@ -94,14 +94,14 @@ export default function App({ temporaryStorage }: KnowledgeDrawerProps) {
                             <DrawerFooter className="flex gap-4">
                                 {temporaryStorage && (
                                     <Button className="sm:w-[50%]" variant="ghost" onPress={resetEditor}>
-                                        {t('reset', {title: t('editor')})}
+                                        {t('reset', { title: t('editor') })}
                                     </Button>
                                 )}
 
                                 <Button
                                     className="m-auto sm:w-[50%] text-white bg-gradient-to-br from-pink-400 to-indigo-400 dark:from-indigo-500 dark:to-pink-500"
                                     isLoading={isLoading}
-                                    onClick={async () => {
+                                    onPress={async () => {
                                         try {
                                             await submit();
                                             onClose();

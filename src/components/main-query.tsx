@@ -26,7 +26,7 @@ export default function Component(props: NavbarProps) {
                 {/* Logo */}
                 <NavbarBrand className="mr-1 w-[40vw] md:w-auto md:max-w-fit">
                     <div className="rounded-full ml-2">
-                        <LogoIcon size={22} />
+                        <LogoIcon size={40} />
                     </div>
                     <span className="ml-2 font-medium md:hidden">Brew</span>
                 </NavbarBrand>
@@ -37,7 +37,7 @@ export default function Component(props: NavbarProps) {
                         aria-label="Got a shot"
                         className="text-sm font-normal text-default-500 bg-transparent pl-0 px-4"
                         endContent={<div className="w-1 h-4 rounded-full bg-black dark:bg-white animate-pulse" />}
-                        onClick={e => {
+                        onPress={e => {
                             if (props.onClick) {
                                 props.onClick(e);
                             }

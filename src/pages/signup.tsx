@@ -26,6 +26,8 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
     const [isConfirmPasswordValid, setIsConfirmPasswordValid] = useState(true);
     const [isVerifyCodeValid, setIsVerifyCodeValid] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
+    const [spaceName, setSpaceName] = useState(t('MainSpace'));
+    const [isSpaceNameValid, setIsSpaceNameValid] = useState(true);
 
     const togglePasswordVisibility = () => setIsPasswordVisible(!isPasswordVisible);
     const toggleConfirmPasswordVisibility = () => setIsConfirmPasswordVisible(!isConfirmPasswordVisible);
@@ -72,12 +74,19 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
         }
         setIsEmailValid(true);
 
-        if (!userName.length) {
+        if (!userName.length || userName.length > 20) {
             setIsUserNameValid(false);
 
             return;
         }
         setIsUserNameValid(true);
+
+        if (!spaceName.length || spaceName.length > 10) {
+            setIsSpaceNameValid(false);
+
+            return;
+        }
+        setIsSpaceNameValid(true);
 
         paginate(1);
     };
@@ -121,7 +130,7 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
     const handleSignUpSubmit = async () => {
         setIsLoading(true);
         try {
-            await Signup(email, userName, password, verifyCode);
+            await Signup(email, userName, spaceName, password, verifyCode);
             toast({
                 title: t('Notify'),
                 description: t('Welcome to signup')
@@ -191,7 +200,8 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
                                     placeholder="Enter your email"
                                     type="email"
                                     variant="bordered"
-                                    validationState={isEmailValid ? 'valid' : 'invalid'}
+                                    isInvalid={!isEmailValid}
+                                    errorMessage={isEmailValid ? '' : t('InvalidEmail')}
                                     value={email}
                                     onValueChange={value => {
                                         setIsEmailValid(true);
@@ -206,11 +216,36 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
                                     placeholder="Enter your user name"
                                     type="text"
                                     variant="bordered"
-                                    validationState={isUserNameValid ? 'valid' : 'invalid'}
+                                    isInvalid={!isUserNameValid}
                                     value={userName}
+                                    validate={value => {
+                                        if (value.length === 0 || value.length > 20) {
+                                            return 'length between 0 and 20';
+                                        }
+                                    }}
                                     onValueChange={value => {
                                         setIsUserNameValid(true);
                                         setUserName(value);
+                                    }}
+                                />
+
+                                <Input
+                                    isRequired
+                                    label={t('DefaultSpaceName')}
+                                    name="username"
+                                    placeholder="Enter your first space name"
+                                    type="text"
+                                    variant="bordered"
+                                    isInvalid={!isSpaceNameValid}
+                                    value={spaceName}
+                                    validate={value => {
+                                        if (value.length === 0 || value.length > 10) {
+                                            return 'length between 0 and 10';
+                                        }
+                                    }}
+                                    onValueChange={value => {
+                                        setIsSpaceNameValid(true);
+                                        setSpaceName(value);
                                     }}
                                 />
                             </>

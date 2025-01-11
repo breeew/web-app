@@ -83,7 +83,7 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
                             <Button
                                 className="float-right text-white bg-gradient-to-br from-pink-300 from-15%  to-indigo-600 dark:from-indigo-500 dark:to-pink-500"
                                 endContent={<Icon icon="material-symbols:arrow-forward-ios-rounded" />}
-                                onClick={goToKnowledge}
+                                onPress={goToKnowledge}
                             >
                                 {t('View Brain')}
                             </Button>
@@ -94,7 +94,7 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
                         <Button
                             className="float-right text-white bg-gradient-to-br from-pink-300 from-15%  to-indigo-600 dark:from-indigo-500 dark:to-pink-500"
                             startContent={<Icon icon="material-symbols:arrow-back-ios-rounded" />}
-                            onClick={goToChat}
+                            onPress={goToChat}
                         >
                             {t('Back to chat')}
                         </Button>
@@ -122,7 +122,7 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
                     {currentSelectedResource && currentSelectedResource.id && currentSelectedResource.id !== 'knowledge' && (
                         <>
                             <NavbarItem>
-                                <Button radius="full" variant="ghost" className="flex gap-2 text-inherit" onClick={showResourceSetting}>
+                                <Button radius="full" variant="ghost" className="flex gap-2 text-inherit" onPress={showResourceSetting}>
                                     {t('Resource Setting')}
                                 </Button>
                             </NavbarItem>

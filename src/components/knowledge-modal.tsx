@@ -2,6 +2,7 @@ import { Icon } from '@iconify/react';
 import { BreadcrumbItem, Breadcrumbs, Button, ButtonGroup, Kbd, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Skeleton, Spacer, useDisclosure } from '@nextui-org/react';
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 
 import ShareLinkModal from './share-link';
@@ -14,6 +15,7 @@ import KnowledgeDeletePopover from '@/components/knowledge-delete-popover';
 import KnowledgeEdit from '@/components/knowledge-edit';
 import KnowledgeView from '@/components/knowledge-view';
 import { useMedia } from '@/hooks/use-media';
+import { usePlan } from '@/hooks/use-plan';
 import { useRole } from '@/hooks/use-role';
 import resourceStore, { loadSpaceResource } from '@/stores/resource';
 import spaceStore from '@/stores/space';
@@ -176,6 +178,9 @@ const ViewKnowledge = memo(
             }
         });
 
+        const { userIsPro } = usePlan();
+        const navigate = useNavigate();
+
         return (
             <>
                 <Modal hideCloseButton backdrop="blur" placement="top-center" size={size} isOpen={isOpen} isKeyboardDismissDisabled={!canEsc} scrollBehavior="inside" onClose={close}>
@@ -183,20 +188,28 @@ const ViewKnowledge = memo(
                         <ModalContent>
                             {onClose => (
                                 <>
-                                    <ModalHeader className="flex gap-1 items-center justify-between dark:text-gray-100 text-gray-800">
-                                        <Breadcrumbs>
-                                            <BreadcrumbItem>{t('Home')}</BreadcrumbItem>
+                                    <ModalHeader className="flex items-center justify-between dark:text-gray-100 text-gray-800 gap-4">
+                                        <Breadcrumbs className="break-all text-wrap max-w-[66%] overflow-hidden text-ellipsis">
+                                            <BreadcrumbItem
+                                                onClick={() => {
+                                                    navigate('/');
+                                                }}
+                                            >
+                                                {t('Home')}
+                                            </BreadcrumbItem>
                                             <BreadcrumbItem onClick={onClose}>{spaceTitle === 'Main' ? t('MainSpace') : spaceTitle}</BreadcrumbItem>
                                             <BreadcrumbItem>{knowledgeResource}</BreadcrumbItem>
                                             <BreadcrumbItem>{knowledge.id}</BreadcrumbItem>
                                         </Breadcrumbs>
-                                        <Button size="sm" variant="faded" endContent={<Icon icon="mingcute:share-3-line" />} isLoading={createShareLoading} onPress={createShareURL}>
-                                            {t('Share')}
-                                        </Button>
+                                        {!isEdit && userIsPro && (
+                                            <Button size="sm" variant="faded" endContent={<Icon icon="mingcute:share-3-line" />} isLoading={createShareLoading} onPress={createShareURL}>
+                                                {t('Share')}
+                                            </Button>
+                                        )}
                                     </ModalHeader>
                                     <ModalBody className="w-full overflow-hidden flex flex-col items-center px-0">
                                         {isEdit ? (
-                                            <KnowledgeEdit ref={editor} hideSubmit classNames={{ editor: 'mx-0' }} knowledge={knowledge} onChange={onChangeFunc} />
+                                            <KnowledgeEdit ref={editor} hideSubmit classNames={{ editor: '!mx-0' }} knowledge={knowledge} onChange={onChangeFunc} />
                                         ) : (
                                             <KnowledgeView knowledge={knowledge} />
                                         )}
@@ -208,7 +221,7 @@ const ViewKnowledge = memo(
                                             </Button>
                                         ) : (
                                             <ButtonGroup variant="flat" size="base" className="mb-4">
-                                                <Button isDisabled={knowledge.stage !== 3} onClick={changeEditable}>
+                                                <Button isDisabled={knowledge.stage !== 3} onPress={changeEditable}>
                                                     {(() => {
                                                         if (knowledge.stage == 1) {
                                                             return 'Summarizing.';

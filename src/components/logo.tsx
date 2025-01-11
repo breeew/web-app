@@ -1,10 +1,15 @@
 import React from 'react';
 
+import { cn } from '@/lib/utils';
 import type { IconSvgProps } from '@/types';
 
 export const LogoIcon: React.FC<IconSvgProps> = ({ size = 32, width, height, ...props }) => {
+    width = width || size;
+    height = height || size;
     return import.meta.env.VITE_APP_LOGO ? (
-        <div dangerouslySetInnerHTML={{ __html: import.meta.env.VITE_APP_LOGO }} {...props} />
+        <div style={{ width: width + 'px', height: height + 'px' }}>
+            <div dangerouslySetInnerHTML={{ __html: import.meta.env.VITE_APP_LOGO }} {...props} className="w-full h-full" />
+        </div>
     ) : (
         <div className="text-foreground opacity-85">
             <svg

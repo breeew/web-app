@@ -242,3 +242,8 @@ video {
 .editor .ce-toolbar {
     right: auto;
 }
+
+.editor .ce-block {
+    @apply break-words;
+    @apply break-all;
+}

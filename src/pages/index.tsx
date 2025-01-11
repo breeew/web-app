@@ -1,17 +1,29 @@
 import { Button, cn, Image, Link, Snippet } from '@nextui-org/react';
+import { t } from 'i18next';
+import { useState } from 'react';
 
+import DotPattern from '@/components/dot-pattern';
 import { DiscordIcon, GithubIcon } from '@/components/icons';
+import AnimatedBeamMultipleOutput from '@/components/index-beam';
+import BentoDemo from '@/components/index-bento-gird';
 import { Name } from '@/components/logo';
 import MorphingText from '@/components/morphing-text';
 import NeonGradientCard from '@/components/neon-gradient-card';
 import Particles from '@/components/particles';
 import { subtitle, title } from '@/components/primitives';
 import SafariBox from '@/components/safari-box';
+import { VelocityScroll } from '@/components/scroll-based-velocity';
 import ShineBorder from '@/components/shine-border';
 import ShinyText from '@/components/shiny-text';
+import SparklesText from '@/components/sparkles-text';
+import TextRevealByWord from '@/components/text-reveal';
 import DefaultLayout from '@/layouts/default';
 
 export default function IndexPage() {
+    const [demoLoaded, setDemoLoaded] = useState(false);
+    function demoOnLoad() {
+        setDemoLoaded(true);
+    }
     return (
         <DefaultLayout>
             <section className="flex h-full flex-col items-center gap-4 py-8 md:py-10">
@@ -27,18 +39,24 @@ export default function IndexPage() {
                     </div>
                 </div>
 
-                <div className="inline-block max-w-xl text-center justify-center">
-                    <span className={title()}>Come&nbsp;</span>
+                <div className="inline-block max-w-2xl text-center justify-center">
+                    <span className={title()}>{t('IndexH1')}&nbsp;</span>
                     <span className={title({ color: 'violet' })}>{Name}&nbsp;</span>
                     <br />
+                    <br />
                     <span className={title()}>
-                        Build your second <span className={title({ color: 'violet' })}>brain</span>.
+                        {t('Build your second')} <span className={title({ color: 'violet' })}>{t('Brain')}</span>
                     </span>
                     {/* <div className={subtitle({ class: 'mt-4' })}>To reach beyond your limits</div> */}
                 </div>
 
                 <div className="flex gap-3 mt-10 mb-24">
-                    <Link href="https://discord.gg/YGrbmbCVRF">
+                    <Link href="/login">
+                        <Button color="primary" className="flex gap-2  items-center">
+                            {t('QuickStart')}
+                        </Button>
+                    </Link>
+                    {/* <Link href="https://discord.gg/YGrbmbCVRF">
                         <Button color="primary" className="flex gap-2  items-center">
                             Document
                         </Button>
@@ -48,10 +66,9 @@ export default function IndexPage() {
                             <GithubIcon />
                             Github
                         </Button>
-                    </Link>
+                    </Link> */}
                 </div>
 
-                <MorphingText className="mb-20" texts={['Oblivion Your Memory', 'To', 'Reach beyond your limits']} />
                 {/* <div className="mt-8">
                     <Snippet hideCopyButton hideSymbol variant="bordered">
                         <span className="flex items-center gap-2">
@@ -64,11 +81,23 @@ export default function IndexPage() {
                     </Snippet>
                 </div> */}
 
-                <NeonGradientCard className=" justify-center text-center w-full max-w-[1200px]">
-                    <Image src="https://brew-img.holdno.com/website/demo/obliv-demo.png" className="w-full" />
-                </NeonGradientCard>
+                {demoLoaded && (
+                    <NeonGradientCard className="justify-center text-center w-full max-w-[1200px]">
+                        <Image src="demo-screen.png" className="w-full" />
+                    </NeonGradientCard>
+                )}
+
+                <Image src="demo-screen.png" className="hidden" onLoad={() => demoOnLoad()} />
+                <div id="feature" className="relative flex h-[160px] w-full flex-col items-center justify-center overflow-hidden rounded-lg bg-background md:shadow-xl">
+                    <p className="z-10 whitespace-pre-wrap text-center text-5xl font-medium tracking-tighter text-black dark:text-white">{t('Features')}</p>
+                    <p className="z-10 whitespace-pre-wrap text-center text-base font-medium tracking-tighter text-zinc-400 ">{t('Gradually build better and more efficient recording software.')}</p>
+                    <DotPattern className={cn('[mask-image:radial-gradient(260px_circle_at_center,white,transparent)]')} />
+                </div>
+                <BentoDemo />
+
+                <TextRevealByWord className={title()} text="Oblivion Your Memory to reach beyond your limits." />
             </section>
-            <Particles className="absolute inset-0 z-0" quantity={200} ease={10} refresh />
+            <Particles className="absolute inset-0 z-0" quantity={50} ease={10} refresh />
         </DefaultLayout>
     );
 }

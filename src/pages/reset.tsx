@@ -48,7 +48,7 @@ export default function Component() {
                     <Button
                         className="w-full"
                         color="primary"
-                        onClick={() => {
+                        onPress={() => {
                             navigate('/login');
                         }}
                     >
@@ -105,7 +105,7 @@ export default function Component() {
                             onValueChange={setConfirmPassword}
                         />
                         <div className="flex w-full items-center justify-between px-1 py-2">{notice}</div>
-                        <Button className="w-full" color="primary" isLoading={isLoading} isDisabled={!confirmPassword} onClick={resetPassword}>
+                        <Button className="w-full" color="primary" isLoading={isLoading} isDisabled={!confirmPassword} onPress={resetPassword}>
                             {t('Submit')}
                         </Button>
                     </div>

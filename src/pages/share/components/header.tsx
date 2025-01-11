@@ -17,8 +17,10 @@ export default memo(({ controlsContent }: ShareHeaderProps) => {
     return (
         <header className="flex w-full items-center gap-2 sm:gap-4 pb-4 flex-row justify-between">
             <div className="flex items-center gap-2">
-                <LogoIcon />
-                <h1>{Name}</h1>
+                <Link target="_parent" href="/">
+                    <LogoIcon />
+                    <h1 className=" dark:text-white text-black">{Name}</h1>
+                </Link>
                 <Popover>
                     <PopoverTrigger>
                         <Button isIconOnly className="flex lg:hidden" radius="full" size="sm" variant="flat">

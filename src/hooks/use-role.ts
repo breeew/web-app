@@ -4,7 +4,7 @@ import { useSnapshot } from 'valtio';
 import spaceStore from '@/stores/space';
 import { Role } from '@/types';
 
-export function useRole(): { isViewer: boolean } {
+export function useRole(): { isSpaceViewer: boolean } {
     const { spaceRole } = useSnapshot(spaceStore);
 
     const isSpaceViewer = useMemo(() => {

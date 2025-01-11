@@ -28,6 +28,7 @@ export default class Video extends ImageTool {
         config.buttonContent = config.buttonContent || `${IconVideo} ${api.i18n.t('Select a Video')}`;
         config.types = config.types || 'video/*';
         super({ data, config, api, onSelectFile, readOnly, block });
+        this.readOnly = readOnly;
     }
 
     // original render() method from image tool is used
@@ -58,7 +59,11 @@ export default class Video extends ImageTool {
      */
     fillVideo(url) {
         const root = createRoot(this.ui.nodes.imageContainer);
-
+        if (url || this.readOnly) {
+            setTimeout(() => {
+                this.ui.toggleStatus('filled');
+            }, 500);
+        }
         root.render(
             <Videojs
                 src={url}

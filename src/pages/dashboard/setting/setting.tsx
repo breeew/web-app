@@ -8,6 +8,8 @@ import AppearanceSetting from './appearance-setting';
 import BillingSetting from './billing-setting';
 import ProfileSetting from './profile-setting';
 
+import { usePlan } from '@/hooks/use-plan';
+
 const Setting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>(({ className, ...props }, ref) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -21,10 +23,12 @@ const Setting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>(({ cla
         navigate('/dashboard');
     }
 
+    const { isPlatform } = usePlan();
+
     return (
         <div className="w-full flex flex-col items-center">
             <div className="w-full p-4 box-border">
-                <Button startContent={<Icon icon="material-symbols:arrow-back-ios-rounded" />} variant="bordered" onClick={back}>
+                <Button startContent={<Icon icon="material-symbols:arrow-back-ios-rounded" />} variant="bordered" onPress={back}>
                     {t('Back')}
                 </Button>
             </div>
@@ -49,9 +53,11 @@ const Setting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>(({ cla
                     <Tab key="appearance" title={t('Appearance')}>
                         <AppearanceSetting />
                     </Tab>
-                    <Tab key="billing" title={t('Billing')}>
-                        <BillingSetting />
-                    </Tab>
+                    {isPlatform && (
+                        <Tab key="billing" title={t('Billing')}>
+                            <BillingSetting />
+                        </Tab>
+                    )}
                 </Tabs>
             </div>
         </div>

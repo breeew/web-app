@@ -169,9 +169,9 @@ export default function Component({ children }: { children: React.ReactNode }) {
                     <div className="flex items-center justify-between">
                         <Link color="foreground" href="/" className="cursor-pointer">
                             <div className="flex items-center gap-2 px-2">
-                                <LogoIcon size={20} />
+                                <LogoIcon size={40} />
 
-                                <span className="text-lg font-bold">{Name}</span>
+                                <span className="text-lg font-bold header-text">{Name}</span>
                             </div>
                         </Link>
                         {/* <div className="flex items-center justify-end">
@@ -203,12 +203,12 @@ export default function Component({ children }: { children: React.ReactNode }) {
                     <div className="flex flex-col gap-y-2">
                         <div className="pt-6 pb-2 px-2 text-zinc-500 text-sm">{isChat ? t('Chat Sessions') : t('Resource List')}</div>
                         {isChat ? (
-                            <Button className="mx-1" variant="ghost" startContent={<Icon icon="bx:chat" width={24} />} onClick={createNewSession}>
+                            <Button className="mx-1" variant="ghost" startContent={<Icon icon="bx:chat" width={24} />} onPress={createNewSession}>
                                 {t('New Session')}
                             </Button>
                         ) : (
                             <>
-                                <Button className="mx-1" variant="ghost" startContent={<Icon icon="ic:outline-create-new-folder" width={24} />} onClick={showCreateResource}>
+                                <Button className="mx-1" variant="ghost" startContent={<Icon icon="ic:outline-create-new-folder" width={24} />} onPress={showCreateResource}>
                                     {t('New Resource')}
                                 </Button>
                                 <ResourceManage ref={resourceManage} onModify={onResourceModify} />
@@ -360,19 +360,21 @@ export default function Component({ children }: { children: React.ReactNode }) {
                                     className="mb-4 h-20 items-center justify-between"
                                     variant="bordered"
                                     endContent={
-                                        <>
-                                            <Chip
-                                                variant="shadow"
-                                                size="sm"
-                                                classNames={{
-                                                    base: 'bg-gradient-to-br from-indigo-500 to-pink-500 border-small border-white/50 shadow-pink-500/30',
-                                                    content: 'drop-shadow shadow-black text-white'
-                                                }}
-                                            >
-                                                Pro
-                                            </Chip>
-                                            <Icon className="text-default-400" icon="lucide:chevrons-up-down" width={16} />
-                                        </>
+                                        userInfo.planID && (
+                                            <>
+                                                <Chip
+                                                    variant="shadow"
+                                                    size="sm"
+                                                    classNames={{
+                                                        base: 'bg-gradient-to-br from-indigo-500 to-pink-500 border-small border-white/50 shadow-pink-500/30',
+                                                        content: 'drop-shadow shadow-black text-white'
+                                                    }}
+                                                >
+                                                    {t(userInfo.planID)}
+                                                </Chip>
+                                                <Icon className="text-default-400" icon="lucide:chevrons-up-down" width={16} />
+                                            </>
+                                        )
                                     }
                                 >
                                     <User

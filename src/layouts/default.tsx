@@ -2,6 +2,7 @@ import { Link } from '@nextui-org/react';
 
 import { Name } from '@/components/logo';
 import Navbar from '@/components/navbar';
+import Footer from '@/layouts/footer';
 
 export default function DefaultLayout({ children }: { children: React.ReactNode }) {
     return (
@@ -9,10 +10,7 @@ export default function DefaultLayout({ children }: { children: React.ReactNode 
             <Navbar />
             <main className="container mx-auto max-w-7xl px-6 flex-grow pt-16">{children}</main>
             <footer className="w-full flex items-center justify-center py-3">
-                <Link isExternal className="flex items-center gap-1 text-current" href="https://github.com" title="brew github">
-                    <span className="text-default-600">Powered by</span>
-                    <p className="text-primary">{Name}</p>
-                </Link>
+                <Footer />
             </footer>
         </div>
     );

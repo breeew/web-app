@@ -2,6 +2,7 @@ import {
     BreadcrumbItem,
     Breadcrumbs,
     Button,
+    ButtonGroup,
     Card,
     CardBody,
     CardFooter,
@@ -10,6 +11,7 @@ import {
     Modal,
     ModalBody,
     ModalContent,
+    ModalFooter,
     ModalHeader,
     Progress,
     ScrollShadow,
@@ -370,7 +372,7 @@ const KnowledgeList = memo(
                         })}
                     </div>
                 </ScrollShadow>
-                {showGoTop && <GoTop className="fixed bottom-6 right-6 backdrop-blur backdrop-saturate-150 dark:border-white/20 dark:bg-white/10 dark:text-white text-gray-500" onClick={goToTop} />}
+                {showGoTop && <GoTop className="fixed bottom-6 right-6 backdrop-blur backdrop-saturate-150 dark:border-white/20 dark:bg-white/10 dark:text-white text-gray-500" onPress={goToTop} />}
             </>
         );
     })
@@ -434,6 +436,18 @@ const CreateKnowledgeModal = memo(
             };
         });
 
+        const editor = useRef();
+        const [createLoading, setCreateLoading] = useState(false);
+        const submit = useCallback(async () => {
+            try {
+                setCreateLoading(true);
+                await editor.current.submit();
+            } catch (e: any) {
+                console.error(e);
+            }
+            setCreateLoading(false);
+        }, [editor]);
+
         return (
             <>
                 <Modal backdrop="blur" placement="bottom" scrollBehavior="inside" size={size} isOpen={isOpen} isKeyboardDismissDisabled={true} onClose={onCancelFunc}>
@@ -442,14 +456,22 @@ const CreateKnowledgeModal = memo(
                             <>
                                 <ModalHeader className="flex flex-col gap-1 dark:text-gray-100 text-gray-800">
                                     <Breadcrumbs>
-                                        <BreadcrumbItem>Home</BreadcrumbItem>
+                                        <BreadcrumbItem onClick={onClose}>{t('Home')}</BreadcrumbItem>
                                         <BreadcrumbItem onClick={onClose}>{spaceTitle === 'Main' ? t('MainSpace') : spaceTitle}</BreadcrumbItem>
                                         <BreadcrumbItem>{t('Create')}</BreadcrumbItem>
                                     </Breadcrumbs>
                                 </ModalHeader>
                                 <ModalBody className="w-full overflow-hidden flex flex-col items-center">
-                                    <KnowledgeEdit classNames={{ editor: 'mx-0' }} knowledge={knowledge} onChange={onChangeFunc} onCancel={onCancelFunc} />
+                                    <KnowledgeEdit ref={editor} classNames={{ editor: '!mx-0' }} knowledge={knowledge} hideSubmit onChange={onChangeFunc} onCancel={onCancelFunc} />
                                 </ModalBody>
+                                <ModalFooter className="flex justify-center">
+                                    <ButtonGroup variant="flat" size={isMobile ? 'sm' : 'base'} className="mb-4">
+                                        <Button color="primary" onPress={submit} isLoading={createLoading}>
+                                            {t('Save')}
+                                        </Button>
+                                        <Button onPress={onClose}>{t('Close')}</Button>
+                                    </ButtonGroup>
+                                </ModalFooter>
                             </>
                         )}
                     </ModalContent>

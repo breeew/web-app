@@ -126,7 +126,7 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
                             })}
                         </Select>
                     )}
-                    <Button className="mt-1 text-white bg-gradient-to-br from-pink-300 from-15%  to-indigo-600 dark:from-indigo-500 dark:to-pink-500" isLoading={loading} onClick={createNewKnowledge}>
+                    <Button className="mt-1 text-white bg-gradient-to-br from-pink-300 from-15%  to-indigo-600 dark:from-indigo-500 dark:to-pink-500" isLoading={loading} onPress={createNewKnowledge}>
                         {t('Submit')}
                     </Button>
                 </form>

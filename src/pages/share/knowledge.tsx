@@ -42,7 +42,7 @@ export default function () {
                             avatarProps={{
                                 src: knowledge.user_avatar
                             }}
-                            description={t('Shared on') + ' ' + new Date(knowledge.created_at * 1000).toLocaleDateString()}
+                            description={t('CreatedOn') + ' ' + new Date(knowledge.created_at * 1000).toLocaleDateString()}
                             name={knowledge.user_name}
                         />
                     </div>

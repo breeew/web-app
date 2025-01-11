@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ReactNode, useEffect, useMemo } from 'react';
-import { createBrowserRouter, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet, redirect, useLocation, useNavigate } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 
 import { GetUserInfo, LoginWithAccessToken } from '@/apis/user';
@@ -26,16 +26,15 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
     const { accessToken, loginToken, userInfo } = useSnapshot(userStore);
     const navigate = useNavigate();
     const { pathname } = useLocation();
-    const { currentSelectedSpace } = useSnapshot(spaceStore);
+    const { currentSelectedSpace, spaces } = useSnapshot(spaceStore);
 
     const isLogin = useMemo(() => {
         return accessToken || loginToken;
     }, [accessToken, loginToken]);
 
     useEffect(() => {
-        if (pathname === '/dashboard' && currentSelectedSpace) {
-            navigate(`/dashboard/${currentSelectedSpace}/chat`);
-
+        if (pathname === '/dashboard' && currentSelectedSpace && userInfo) {
+            redirect(`/dashboard/${currentSelectedSpace}/chat`);
             return;
         }
 
@@ -47,9 +46,11 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
                     setUserInfo({
                         userID: resp.user_id,
                         // avatar: resp.avatar,
-                        avatar: 'https://avatar.vercel.sh/' + resp.user_id,
+                        avatar: resp.avatar || 'https://avatar.vercel.sh/' + resp.user_id,
                         userName: resp.user_name,
-                        email: resp.email
+                        email: resp.email,
+                        planID: resp.plan_id,
+                        serviceMode: resp.service_mode
                     });
 
                     await loadUserSpaces();
@@ -63,14 +64,13 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
                 } catch (e: any) {
                     if (axios.isAxiosError(e) && e.status === 403) {
                         logout();
+                        navigate('/login');
                     }
-
-                    navigate('/login');
                 }
             }
             Login(accessToken ? '' : 'authorization', accessToken || loginToken);
         }
-    }, [isLogin, currentSelectedSpace]);
+    }, [isLogin, currentSelectedSpace, spaces]);
 
     return isLogin ? children : <Navigate to="/login" />;
 }
@@ -81,7 +81,7 @@ function PreLogin({ init, children }: { init: boolean; children: ReactNode }) {
         return accessToken || loginToken;
     }, [accessToken, loginToken]);
 
-    if (userInfo) {
+    if (userInfo && userInfo.userID) {
         setCurrentSelectedSpace('');
 
         if (init) {
@@ -99,7 +99,7 @@ function PreLogin({ init, children }: { init: boolean; children: ReactNode }) {
 const routes = createBrowserRouter([
     {
         path: '*',
-        element: <Navigate to="/login" />
+        element: <Navigate to="/" />
     },
     {
         path: '/',

@@ -8,6 +8,7 @@ export interface LoginResponse {
     user_id: string;
     avatar: string;
     service_mode: string;
+    plan_id: string;
 }
 
 export async function LoginWithAccessToken(accessToken: string): Promise<LoginResponse> {
@@ -54,10 +55,11 @@ export async function SendVerifyEmail(email: string): Promise<void> {
     });
 }
 
-export async function Signup(email: string, userName: string, password: string, verifyCode: string): Promise<void> {
+export async function Signup(email: string, userName: string, spaceName: string, password: string, verifyCode: string): Promise<void> {
     return await instance.post('/signup', {
         email: email,
         user_name: userName,
+        init_work_space: spaceName,
         password: password,
         verify_code: verifyCode
     });
@@ -77,4 +79,16 @@ export async function RequestResetPassword(endpoint: string, email: string): Pro
     });
 
     resp.data.data;
+}
+
+export interface UserPlanDescription {
+    user_id: string;
+    plan_id: string;
+    start_time: number;
+    end_time: number;
+}
+
+export async function GetUserPlanDescription(): Promise<UserPlanDescription> {
+    const resp = await instance.get('/plan/user/description');
+    return resp.data.data;
 }

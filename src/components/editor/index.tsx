@@ -27,7 +27,6 @@ function getUploader(toast: (d: ToastProps) => void, t: (d: string) => string, c
     return {
         async uploadByFile(file: File): { success: number; file?: { url: string } } {
             try {
-                console.log('file type', file.type);
                 let result: CompressResult = {};
                 let fileKind = '';
 
@@ -172,6 +171,79 @@ export const Editor = memo(
                 placeholder: placeholder,
                 readOnly: readOnly,
                 autofocus: !readOnly && autofocus,
+                i18n: {
+                    messages: {
+                        ui: {
+                            blockTunes: {
+                                toggler: {
+                                    'Click to tune': t('Click to tune'),
+                                    'or drag to move': t('or drag to move')
+                                }
+                            },
+                            inlineToolbar: {
+                                converter: {
+                                    'Convert to': t('Convert to')
+                                }
+                            },
+                            toolbar: {
+                                toolbox: {
+                                    Add: t('Add')
+                                }
+                            },
+                            popover: {
+                                Filter: t('Filter'),
+                                'Nothing found': t('Nothing found'),
+                                'Convert to': t('Convert to')
+                            }
+                        },
+                        toolNames: {
+                            Text: t('Text'),
+                            Heading: t('Heading'),
+                            Link: t('Link'),
+                            Bold: t('Bold'),
+                            Italic: t('Italic'),
+                            Marker: t('Marker'),
+                            InlineCode: t('InlineCode'),
+                            Image: t('Image'),
+                            Video: t('Video'),
+                            'Ordered List': t('Ordered List'),
+                            'Unordered List': t('Unordered List'),
+                            Checklist: t('Checklist'),
+                            Quote: t('Quote'),
+                            Delimiter: t('Delimiter'),
+                            Code: t('Code'),
+                            Table: t('Table')
+                        },
+                        tools: {
+                            link: {
+                                'Add a link': t('Add a link')
+                            },
+                            stub: {
+                                'The block can not be displayed correctly.': t('The block can not be displayed correctly.')
+                            },
+                            header: {
+                                'Heading 1': t('Heading') + '1',
+                                'Heading 2': t('Heading') + '2',
+                                'Heading 3': t('Heading') + '3',
+                                'Heading 4': t('Heading') + '4',
+                                'Heading 5': t('Heading') + '5',
+                                'Heading 6': t('Heading') + '6'
+                            }
+                        },
+                        blockTunes: {
+                            delete: {
+                                Delete: t('Delete'),
+                                'Click to delete': t('Confirm')
+                            },
+                            moveUp: {
+                                'Move up': t('Move up')
+                            },
+                            moveDown: {
+                                'Move down': t('Move down')
+                            }
+                        }
+                    }
+                },
                 /**
                  * Id of Element that should contain the Editor
                  */
@@ -184,7 +256,9 @@ export const Editor = memo(
                         class: Header,
                         inlineToolbar: ['marker', 'link'],
                         config: {
-                            placeholder: 'Header'
+                            placeholder: t('Header'),
+                            levels: [1, 2, 3, 4],
+                            defaultLevel: 2
                         },
                         shortcut: 'CMD+SHIFT+H'
                     },

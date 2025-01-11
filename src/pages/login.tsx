@@ -31,7 +31,7 @@ export default function Component() {
             <div className="absolute left-10 top-10">
                 <div className="flex items-center">
                     <Link href="/">
-                        <LogoIcon className="text-white mr-2" size={18} />
+                        <LogoIcon className="text-white mr-2" size={34} />
                         <p className="font-medium text-white">{Name}</p>
                     </Link>
                 </div>
@@ -127,9 +127,10 @@ const LoginComponent = memo(function LoginComponent({ changeMode }: { changeMode
             setUserInfo({
                 userID: resp.user_id,
                 // avatar: resp.avatar,
-                avatar: 'https://avatar.vercel.sh/' + resp.user_id,
+                avatar: resp.avatar || 'https://avatar.vercel.sh/' + resp.user_id,
                 userName: resp.user_name,
-                email: resp.email
+                email: resp.email,
+                planID: resp.plan_id
             });
 
             navigate('/dashboard');
@@ -157,10 +158,10 @@ const LoginComponent = memo(function LoginComponent({ changeMode }: { changeMode
             setUserLoginToken(resp.token);
             setUserInfo({
                 userID: resp.meta.user_id,
-                // avatar: resp.avatar,
-                avatar: 'https://avatar.vercel.sh/' + resp.meta.user_id,
+                avatar: resp.meta.avatar || 'https://avatar.vercel.sh/' + resp.meta.user_id,
                 userName: resp.meta.user_name,
-                email: resp.meta.email
+                email: resp.meta.email,
+                planID: resp.meta.plan_id
             });
 
             navigate('/dashboard');
