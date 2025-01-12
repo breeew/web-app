@@ -20,6 +20,7 @@ import {
 } from '@nextui-org/react';
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useMediaQuery } from 'usehooks-ts';
 import { useSnapshot } from 'valtio';
 import { subscribeKey } from 'valtio/utils';
@@ -35,7 +36,7 @@ import { useMedia } from '@/hooks/use-media';
 import { useRole } from '@/hooks/use-role';
 import { useUserAgent } from '@/hooks/use-user-agent';
 import { FireTowerMsg } from '@/lib/firetower';
-import knowledgeStore from '@/stores/knowledge';
+import knowledgeStore, { onKnowledgeSearchKeywordsChange } from '@/stores/knowledge';
 import resourceStore from '@/stores/resource';
 import socketStore, { CONNECTION_OK } from '@/stores/socket';
 import spaceStore from '@/stores/space';
@@ -53,6 +54,7 @@ export default memo(function Component() {
     const [hasMore, setHasMore] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const { onKnowledgeSearch } = useSnapshot(knowledgeStore);
+    const navigate = useNavigate();
 
     const { isSpaceViewer } = useRole();
 
@@ -146,6 +148,11 @@ export default memo(function Component() {
 
     const showKnowledge = useCallback(
         (knowledge: Knowledge) => {
+            if (isMobile) {
+                console.log(`/dashboard/${knowledge.space_id}/knowledge/${knowledge.id}/editor`);
+                navigate(`/dashboard/${knowledge.space_id}/knowledge/${knowledge.id}/editor`);
+                return;
+            }
             if (viewKnowledge && viewKnowledge.current) {
                 // @ts-ignore
                 viewKnowledge.current.show(knowledge);

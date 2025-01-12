@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ReactNode, useEffect, useMemo } from 'react';
-import { createBrowserRouter, Navigate, Outlet, redirect, useLocation, useNavigate } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 
 import { GetUserInfo, LoginWithAccessToken } from '@/apis/user';
@@ -9,6 +9,8 @@ import { autoLoginDirect } from '@/lib/utils';
 import Dashboard from '@/pages/dashboard';
 import ChatSession from '@/pages/dashboard/chat/chat-session.tsx';
 import Chat from '@/pages/dashboard/chat/chat.tsx';
+import CreateKnowledge from '@/pages/dashboard/create-knowledge';
+import EditKnowledge from '@/pages/dashboard/edit-knowledge';
 import Journal from '@/pages/dashboard/journal/journal';
 import Knowledge from '@/pages/dashboard/knowledge';
 import Setting from '@/pages/dashboard/setting/setting';
@@ -35,7 +37,7 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         if (pathname === '/dashboard' && currentSelectedSpace && userInfo) {
-            redirect(`/dashboard/${currentSelectedSpace}/chat`);
+            navigate(`/dashboard/${currentSelectedSpace}/chat`, { replace: true });
             return;
         }
 
@@ -149,6 +151,22 @@ const routes = createBrowserRouter([
                 element: (
                     <ProtectedRoute>
                         <Journal />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: '/dashboard/:spaceID/knowledge/create',
+                element: (
+                    <ProtectedRoute>
+                        <CreateKnowledge />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: '/dashboard/:spaceID/knowledge/:knowledgeID/editor',
+                element: (
+                    <ProtectedRoute>
+                        <EditKnowledge />
                     </ProtectedRoute>
                 )
             },

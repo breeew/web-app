@@ -9,7 +9,7 @@ export function useRole(): { isSpaceViewer: boolean } {
 
     const isSpaceViewer = useMemo(() => {
         return !spaceRole || spaceRole === Role.VIEWER;
-    });
+    }, [spaceRole]);
 
     return { isSpaceViewer };
 }

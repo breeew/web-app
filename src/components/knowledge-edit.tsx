@@ -180,7 +180,8 @@ export default memo(
         return (
             <>
                 {knowledge && (
-                    <ScrollShadow hideScrollBar isEnabled={enableScrollShadow} className="w-full flex-grow box-border  flex justify-center">
+                    <>
+                        {/* <ScrollShadow hideScrollBar isEnabled={enableScrollShadow} className="w-full flex-grow box-border  flex justify-center"> */}
                         <KnowledgeAITaskList />
                         <div className="w-full h-full md:max-w-[650px]">
                             {knowledge.id && (
@@ -213,7 +214,7 @@ export default memo(
                             )}
 
                             <div className="w-full flex-wrap flex flex-col gap-3">
-                                <Skeleton isLoaded={defaultResource}>
+                                <Skeleton isLoaded={defaultResource} className="min-h-10">
                                     {defaultResource && (
                                         <Select
                                             isRequired
@@ -309,7 +310,8 @@ export default memo(
 
                             <div className="pb-20" />
                         </div>
-                    </ScrollShadow>
+                        {/* </ScrollShadow> */}
+                    </>
                 )}
             </>
         );

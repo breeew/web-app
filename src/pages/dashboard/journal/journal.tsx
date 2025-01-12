@@ -501,7 +501,7 @@ export default function Component() {
                         {/* 
                                 </ScrollShadow> */}
 
-                        <div className="flex-1 basis-0 min-h-0 overflow-y-auto overflow-x-hidden">{editorRender}</div>
+                        <div className="flex-1 basis-0 min-h-0 overflow-y-auto overflow-x-hidden mx-4">{editorRender}</div>
 
                         {/* </div> */}
                         <div className="flex h-10 justify-center items-center">

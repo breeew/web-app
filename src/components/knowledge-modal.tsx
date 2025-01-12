@@ -5,9 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 
-import ShareButton from './share-button';
-import ShareLinkModal from './share-link';
-
 import { GetKnowledge, type Knowledge } from '@/apis/knowledge';
 import { type Resource } from '@/apis/resource';
 import { ListResources } from '@/apis/resource';
@@ -15,6 +12,7 @@ import { CreateKnowledgeShareURL } from '@/apis/share';
 import KnowledgeDeletePopover from '@/components/knowledge-delete-popover';
 import KnowledgeEdit from '@/components/knowledge-edit';
 import KnowledgeView from '@/components/knowledge-view';
+import ShareButton from '@/components/share-button';
 import { useMedia } from '@/hooks/use-media';
 import { usePlan } from '@/hooks/use-plan';
 import { useRole } from '@/hooks/use-role';
@@ -91,13 +89,9 @@ const ViewKnowledge = memo(
             if (!currentSelectedSpace) {
                 return '';
             }
-            for (const item of spaces) {
-                if (item.space_id === currentSelectedSpace) {
-                    return item.title;
-                }
-            }
 
-            return '';
+            const target = spaces.find(v => v.space_id === currentSelectedSpace);
+            return target?.title;
         }, [spaces, currentSelectedSpace]);
 
         const changeEditable = useCallback(() => {
@@ -133,7 +127,7 @@ const ViewKnowledge = memo(
         }, [currentSelectedSpace, currentSpaceResources]);
 
         const knowledgeResource = useMemo(() => {
-            if (!knowledge) {
+            if (!knowledge || !currentSpaceResources) {
                 return '';
             }
 
@@ -198,7 +192,7 @@ const ViewKnowledge = memo(
                                             />
                                         )}
                                     </ModalHeader>
-                                    <ModalBody className="w-full overflow-hidden flex flex-col items-center px-6">
+                                    <ModalBody className="w-full flex flex-col items-center px-6 overflow-y-auto">
                                         {isEdit ? (
                                             <KnowledgeEdit ref={editor} hideSubmit classNames={{ editor: '!mx-0' }} knowledge={knowledge} onChange={onChangeFunc} />
                                         ) : (
@@ -215,9 +209,9 @@ const ViewKnowledge = memo(
                                                 <Button isDisabled={knowledge.stage !== 3} onPress={changeEditable}>
                                                     {(() => {
                                                         if (knowledge.stage == 1) {
-                                                            return 'Summarizing.';
+                                                            return t('Summarizing');
                                                         } else if (knowledge.stage == 2) {
-                                                            return 'Embedding.';
+                                                            return t('Embedding');
                                                         }
 
                                                         if (isEdit) {

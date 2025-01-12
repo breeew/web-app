@@ -475,7 +475,6 @@ function useResourceMode() {
                 });
 
                 if (!currentSelectedResourceAlreadyExist) {
-                    console.log('set new resources');
                     setCurrentSelectedResource(items[0]);
                 }
 

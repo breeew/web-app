@@ -1,7 +1,7 @@
 import { Icon } from '@iconify/react';
 import { Avatar, AvatarGroup, Button, Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerHeader, Image, Link, Tooltip, useDisclosure } from '@nextui-org/react';
 import { t } from 'i18next';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSnapshot } from 'valtio';
 
@@ -10,9 +10,10 @@ import spaceStore from '@/stores/space';
 
 export interface KnowledgeDrawerProps {
     temporaryStorage?: string;
+    handleButton?: (onOpen: () => void) => React.ReactDOM;
 }
 
-export default function App({ temporaryStorage }: KnowledgeDrawerProps) {
+export default function App({ temporaryStorage, handleButton }: KnowledgeDrawerProps) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const { t } = useTranslation();
     const { currentSelectedSpace } = useSnapshot(spaceStore);
@@ -38,20 +39,25 @@ export default function App({ temporaryStorage }: KnowledgeDrawerProps) {
 
     return (
         <>
-            <Button
-                className="bg-gradient-to-br from-pink-400 to-indigo-400 dark:from-indigo-500 dark:to-pink-500"
-                startContent={<Icon icon="fluent:brain-sparkle-20-regular" width={20} />}
-                variant="flat"
-                size="sm"
-                onPress={onOpen}
-            >
-                {t('Quick Create Knowledge')}
-            </Button>
+            {handleButton ? (
+                handleButton(onOpen)
+            ) : (
+                <Button
+                    className="bg-gradient-to-br from-pink-400 to-indigo-400 dark:from-indigo-500 dark:to-pink-500"
+                    startContent={<Icon icon="fluent:brain-sparkle-20-regular" width={20} />}
+                    variant="flat"
+                    size="sm"
+                    onPress={onOpen}
+                >
+                    {t('Quick Create Knowledge')}
+                </Button>
+            )}
+
             <Drawer
                 hideCloseButton
                 backdrop="opaque"
                 classNames={{
-                    base: 'data-[placement=right]:sm:m-2 data-[placement=left]:sm:m-2 sm:max-w-[50%] lg:max-w-[40%] rounded-medium'
+                    base: 'data-[placement=right]:sm:m-2 data-[placement=left]:sm:m-2 w-full lg:max-w-[700px] rounded-medium'
                 }}
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
@@ -93,13 +99,13 @@ export default function App({ temporaryStorage }: KnowledgeDrawerProps) {
                             </DrawerBody>
                             <DrawerFooter className="flex gap-4">
                                 {temporaryStorage && (
-                                    <Button className="sm:w-[50%]" variant="ghost" onPress={resetEditor}>
+                                    <Button className="w-[50%]" variant="ghost" onPress={resetEditor}>
                                         {t('reset', { title: t('editor') })}
                                     </Button>
                                 )}
 
                                 <Button
-                                    className="m-auto sm:w-[50%] text-white bg-gradient-to-br from-pink-400 to-indigo-400 dark:from-indigo-500 dark:to-pink-500"
+                                    className="m-auto w-[50%] text-white bg-gradient-to-br from-pink-400 to-indigo-400 dark:from-indigo-500 dark:to-pink-500"
                                     isLoading={isLoading}
                                     onPress={async () => {
                                         try {
