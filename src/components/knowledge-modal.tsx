@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 
+import ShareButton from './share-button';
 import ShareLinkModal from './share-link';
 
 import { GetKnowledge, type Knowledge } from '@/apis/knowledge';
@@ -147,23 +148,6 @@ const ViewKnowledge = memo(
             };
         });
 
-        const [shareURL, setShareURL] = useState('');
-        const [createShareLoading, setCreateShareLoading] = useState(false);
-        const shareLink = useRef();
-        const createShareURL = useCallback(async () => {
-            setCreateShareLoading(true);
-            try {
-                const res = await CreateKnowledgeShareURL(knowledge?.space_id, window.location.origin + '/s/k/{token}', knowledge?.id);
-                setShareURL(res.url);
-                if (shareLink.current) {
-                    shareLink.current.show(res.url);
-                }
-            } catch (e: any) {
-                console.error(e);
-            }
-            setCreateShareLoading(false);
-        }, [knowledge, shareLink]);
-
         const editor = useRef();
         const [saveLoading, setSaveLoading] = useState(false);
         const submit = useCallback(async () => {
@@ -202,12 +186,19 @@ const ViewKnowledge = memo(
                                             <BreadcrumbItem>{knowledge.id}</BreadcrumbItem>
                                         </Breadcrumbs>
                                         {!isEdit && userIsPro && (
-                                            <Button size="sm" variant="faded" endContent={<Icon icon="mingcute:share-3-line" />} isLoading={createShareLoading} onPress={createShareURL}>
-                                                {t('Share')}
-                                            </Button>
+                                            <ShareButton
+                                                genUrlFunc={async () => {
+                                                    try {
+                                                        const res = await CreateKnowledgeShareURL(knowledge?.space_id, window.location.origin + '/s/k/{token}', knowledge?.id);
+                                                        return res.url;
+                                                    } catch (e: any) {
+                                                        console.error(e);
+                                                    }
+                                                }}
+                                            />
                                         )}
                                     </ModalHeader>
-                                    <ModalBody className="w-full overflow-hidden flex flex-col items-center px-0">
+                                    <ModalBody className="w-full overflow-hidden flex flex-col items-center px-6">
                                         {isEdit ? (
                                             <KnowledgeEdit ref={editor} hideSubmit classNames={{ editor: '!mx-0' }} knowledge={knowledge} onChange={onChangeFunc} />
                                         ) : (
@@ -289,7 +280,6 @@ const ViewKnowledge = memo(
                             )}
                         </ModalContent>
                     )}
-                    <ShareLinkModal ref={shareLink} />
                 </Modal>
             </>
         );

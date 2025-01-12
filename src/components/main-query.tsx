@@ -24,18 +24,18 @@ export default function Component(props: NavbarProps) {
                 justify="center"
             >
                 {/* Logo */}
-                <NavbarBrand className="mr-1 w-[40vw] md:w-auto md:max-w-fit">
+                <NavbarBrand className="mr-1  md:w-auto md:max-w-fit">
                     <div className="rounded-full ml-2">
                         <LogoIcon size={40} />
                     </div>
-                    <span className="ml-2 font-medium md:hidden">Brew</span>
+                    {/* <span className="ml-2 font-medium md:hidden">{t('knowledgeCreateButtonTitle')}...</span> */}
                 </NavbarBrand>
 
                 {/* Items */}
-                <NavbarItem className="hidden md:flex">
+                <NavbarItem className="flex">
                     <Button
                         aria-label="Got a shot"
-                        className="text-sm font-normal text-default-500 bg-transparent pl-0 px-4"
+                        className="text-sm font-normal text-default-500 bg-transparent pl-0 md:px-4"
                         endContent={<div className="w-1 h-4 rounded-full bg-black dark:bg-white animate-pulse" />}
                         onPress={e => {
                             if (props.onClick) {

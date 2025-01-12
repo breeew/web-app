@@ -17,6 +17,7 @@ import IndexPage from '@/pages/index';
 import Login from '@/pages/login';
 import Reset from '@/pages/reset';
 import ShareKnowledge from '@/pages/share/knowledge';
+import ShareSessionPage from '@/pages/share/session';
 import TestIframe from '@/pages/share/test-iframe';
 import { buildTower } from '@/stores/socket';
 import spaceStore, { loadUserSpaces, setCurrentSelectedSpace } from '@/stores/space';
@@ -138,6 +139,10 @@ const routes = createBrowserRouter([
             {
                 path: '/s/k/:token', // /share/knowledge
                 element: <ShareKnowledge />
+            },
+            {
+                path: '/s/s/:token',
+                element: <ShareSessionPage />
             },
             {
                 path: '/dashboard/:spaceID/journal/:selectDate',

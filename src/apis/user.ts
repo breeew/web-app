@@ -89,6 +89,6 @@ export interface UserPlanDescription {
 }
 
 export async function GetUserPlanDescription(): Promise<UserPlanDescription> {
-    const resp = await instance.get('/plan/user/description');
+    const resp = await instance.get('/user/plan');
     return resp.data.data;
 }

@@ -160,5 +160,11 @@
     "Table": "表格",
     "InlineCode": "行内代码块",
     "Add a link": "添加链接",
-    "The block can not be displayed correctly.": "该块无法正确显示。"
+    "The block can not be displayed correctly.": "该块无法正确显示。",
+    "Year": "年",
+    "Month": "月",
+    "All Features": "全部功能",
+    "Less Limits": "较少的用量",
+    "More Limits": "较高的用量",
+    "Redeem": "兑换"
 }

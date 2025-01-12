@@ -31,16 +31,17 @@ export default memo(({ controlsContent }: ShareHeaderProps) => {
                 </Popover>
             </div>
             <div className="flex items-center gap-2">
-                <Link target="_parent" href="/">
-                    <Button
-                        className="bg-gradient-to-br from-pink-400 to-indigo-400 dark:from-indigo-500 dark:to-pink-500"
-                        startContent={<Icon icon="fluent:brain-sparkle-20-regular" width={20} />}
-                        variant="flat"
-                        size="sm"
-                    >
-                        {t('StartCyberMemory')}
-                    </Button>
-                </Link>
+                <Button
+                    className="bg-gradient-to-br from-pink-400 to-indigo-400 dark:from-indigo-500 dark:to-pink-500"
+                    startContent={<Icon icon="fluent:brain-sparkle-20-regular" width={20} />}
+                    variant="flat"
+                    size="sm"
+                    onPress={() => {
+                        window.parent.location.href = '/';
+                    }}
+                >
+                    {t('StartCyberMemory')}
+                </Button>
             </div>
         </header>
     );

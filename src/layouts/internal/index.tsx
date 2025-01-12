@@ -38,6 +38,7 @@ import { LogoIcon, Name } from '@/components/logo';
 import ResourceManage from '@/components/resource-modal';
 import { useChatPageCondition } from '@/hooks/use-chat-page';
 import { useMedia } from '@/hooks/use-media';
+import { usePlan } from '@/hooks/use-plan';
 import resourceStore, { loadSpaceResource, setCurrentSelectedResource, setSpaceResource } from '@/stores/resource';
 import sessionStore, { setCurrentSelectedSession } from '@/stores/session';
 import { closeSocket } from '@/stores/socket';
@@ -156,6 +157,8 @@ export default function Component({ children }: { children: React.ReactNode }) {
         const t = today(getLocalTimeZone()).toString();
         navigate(`/dashboard/${currentSelectedSpace}/journal/${t}`);
     }
+
+    const { userPlan } = usePlan();
 
     return (
         <div className="flex h-dvh w-full gap-4 dark:bg-zinc-900">
@@ -370,7 +373,7 @@ export default function Component({ children }: { children: React.ReactNode }) {
                                                         content: 'drop-shadow shadow-black text-white'
                                                     }}
                                                 >
-                                                    {t(userInfo.planID)}
+                                                    {userPlan}
                                                 </Chip>
                                                 <Icon className="text-default-400" icon="lucide:chevrons-up-down" width={16} />
                                             </>

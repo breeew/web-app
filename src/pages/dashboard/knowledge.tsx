@@ -218,11 +218,10 @@ export default memo(function Component() {
                     </Skeleton>
                 </div>
                 <KnowledgeList ref={ssDom} isShowCreate={isShowCreate} knowledgeList={dataList} onSelect={showKnowledge} onChanges={onChanges} onLoadMore={onLoadMore} />
-                {isShowCreate && (
-                    <div className="absolute w-auto bottom-2 right-1/2 mr-[-130px]">
-                        <MainQuery onClick={showCreate} />
-                    </div>
-                )}
+
+                <div className="absolute w-auto bottom-2 right-1/2 mr-[-130px]">
+                    <MainQuery onClick={showCreate} />
+                </div>
             </div>
 
             <KnowledgeModal
@@ -465,7 +464,7 @@ const CreateKnowledgeModal = memo(
                                     <KnowledgeEdit ref={editor} classNames={{ editor: '!mx-0' }} knowledge={knowledge} hideSubmit onChange={onChangeFunc} onCancel={onCancelFunc} />
                                 </ModalBody>
                                 <ModalFooter className="flex justify-center">
-                                    <ButtonGroup variant="flat" size={isMobile ? 'sm' : 'base'} className="mb-4">
+                                    <ButtonGroup variant="flat" size="base" className="mb-4">
                                         <Button color="primary" onPress={submit} isLoading={createLoading}>
                                             {t('Save')}
                                         </Button>
