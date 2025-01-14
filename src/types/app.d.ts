@@ -2,6 +2,7 @@ declare type Resource = {
     id: string;
     title: string;
     cycle: number;
+    tag: string;
     space_id: string;
     description: string;
 };
@@ -27,6 +28,7 @@ declare type ResourceStore = {
     currentSelectedResource: Resource | undefined;
     currentSpaceResources: Resource[] | undefined;
     onResourceUpdate: boolean;
+    resourceTags: string[];
 };
 
 type callbackFunc = (msg: FireTowerMsg) => void;

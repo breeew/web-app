@@ -12,6 +12,7 @@ import ResourceManage from '@/components/resource-modal';
 import ShareButton from '@/components/share-button';
 import { useChatPageCondition } from '@/hooks/use-chat-page';
 import { usePlan } from '@/hooks/use-plan';
+import { useRole } from '@/hooks/use-role';
 import { triggerKnowledgeSearch } from '@/stores/knowledge';
 import { onKnowledgeSearchKeywordsChange } from '@/stores/knowledge';
 // import NotificationsCard from './notifications-card';
@@ -22,7 +23,7 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
     const { t } = useTranslation();
     const { currentSelectedResource } = useSnapshot(resourceStore);
     const { spaces, currentSelectedSpace } = useSnapshot(spaceStore);
-    const { isChat } = useChatPageCondition();
+    const { isChat, isSession } = useChatPageCondition();
     const resourceManage = useRef<HTMLElement>();
     const currentSpace = useMemo(() => {
         return spaces.find(v => v.space_id === currentSelectedSpace);
@@ -69,6 +70,7 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
     };
 
     const { userIsPro } = usePlan();
+    const { isSpaceViewer } = useRole();
 
     return (
         <Navbar
@@ -113,7 +115,7 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
                 })()}
             </NavbarBrand>
 
-            {isChat && userIsPro && (
+            {isSession && userIsPro && (
                 <NavbarContent className="ml-4 h-12 w-full max-w-fit gap-4 rounded-full" justify="end">
                     <ShareButton
                         genUrlFunc={async () => {
@@ -128,14 +130,14 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
                 </NavbarContent>
             )}
 
-            {!isChat && (
+            {!isChat && !isSpaceViewer && (
                 <NavbarContent className="ml-4 hidden h-12 w-full max-w-fit gap-4 rounded-full px-4  lg:flex" justify="end">
                     {/* <NavbarItem>
                         <Link className="flex gap-2 text-inherit" href="#">
                             Prompt
                         </Link>
                     </NavbarItem> */}
-                    {currentSpace && currentSpace.title !== 'Main' && (
+                    {currentSpace && (
                         <NavbarItem>
                             <ManageSpaceComponent radius="full" label={t('Space Setting')} variant="ghost" className="flex gap-2 text-inherit" space={currentSpace} />
                         </NavbarItem>

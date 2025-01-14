@@ -5,7 +5,8 @@ import { ListResources, Resource } from '@/apis/resource';
 const resourceStore = proxy<ResourceStore>({
     currentSelectedResource: undefined,
     currentSpaceResources: undefined,
-    onResourceUpdate: false
+    onResourceUpdate: false,
+    resourceTags: ['projects', 'areas', 'resources', 'archives']
 });
 
 export const setCurrentSelectedResource = (data: Resource) => {

@@ -28,7 +28,6 @@ export const setCurrentSelectedSpace = (space: string) => {
 };
 
 export const setSpaceRole = (role: string) => {
-    console.log('set role', role);
     spaceStore.spaceRole = role;
 };
 

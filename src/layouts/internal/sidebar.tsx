@@ -125,7 +125,7 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
                                         item.icon ? (
                                             <div className={'flex h-11 items-center gap-2 px-2 py-1.5'}>
                                                 <Icon className={cn('text-default-500 group-data-[selected=true]:text-foreground', iconClassName)} icon={item.icon} width={24} />
-                                                <span className="text-small font-medium text-default-500 group-data-[selected=true]:text-foreground">{item.title}</span>
+                                                <span className="text-small font-medium text-default-500 group-data-[selected=true]:text-foreground ">{item.title}</span>
                                             </div>
                                         ) : (
                                             (item.startContent ?? null)

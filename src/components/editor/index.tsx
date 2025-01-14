@@ -105,7 +105,7 @@ export const Editor = memo(
         const [randomID, setRandomID] = useState(randomString(6));
 
         useEffect(() => {
-            if (!currentSelectedSpace) {
+            if (!readOnly && currentSelectedSpace === '') {
                 return;
             }
             const renderFunc = async function (editor: EditorJS, data: string | OutputData, dataType: string) {

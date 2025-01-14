@@ -1,5 +1,6 @@
 import { Icon } from '@iconify/react';
 import { Button, Input, Tooltip } from '@nextui-org/react';
+import axios from 'axios';
 import { AnimatePresence, domAnimation, LazyMotion, m } from 'framer-motion';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { SendVerifyEmail, Signup } from '@/apis/user';
 import { useToast } from '@/hooks/use-toast';
+import { md5 } from '@/lib/utils';
 
 export default function Component({ changeMode }: { changeMode: (v: string) => void }) {
     const { t } = useTranslation();
@@ -20,14 +22,14 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
     const [verifyCode, setVerifyCode] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [[page, direction], setPage] = useState([0, 0]);
-    const [isEmailValid, setIsEmailValid] = useState(true);
-    const [isUserNameValid, setIsUserNameValid] = useState(true);
-    const [isPasswordValid, setIsPasswordValid] = useState(true);
-    const [isConfirmPasswordValid, setIsConfirmPasswordValid] = useState(true);
-    const [isVerifyCodeValid, setIsVerifyCodeValid] = useState(true);
+    const [isEmailValid, setIsEmailValid] = useState('');
+    const [isUserNameValid, setIsUserNameValid] = useState('');
+    const [isPasswordValid, setIsPasswordValid] = useState('');
+    const [isConfirmPasswordValid, setIsConfirmPasswordValid] = useState('');
+    const [isVerifyCodeValid, setIsVerifyCodeValid] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [spaceName, setSpaceName] = useState(t('MainSpace'));
-    const [isSpaceNameValid, setIsSpaceNameValid] = useState(true);
+    const [isSpaceNameValid, setIsSpaceNameValid] = useState('');
 
     const togglePasswordVisibility = () => setIsPasswordVisible(!isPasswordVisible);
     const toggleConfirmPasswordVisibility = () => setIsConfirmPasswordVisible(!isConfirmPasswordVisible);
@@ -68,25 +70,25 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
 
     const handleEmailSubmit = () => {
         if (!email.length) {
-            setIsEmailValid(false);
+            setIsEmailValid(t('InvalidEmail'));
 
             return;
         }
-        setIsEmailValid(true);
+        setIsEmailValid('');
 
-        if (!userName.length || userName.length > 20) {
-            setIsUserNameValid(false);
-
-            return;
-        }
-        setIsUserNameValid(true);
-
-        if (!spaceName.length || spaceName.length > 10) {
-            setIsSpaceNameValid(false);
+        if (!userName.length || userName.length > 30) {
+            setIsUserNameValid(t('length between', { min: 0, max: 30 }));
 
             return;
         }
-        setIsSpaceNameValid(true);
+        setIsUserNameValid('');
+
+        if (!spaceName.length || spaceName.length > 30) {
+            setIsSpaceNameValid(t('length between', { min: 0, max: 30 }));
+
+            return;
+        }
+        setIsSpaceNameValid('');
 
         paginate(1);
     };
@@ -100,12 +102,12 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
         }
 
         if (!confirmPassword.length || confirmPassword !== password) {
-            setIsConfirmPasswordValid(false);
+            setIsConfirmPasswordValid(t('Passwords do not match'));
 
             return;
         }
-        setIsConfirmPasswordValid(true);
-        setIsPasswordValid(true);
+        setIsConfirmPasswordValid('');
+        setIsPasswordValid('');
 
         // Submit logic or API call here
         if (isSendVerifyEmail) {
@@ -128,15 +130,24 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
     };
 
     const handleSignUpSubmit = async () => {
+        if (verifyCode === '') {
+            setIsVerifyCodeValid(t('NotEmpty'));
+            return;
+        }
+        setIsVerifyCodeValid('');
+
         setIsLoading(true);
         try {
-            await Signup(email, userName, spaceName, password, verifyCode);
+            await Signup(email, userName, spaceName, md5(password), verifyCode);
             toast({
                 title: t('Notify'),
                 description: t('Welcome to signup')
             });
             changeMode('login');
         } catch (e: any) {
+            if (axios.isAxiosError(e) && (e.status === 400 || e.status === 403)) {
+                setIsVerifyCodeValid(t('VerificationCodeError'));
+            }
             console.error(e);
         }
         setIsLoading(false);
@@ -200,11 +211,11 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
                                     placeholder="Enter your email"
                                     type="email"
                                     variant="bordered"
-                                    isInvalid={!isEmailValid}
-                                    errorMessage={isEmailValid ? '' : t('InvalidEmail')}
+                                    isInvalid={isEmailValid !== ''}
+                                    errorMessage={isEmailValid}
                                     value={email}
                                     onValueChange={value => {
-                                        setIsEmailValid(true);
+                                        setIsEmailValid('');
                                         setEmail(value);
                                     }}
                                 />
@@ -216,15 +227,12 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
                                     placeholder="Enter your user name"
                                     type="text"
                                     variant="bordered"
-                                    isInvalid={!isUserNameValid}
+                                    isInvalid={isUserNameValid !== ''}
+                                    errorMessage={isUserNameValid}
                                     value={userName}
-                                    validate={value => {
-                                        if (value.length === 0 || value.length > 20) {
-                                            return 'length between 0 and 20';
-                                        }
-                                    }}
+                                    validationBehavior="aria"
                                     onValueChange={value => {
-                                        setIsUserNameValid(true);
+                                        setIsUserNameValid('');
                                         setUserName(value);
                                     }}
                                 />
@@ -236,15 +244,11 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
                                     placeholder="Enter your first space name"
                                     type="text"
                                     variant="bordered"
-                                    isInvalid={!isSpaceNameValid}
+                                    isInvalid={isSpaceNameValid !== ''}
+                                    errorMessage={isSpaceNameValid}
                                     value={spaceName}
-                                    validate={value => {
-                                        if (value.length === 0 || value.length > 10) {
-                                            return 'length between 0 and 10';
-                                        }
-                                    }}
                                     onValueChange={value => {
-                                        setIsSpaceNameValid(true);
+                                        setIsSpaceNameValid('');
                                         setSpaceName(value);
                                     }}
                                 />
@@ -268,10 +272,11 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
                                     name="password"
                                     variant="bordered"
                                     type={isPasswordVisible ? 'text' : 'password'}
-                                    validationState={isPasswordValid ? 'valid' : 'invalid'}
+                                    isInvalid={isPasswordValid !== ''}
+                                    errorMessage={isPasswordValid}
                                     value={password}
                                     onValueChange={value => {
-                                        setIsPasswordValid(true);
+                                        setIsPasswordValid('');
                                         setPassword(value);
                                     }}
                                 />
@@ -287,15 +292,15 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
                                             )}
                                         </button>
                                     }
-                                    errorMessage={!isConfirmPasswordValid ? t('Passwords do not match') : undefined}
                                     variant="bordered"
                                     label={t('Confirm Password')}
                                     name="confirmPassword"
                                     type={isConfirmPasswordVisible ? 'text' : 'password'}
-                                    validationState={isConfirmPasswordValid ? 'valid' : 'invalid'}
+                                    isInvalid={isConfirmPasswordValid !== ''}
+                                    errorMessage={isConfirmPasswordValid}
                                     value={confirmPassword}
                                     onValueChange={value => {
-                                        setIsConfirmPasswordValid(true);
+                                        setIsConfirmPasswordValid('');
                                         setConfirmPassword(value);
                                     }}
                                 />
@@ -306,15 +311,15 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
                                 <Input
                                     autoFocus
                                     isRequired
-                                    errorMessage={!isVerifyCodeValid ? 'Enter your email verify code' : undefined}
                                     label={t('Verify Code')}
                                     name="verifyCode"
                                     variant="bordered"
                                     type="text"
-                                    validationState={isVerifyCodeValid ? 'valid' : 'invalid'}
+                                    isInvalid={isVerifyCodeValid !== ''}
+                                    errorMessage={isVerifyCodeValid}
                                     value={verifyCode}
                                     onValueChange={value => {
-                                        setIsVerifyCodeValid(true);
+                                        setIsVerifyCodeValid('');
                                         setVerifyCode(value);
                                     }}
                                 />

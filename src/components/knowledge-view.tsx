@@ -6,7 +6,6 @@ import { Editor } from '@/components/editor/index';
 import knowledge from '@/pages/share/knowledge';
 
 export default memo(function KnowledgeView({ knowledge }: { knowledge: Knowledge }) {
-    console.log('?????', knowledge);
     return (
         <>
             <ScrollShadow hideScrollBar className="w-full flex-grow box-border flex justify-center">

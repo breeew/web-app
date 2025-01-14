@@ -205,7 +205,7 @@ const EditKnowledge = function (props: EditKnowledgeProps) {
             ) : (
                 <>
                     <div className="flex justify-between items-center w-full min-h-10 p-2 overflow-hidden gap-4">
-                        <Skeleton>
+                        <Skeleton className="rounded-lg">
                             <Breadcrumbs>
                                 <BreadcrumbItem>Home</BreadcrumbItem>
                                 <BreadcrumbItem>Home</BreadcrumbItem>
@@ -222,7 +222,7 @@ const EditKnowledge = function (props: EditKnowledgeProps) {
                         <Skeleton className="h-5 w-4/5 rounded-lg" />
                     </div>
                     <div className="fixed w-full left-0 bottom-0 h-14 flex justify-center items-center bg-content1">
-                        <Skeleton>
+                        <Skeleton className="rounded-lg">
                             <ButtonGroup variant="flat" size="base">
                                 <Button />
                                 <Button />

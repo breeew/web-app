@@ -115,8 +115,9 @@ export default function Component() {
 
             return;
         }
+
         loadData();
-    }, []);
+    }, [spaces]);
 
     // @ts-ignore
     function handleSelectionChange(e) {

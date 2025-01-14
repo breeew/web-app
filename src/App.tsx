@@ -50,7 +50,7 @@ export function App({ children }: { children: React.ReactNode }) {
 
     setTimeout(() => {
         setNotAutoLoginDirect();
-    }, 1000);
+    }, 500);
 
     return (
         <NextUIProvider navigate={navigate}>

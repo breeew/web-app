@@ -20,7 +20,7 @@ export default function () {
             if (data.user_avatar === '') {
                 data.user_avatar = 'https://avatar.vercel.sh/' + data.user_id;
             }
-            console.log(data);
+
             setKnowledge(data);
         } catch (e: any) {
             console.error(e);

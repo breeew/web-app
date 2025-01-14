@@ -1,5 +1,5 @@
 import { OutputData } from '@editorjs/editorjs';
-import { Button, Input, ScrollShadow, Select, SelectItem, Skeleton, Spacer } from '@nextui-org/react';
+import { Button, Input, ScrollShadow, Select, SelectItem, SelectSection, Skeleton, Spacer } from '@nextui-org/react';
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSnapshot } from 'valtio';
@@ -8,6 +8,7 @@ import { CreateKnowledge, type Knowledge, UpdateKnowledge } from '@/apis/knowled
 import { ListResources, Resource } from '@/apis/resource';
 import KnowledgeAITaskList from '@/components/ai-tasks-list';
 import { Editor } from '@/components/editor/index';
+import { useGroupedResources } from '@/hooks/use-resource';
 import { useToast } from '@/hooks/use-toast';
 import resourceStore, { loadSpaceResource } from '@/stores/resource';
 import spaceStore from '@/stores/space';
@@ -63,31 +64,32 @@ export default memo(
             loadSpaceResource(currentSelectedSpace);
         }, [currentSelectedResource, currentSelectedSpace]);
 
-        const resources = useMemo(() => {
-            let list: Resource[] = [];
-            let matched = false;
+        const { groupedResources } = useGroupedResources();
+        // const resources = useMemo(() => {
+        //     let list: Resource[] = [];
+        //     let matched = false;
 
-            if (currentSpaceResources) {
-                for (const item of currentSpaceResources) {
-                    if (resource === item.id) {
-                        matched = true;
-                    }
+        //     if (currentSpaceResources) {
+        //         for (const item of currentSpaceResources) {
+        //             if (resource === item.id) {
+        //                 matched = true;
+        //             }
 
-                    if (item.id !== '') {
-                        list.push(item);
-                    }
-                }
-            }
+        //             if (item.id !== '') {
+        //                 list.push(item);
+        //             }
+        //         }
+        //     }
 
-            if (!matched && resource) {
-                list.push({
-                    id: resource,
-                    title: t('UnCreate') + ': ' + resource
-                });
-            }
+        //     if (!matched && resource) {
+        //         list.push({
+        //             id: resource,
+        //             title: t('UnCreate') + ': ' + resource
+        //         });
+        //     }
 
-            return list;
-        }, [currentSpaceResources]);
+        //     return list;
+        // }, [currentSpaceResources]);
 
         const defaultResource = useMemo(() => {
             if (knowledge && knowledge.resource) {
@@ -97,12 +99,12 @@ export default memo(
                 return currentSelectedResource.id;
             }
 
-            if (resources.length > 0) {
-                return resources[0].id;
+            if (groupedResources.length > 0 && groupedResources[0].items.length > 0) {
+                return groupedResources[0].items[0].id;
             }
 
             return '';
-        }, [currentSelectedResource, resources, knowledge]);
+        }, [currentSelectedResource, groupedResources, knowledge]);
 
         const onKnowledgeContentChanged = useCallback((value: string | OutputData) => {
             if (isInvalid) {
@@ -231,8 +233,14 @@ export default memo(
                                                 }
                                             }}
                                         >
-                                            {resources.map(item => {
-                                                return <SelectItem key={item.id}>{item.title}</SelectItem>;
+                                            {groupedResources.map(item => {
+                                                return (
+                                                    <SelectSection showDivider key={item.title} title={t(item.title)}>
+                                                        {item.items.map(v => {
+                                                            return <SelectItem key={v.id}>{v.title}</SelectItem>;
+                                                        })}
+                                                    </SelectSection>
+                                                );
                                             })}
                                         </Select>
                                     )}

@@ -293,7 +293,7 @@ export default function Component() {
 
     const controlsContent = useMemo(
         () => (
-            <div className="flex flex-col gap-6  overflow-y-auto pb-16">
+            <div className="flex flex-col gap-6 overflow-y-auto pb-16">
                 <div className="mx-auto relative">
                     <Calendar
                         aria-label="Date (Max Date Value)"
@@ -461,7 +461,7 @@ export default function Component() {
 
             <main className="flex gap-6 w-full max-w-[1400px] h-full items-stretch justify-center relative">
                 {/* Controls */}
-                <div className="hidden w-[260px] overflow-hidden flex-col gap-4 lg:flex sticky top-0">{controlsContent}</div>
+                <div className="hidden w-[260px] overflow-hidden max-h-[calc(100vh*3/4)] flex-col gap-4 lg:flex sticky top-0">{controlsContent}</div>
                 {/* Chat */}
                 <div className="relative flex flex-col h-full gap-2 pt-4 sm:pt-10 w-full md:max-w-[720px] rounded-xl bg-content1 overflow-hidden">
                     <div className="flex flex-grow w-full max-w-full flex-col box-border px-1 gap-2 relative overflow-hidden">
@@ -520,30 +520,38 @@ export default function Component() {
                         </div>
                     </div>
                 </div>
-                <div className="hidden w-[260px] gap-4 xl:flex justify-end">
+                <div className="hidden w-[260px] max-h-[calc(100vh*3/4)] overflow-y-auto flex-col gap-4 lg:flex sticky top-0">
                     <Listbox
                         aria-label="rel docs"
                         variant="faded"
                         onAction={key => {
                             showKnowledge(key as string);
                         }}
+                        classNames={{
+                            base: 'max-w-xs',
+                            list: 'max-h-screen overflow-scroll'
+                        }}
                         virtualization={{
-                            maxListboxHeight: 600,
+                            maxListboxHeight: 400,
                             itemHeight: 40
                         }}
+                        topContent={<span className="text-zinc-500 text-sm font-bold">{t('DateRelKnowledge')}</span>}
                     >
-                        <ListboxSection title={t('RelKnowledge')} classNames={{ heading: 'text-zinc-500 text-sm font-bold' }}>
+                        <ListboxSection classNames={{ heading: 'text-zinc-500 text-sm font-bold' }}>
                             {knowledges &&
                                 knowledges.map(v => {
                                     return (
                                         <ListboxItem key={v.id} aria-label={v.title} className="overflow-hidden text-wrap break-words break-all flex flex-col items-start">
-                                            {v.title && <div>{v.title}</div>}
-                                            <div> {v.id}</div>
+                                            <div className="flex flex-col">
+                                                <span className="text-small">{v.title}</span>
+                                                <span className="text-tiny text-default-400">{v.id}</span>
+                                            </div>
                                         </ListboxItem>
                                     );
                                 })}
                         </ListboxSection>
                     </Listbox>
+
                     {/* TODO: New Knowledge & AI QA */}
                     {/* <Button variant="ghost">{t("CreateKnowledge")}</Button> */}
                 </div>

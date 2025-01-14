@@ -96,7 +96,7 @@ function PreLogin({ init, children }: { init: boolean; children: ReactNode }) {
         }
     }
 
-    return isLogin ? <Navigate to="/dashboard" /> : children;
+    return isLogin && autoLoginDirect() ? <Navigate to="/dashboard" /> : children;
 }
 
 const routes = createBrowserRouter([

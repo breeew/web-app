@@ -60,7 +60,7 @@ function handleAxiosError(error: AxiosError) {
         logout();
     }
     toast({
-        title: 'Request Error',
+        title: i18n.t('RequestError'),
         // @ts-ignore
         description: error.response ? error.response.data.meta.message + ', ' + error.message : error.message
     });

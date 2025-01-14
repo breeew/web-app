@@ -19,7 +19,7 @@ import {
     useDisclosure,
     User
 } from '@nextui-org/react';
-import React, { Key, useCallback, useEffect, useRef, useState } from 'react';
+import React, { Key, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useImmer } from 'use-immer';
@@ -39,6 +39,7 @@ import ResourceManage from '@/components/resource-modal';
 import { useChatPageCondition } from '@/hooks/use-chat-page';
 import { useMedia } from '@/hooks/use-media';
 import { usePlan } from '@/hooks/use-plan';
+import { useGroupedResources } from '@/hooks/use-resource';
 import resourceStore, { loadSpaceResource, setCurrentSelectedResource, setSpaceResource } from '@/stores/resource';
 import sessionStore, { setCurrentSelectedSession } from '@/stores/session';
 import { closeSocket } from '@/stores/socket';
@@ -63,7 +64,7 @@ export default function Component({ children }: { children: React.ReactNode }) {
     const { isChat } = useChatPageCondition();
     const { sessionID } = useParams();
 
-    const { resourceList, resourceLoading, listResource } = useResourceMode();
+    const { groupedResources, resourceList, resourceLoading, listResource } = useResourceMode();
 
     const resourceManage = useRef<HTMLElement>();
     const showCreateResource = useCallback(() => {
@@ -253,6 +254,9 @@ export default function Component({ children }: { children: React.ReactNode }) {
                                                 base: 'data-[selected=true]:bg-primary-400 data-[selected=true]:focus:bg-primary-400 dark:data-[selected=true]:bg-primary-300 data-[hover=true]:bg-default-300/20 dark:data-[hover=true]:bg-default-200/40',
                                                 title: 'group-data-[selected=true]:text-primary-foreground'
                                             }}
+                                            sectionClasses={{
+                                                heading: 'text-zinc-500 font-bold'
+                                            }}
                                             items={(() => {
                                                 const items: ChatSessionGroup[] = [];
 
@@ -300,14 +304,40 @@ export default function Component({ children }: { children: React.ReactNode }) {
                                                 base: 'data-[selected=true]:bg-primary-400 data-[selected=true]:focus:bg-primary-400 dark:data-[selected=true]:bg-primary-300 data-[hover=true]:bg-default-300/20 dark:data-[hover=true]:bg-default-200/40',
                                                 title: 'group-data-[selected=true]:text-primary-foreground'
                                             }}
-                                            items={resourceList}
-                                            onSelect={key => {
-                                                for (const item of resourceList) {
-                                                    if (item.id === key) {
-                                                        setCurrentSelectedResource(item);
-                                                        break;
-                                                    }
+                                            sectionClasses={{
+                                                heading: 'text-zinc-500 font-bold'
+                                            }}
+                                            items={(() => {
+                                                const items: ChatSessionGroup[] = [];
+
+                                                for (const item of groupedResources) {
+                                                    items.push({
+                                                        key: item.title,
+                                                        title: t(item.title),
+                                                        items: item.items?.map(v => {
+                                                            return {
+                                                                key: v.id,
+                                                                title: t(v.title) || v.id
+                                                            };
+                                                        })
+                                                    });
                                                 }
+
+                                                return items;
+                                            })()}
+                                            onSelect={key => {
+                                                const targetResource = resourceList?.find(v => v.id === key);
+                                                if (targetResource) {
+                                                    setCurrentSelectedResource(
+                                                        targetResource.id === 'knowledge'
+                                                            ? {
+                                                                  ...targetResource,
+                                                                  title: t(targetResource.title)
+                                                              }
+                                                            : targetResource
+                                                    );
+                                                }
+
                                                 if (isMobile && isOpen) {
                                                     onOpenChange();
                                                 }
@@ -433,9 +463,9 @@ export default function Component({ children }: { children: React.ReactNode }) {
 
 function useResourceMode() {
     const { t } = useTranslation();
-    const [resourceList, setResourceList] = useState<SidebarItem[]>([]);
+    // const [resourceList, setResourceList] = useState<SidebarItem[]>([]);
     const [resourceLoading, setResourceLoading] = useState(false);
-    const { currentSelectedResource } = useSnapshot(resourceStore);
+    const { currentSelectedResource, currentSpaceResources } = useSnapshot(resourceStore);
     const { currentSelectedSpace } = useSnapshot(spaceStore);
 
     useEffect(() => {
@@ -447,38 +477,43 @@ function useResourceMode() {
         });
     }, [currentSelectedSpace]);
 
+    const { groupedResources } = useGroupedResources();
+
+    const appendAllForGroupedResources = useMemo(() => {
+        return [
+            {
+                title: '',
+                items: [
+                    {
+                        id: '',
+                        title: 'all'
+                    }
+                ]
+            },
+            ...groupedResources
+        ];
+    }, [groupedResources]);
     const listResource = useCallback(
         async function (spaceID: string) {
             setResourceLoading(true);
             try {
                 let resp = await loadSpaceResource(spaceID);
-                const items: SidebarItem[] = [
-                    {
-                        id: '',
-                        title: t('All')
-                    }
-                ];
 
                 let currentSelectedResourceAlreadyExist = currentSelectedResource && currentSelectedResource.id === '';
 
                 resp.forEach(v => {
                     if (currentSelectedResource && v.id === currentSelectedResource.id && v.space_id === currentSelectedResource.space_id) {
                         currentSelectedResourceAlreadyExist = true;
+                        return;
                     }
-                    items.push({
-                        id: v.id,
-                        title: v.title,
-                        cycle: v.cycle,
-                        space_id: v.space_id,
-                        description: v.description
-                    });
                 });
 
-                if (!currentSelectedResourceAlreadyExist) {
-                    setCurrentSelectedResource(items[0]);
+                if (!currentSelectedResourceAlreadyExist && resp.length > 0) {
+                    setCurrentSelectedResource({
+                        id: '',
+                        title: t('all')
+                    });
                 }
-
-                setResourceList(items);
             } catch (e: any) {
                 console.error(e);
             }
@@ -487,9 +522,22 @@ function useResourceMode() {
         [currentSelectedResource, currentSelectedSpace]
     );
 
+    const resourceList = useMemo(() => {
+        if (!currentSpaceResources) {
+            return [];
+        }
+        return [
+            {
+                id: '',
+                title: t('all')
+            },
+            ...currentSpaceResources
+        ];
+    }, [currentSpaceResources]);
+
     return {
         resourceList,
-        setResourceList,
+        groupedResources: appendAllForGroupedResources,
         resourceLoading,
         listResource
     };
@@ -634,7 +682,6 @@ function useChatMode() {
                 return;
             }
 
-            console.log(sessionList[0].items[0].id);
             if (sessionList[0].items && sessionList[0].items[0] && (sessionList[0].items[0].id !== sessionID || sessionList[0].key !== 'today')) {
                 reload(sessionList[0].items[0].space_id);
             }

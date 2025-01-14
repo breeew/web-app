@@ -133,7 +133,7 @@ const LoginComponent = memo(function LoginComponent({ changeMode }: { changeMode
                 planID: resp.plan_id
             });
 
-            navigate('/dashboard');
+            navigate('/dashboard', { replace: true });
         } catch (e: any) {
             console.error(e);
         }
@@ -164,7 +164,7 @@ const LoginComponent = memo(function LoginComponent({ changeMode }: { changeMode
                 planID: resp.meta.plan_id
             });
 
-            navigate('/dashboard');
+            navigate('/dashboard', { replace: true });
         } catch (e: AxiosError) {
             if (e.response?.status === 403) {
                 toast({

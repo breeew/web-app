@@ -149,7 +149,6 @@ export default memo(function Component() {
     const showKnowledge = useCallback(
         (knowledge: Knowledge) => {
             if (isMobile) {
-                console.log(`/dashboard/${knowledge.space_id}/knowledge/${knowledge.id}/editor`);
                 navigate(`/dashboard/${knowledge.space_id}/knowledge/${knowledge.id}/editor`);
                 return;
             }

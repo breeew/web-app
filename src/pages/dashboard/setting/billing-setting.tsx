@@ -53,7 +53,7 @@ const BillingSetting = React.forwardRef<HTMLDivElement, BillingSettingCardProps>
     async function loadPlanList() {
         try {
             const list = await GetPlanList();
-            console.log(list);
+
             setPlanList(list);
         } catch (e: any) {
             console.error(e);
@@ -71,7 +71,7 @@ const BillingSetting = React.forwardRef<HTMLDivElement, BillingSettingCardProps>
                                 <div className="flex items-center gap-3">
                                     <Icon className="h-6 w-6 text-default-500" icon="solar:card-outline" />
                                     <div>
-                                        <p className="text-sm font-medium text-default-600">您当前享受{t('Trial Plan')}计划</p>
+                                        <p className="text-sm font-medium text-default-600"> {t('CurrentPlan', { plan: userPlan.planID })}</p>
                                         <p className="text-xs text-default-400">
                                             {t('Your membership plan will expire on')} <span className="text-default-500">{userPlan?.endTime}</span>
                                         </p>

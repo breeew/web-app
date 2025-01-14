@@ -26,37 +26,40 @@ export default function IndexPage() {
     }
     return (
         <DefaultLayout>
-            <section className="flex h-full flex-col items-center gap-4 py-8 md:py-10">
-                <div className="z-10 mb-4 flex items-center justify-center">
-                    <div
-                        className={cn(
-                            'group rounded-full border border-black/5 bg-neutral-100 text-base text-white transition-all ease-in hover:cursor-pointer hover:bg-neutral-200 dark:border-white/5 dark:bg-neutral-900 dark:hover:bg-neutral-800'
-                        )}
-                    >
-                        <ShinyText className="inline-flex items-center justify-center px-4 py-1 transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-400">
-                            <span>✨ Quick start your cyber memory</span>
-                        </ShinyText>
+            <section className="flex h-full flex-col items-center gap-4 py-10">
+                <div className="flex flex-col justify-center items-center lg:py-32">
+                    <div className="z-10 mb-10 flex items-center justify-center">
+                        <div
+                            className={cn(
+                                'group rounded-full border border-black/5 bg-neutral-100 text-base text-white transition-all ease-in hover:cursor-pointer hover:bg-neutral-200 dark:border-white/5 dark:bg-neutral-900 dark:hover:bg-neutral-800'
+                            )}
+                        >
+                            <ShinyText className="inline-flex items-center justify-center px-4 py-1 transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-400">
+                                <span>✨ Quick start your cyber memory</span>
+                            </ShinyText>
+                        </div>
                     </div>
-                </div>
 
-                <div className="inline-block max-w-2xl text-center justify-center">
-                    <span className={title()}>{t('IndexH1')}&nbsp;</span>
-                    <span className={title({ color: 'violet' })}>{Name}&nbsp;</span>
-                    <br />
-                    <br />
-                    <span className={title()}>
-                        {t('Build your second')} <span className={title({ color: 'violet' })}>{t('Brain')}</span>
-                    </span>
-                    {/* <div className={subtitle({ class: 'mt-4' })}>To reach beyond your limits</div> */}
-                </div>
+                    <div className="inline-block max-w-2xl text-center justify-center">
+                        <span className={title()}>{t('IndexH1')}&nbsp;</span>
+                        <span className={title({ color: 'violet' })}>{Name}&nbsp;</span>
+                        <br />
+                        <br />
+                        <span className={title()}>{t('Build your')}</span>
+                        <br />
+                        <br />
+                        <span className={title()}>{t('Second')}</span>
+                        <span className={title({ color: 'violet' })}> {t('Brain')}</span>
+                        {/* <div className={subtitle({ class: 'mt-4' })}>To reach beyond your limits</div> */}
+                    </div>
 
-                <div className="flex gap-3 mt-10 mb-24">
-                    <Link href="/login">
-                        <Button color="primary" className="flex gap-2  items-center">
-                            {t('QuickStart')}
-                        </Button>
-                    </Link>
-                    {/* <Link href="https://discord.gg/YGrbmbCVRF">
+                    <div className="flex gap-3 mt-10 mb-24">
+                        <Link href="/login">
+                            <Button color="primary" className="flex gap-2  items-center" size="lg">
+                                {t('QuickStart')}
+                            </Button>
+                        </Link>
+                        {/* <Link href="https://discord.gg/YGrbmbCVRF">
                         <Button color="primary" className="flex gap-2  items-center">
                             Document
                         </Button>
@@ -67,6 +70,7 @@ export default function IndexPage() {
                             Github
                         </Button>
                     </Link> */}
+                    </div>
                 </div>
 
                 {/* <div className="mt-8">
@@ -88,9 +92,9 @@ export default function IndexPage() {
                 )}
 
                 <Image src="demo-screen.png" className="hidden" onLoad={() => demoOnLoad()} />
-                <div id="feature" className="relative flex h-[160px] w-full flex-col items-center justify-center overflow-hidden rounded-lg bg-background md:shadow-xl">
+                <div id="feature" className="my-10 relative flex h-[160px] w-full md:w-1/2 flex-col items-center justify-center overflow-hidden rounded-lg bg-background md:shadow-xl">
                     <p className="z-10 whitespace-pre-wrap text-center text-5xl font-medium tracking-tighter text-black dark:text-white">{t('Features')}</p>
-                    <p className="z-10 whitespace-pre-wrap text-center text-base font-medium tracking-tighter text-zinc-400 ">{t('Gradually build better and more efficient recording software.')}</p>
+                    <p className="z-10 whitespace-pre-wrap text-center text-lg font-medium tracking-tighter text-zinc-400 mt-4">{t('siteFeaturesDescription')}</p>
                     <DotPattern className={cn('[mask-image:radial-gradient(260px_circle_at_center,white,transparent)]')} />
                 </div>
                 <BentoDemo />
