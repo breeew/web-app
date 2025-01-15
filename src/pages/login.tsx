@@ -130,7 +130,8 @@ const LoginComponent = memo(function LoginComponent({ changeMode }: { changeMode
                 avatar: resp.avatar || 'https://avatar.vercel.sh/' + resp.user_id,
                 userName: resp.user_name,
                 email: resp.email,
-                planID: resp.plan_id
+                planID: resp.plan_id,
+                serviceMode: resp.service_mode
             });
 
             navigate('/dashboard', { replace: true });
@@ -161,7 +162,8 @@ const LoginComponent = memo(function LoginComponent({ changeMode }: { changeMode
                 avatar: resp.meta.avatar || 'https://avatar.vercel.sh/' + resp.meta.user_id,
                 userName: resp.meta.user_name,
                 email: resp.meta.email,
-                planID: resp.meta.plan_id
+                planID: resp.meta.plan_id,
+                serviceMode: resp.meta.service_mode
             });
 
             navigate('/dashboard', { replace: true });

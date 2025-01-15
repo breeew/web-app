@@ -47,6 +47,7 @@ const BillingSetting = React.forwardRef<HTMLDivElement, BillingSettingCardProps>
     const { userInfo } = useSnapshot(userStore);
 
     React.useEffect(() => {
+        loadPlanList();
         if (!userIsPro) {
             setUserPlan({
                 planID: '😭',
@@ -58,9 +59,7 @@ const BillingSetting = React.forwardRef<HTMLDivElement, BillingSettingCardProps>
             }, 500);
             return;
         }
-
         loadUserPlan();
-        loadPlanList();
     }, [userIsPro]);
 
     const [planList, setPlanList] = React.useState();
@@ -124,10 +123,10 @@ const BillingSetting = React.forwardRef<HTMLDivElement, BillingSettingCardProps>
                         ''
                     )} */}
                     {/* Plan radio group */}
-                    {planList && userPlan && (
+                    {planList && (
                         <>
                             <p className="text-base font-medium text-default-700">{t('Current Plan')}</p>
-
+                            <p className="mt-1 text-sm font-normal text-default-400">{t('PlanSellDesc')}</p>
                             <RadioGroup
                                 className="mt-4"
                                 classNames={{
