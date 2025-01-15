@@ -182,5 +182,6 @@
     "CurrentPlan": "Your current plan is {{plan}}",
     "length between": "Length should be between {{min}} and {{max}}",
     "VerificationCodeError": "Verification code is incorrect or has expired.",
-    "RequestError": "Request Error"
+    "RequestError": "Request Error",
+    "Congratulation": "Congratulation"
 }

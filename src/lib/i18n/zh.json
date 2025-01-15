@@ -182,5 +182,6 @@
     "CurrentPlan": "您当前享受 {{plan}} 计划",
     "length between": "长度应在 {{min}} 到 {{max}} 之间",
     "VerificationCodeError": "验证码错误或已失效",
-    "RequestError": "请求失败"
+    "RequestError": "请求失败",
+    "Congratulation": "恭喜"
 }
