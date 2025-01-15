@@ -145,7 +145,10 @@ export default function Component({ children }: { children: React.ReactNode }) {
 
     const createNewSession = useCallback(() => {
         navigate(`/dashboard/${currentSelectedSpace}/chat`);
-    }, [currentSelectedSpace]);
+        if (isMobile && isOpen) {
+            onOpenChange();
+        }
+    }, [currentSelectedSpace, isOpen, isMobile]);
 
     const redirectSession = useCallback(
         (key: string) => {
@@ -390,7 +393,7 @@ export default function Component({ children }: { children: React.ReactNode }) {
                         <DropdownTrigger>
                             {userInfo && userInfo.userID ? (
                                 <Button
-                                    className="mb-4 h-20 items-center justify-between"
+                                    className="mb-4 h-[80px] items-center justify-between"
                                     variant="bordered"
                                     endContent={
                                         userInfo.planID && (
