@@ -1,5 +1,5 @@
-import { Button, Input, Skeleton, Spacer } from '@nextui-org/react';
-import { cn } from '@nextui-org/react';
+import { Button, Input, Skeleton, Spacer } from "@heroui/react";
+import { cn } from "@heroui/react";
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSnapshot } from 'valtio';
@@ -172,7 +172,7 @@ const ProfileSetting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>
                     )}
                 </div>
                 <Spacer y={2} />
-                <Button isDisabled={disabled} className="mt-4 bg-default-foreground text-background" isLoading={loading} onClick={updateUserProfile}>
+                <Button isDisabled={disabled} className="mt-4 bg-default-foreground text-background" isLoading={loading} onPress={updateUserProfile}>
                     {t('Update')}
                 </Button>
             </Skeleton>

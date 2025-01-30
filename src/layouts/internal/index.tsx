@@ -1,10 +1,12 @@
 import { Icon } from '@iconify/react';
+import { getLocalTimeZone, today } from '@internationalized/date';
 import {
     Button,
     Card,
     CardBody,
     CardFooter,
     Chip,
+    cn,
     Dropdown,
     DropdownItem,
     DropdownMenu,
@@ -16,9 +18,8 @@ import {
     Spacer,
     useDisclosure,
     User
-} from '@nextui-org/react';
-import { cn } from '@nextui-org/react';
-import React, { Key, useCallback, useEffect, useRef, useState } from 'react';
+} from "@heroui/react";
+import React, { Key, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useImmer } from 'use-immer';
@@ -32,15 +33,18 @@ import WorkSpaceSelection from './space-selection';
 
 import { ChatSession, GetChatSessionList } from '@/apis/chat';
 import { ListResources } from '@/apis/resource';
-import { GithubIcon, Logo } from '@/components/icons';
+import { GithubIcon } from '@/components/icons';
+import { LogoIcon, Name } from '@/components/logo';
 import ResourceManage from '@/components/resource-modal';
 import { useChatPageCondition } from '@/hooks/use-chat-page';
 import { useMedia } from '@/hooks/use-media';
-import resourceStore, { setCurrentSelectedResource, setSpaceResource } from '@/stores/resource';
+import { usePlan } from '@/hooks/use-plan';
+import { useGroupedResources } from '@/hooks/use-resource';
+import resourceStore, { loadSpaceResource, setCurrentSelectedResource, setSpaceResource } from '@/stores/resource';
 import sessionStore, { setCurrentSelectedSession } from '@/stores/session';
 import { closeSocket } from '@/stores/socket';
 import spaceStore from '@/stores/space';
-import userStore, { setUserAccessToken, setUserInfo } from '@/stores/user';
+import userStore, { logout, setUserAccessToken, setUserInfo } from '@/stores/user';
 
 interface SidebarItem {
     id: string;
@@ -60,7 +64,7 @@ export default function Component({ children }: { children: React.ReactNode }) {
     const { isChat } = useChatPageCondition();
     const { sessionID } = useParams();
 
-    const { resourceList, resourceLoading, listResource } = useResourceMode();
+    const { groupedResources, resourceList, resourceLoading, listResource } = useResourceMode();
 
     const resourceManage = useRef<HTMLElement>();
     const showCreateResource = useCallback(() => {
@@ -129,8 +133,7 @@ export default function Component({ children }: { children: React.ReactNode }) {
         switch (actionName) {
             case 'logout':
                 closeSocket();
-                setUserInfo(undefined);
-                setUserAccessToken('');
+                logout();
                 navigate('/');
                 break;
             case 'setting':
@@ -142,7 +145,10 @@ export default function Component({ children }: { children: React.ReactNode }) {
 
     const createNewSession = useCallback(() => {
         navigate(`/dashboard/${currentSelectedSpace}/chat`);
-    }, [currentSelectedSpace]);
+        if (isMobile && isOpen) {
+            onOpenChange();
+        }
+    }, [currentSelectedSpace, isOpen, isMobile]);
 
     const redirectSession = useCallback(
         (key: string) => {
@@ -150,6 +156,13 @@ export default function Component({ children }: { children: React.ReactNode }) {
         },
         [currentSelectedSpace]
     );
+
+    function goJournal() {
+        const t = today(getLocalTimeZone()).toString();
+        navigate(`/dashboard/${currentSelectedSpace}/journal/${t}`);
+    }
+
+    const { userPlan } = usePlan();
 
     return (
         <div className="flex h-dvh w-full gap-4 dark:bg-zinc-900">
@@ -163,9 +176,9 @@ export default function Component({ children }: { children: React.ReactNode }) {
                     <div className="flex items-center justify-between">
                         <Link color="foreground" href="/" className="cursor-pointer">
                             <div className="flex items-center gap-2 px-2">
-                                <Logo size={20} />
+                                <LogoIcon size={40} />
 
-                                <span className="text-lg font-bold">Brew</span>
+                                <span className="text-lg font-bold header-text">{Name}</span>
                             </div>
                         </Link>
                         {/* <div className="flex items-center justify-end">
@@ -184,14 +197,25 @@ export default function Component({ children }: { children: React.ReactNode }) {
 
                     <div className="flex flex-col gap-y-2">
                         <WorkSpaceSelection />
-                        <Spacer y={4} />
+                        {!isChat && (
+                            <>
+                                <Spacer y={4} />
+                                <Button className="mx-1" startContent={<Icon icon="stash:data-date" width={24} />} onPress={goJournal}>
+                                    {t('Journal')}
+                                </Button>
+                            </>
+                        )}
+                    </div>
+
+                    <div className="flex flex-col gap-y-2">
+                        <div className="pt-6 pb-2 px-2 text-zinc-500 text-sm">{isChat ? t('Chat Sessions') : t('Resource List')}</div>
                         {isChat ? (
-                            <Button className="mx-1" startContent={<Icon icon="material-symbols:forum-rounded" width={24} />} onClick={createNewSession}>
+                            <Button className="mx-1" variant="ghost" startContent={<Icon icon="bx:chat" width={24} />} onPress={createNewSession}>
                                 {t('New Session')}
                             </Button>
                         ) : (
                             <>
-                                <Button className="mx-1" startContent={<Icon icon="material-symbols:auto-awesome-motion" width={24} />} onClick={showCreateResource}>
+                                <Button className="mx-1" variant="ghost" startContent={<Icon icon="ic:outline-create-new-folder" width={24} />} onPress={showCreateResource}>
                                     {t('New Resource')}
                                 </Button>
                                 <ResourceManage ref={resourceManage} onModify={onResourceModify} />
@@ -211,8 +235,6 @@ export default function Component({ children }: { children: React.ReactNode }) {
                             </>
                         )}
                     </div>
-
-                    <div className="pt-6 px-2 text-zinc-500 text-sm">{isChat ? t('Chat Sessions') : t('Resource List')}</div>
                     <Spacer y={1} />
 
                     <ScrollShadow hideScrollBar className="-mr-6 h-full max-h-full py-3 pr-6">
@@ -234,6 +256,9 @@ export default function Component({ children }: { children: React.ReactNode }) {
                                             itemClasses={{
                                                 base: 'data-[selected=true]:bg-primary-400 data-[selected=true]:focus:bg-primary-400 dark:data-[selected=true]:bg-primary-300 data-[hover=true]:bg-default-300/20 dark:data-[hover=true]:bg-default-200/40',
                                                 title: 'group-data-[selected=true]:text-primary-foreground'
+                                            }}
+                                            sectionClasses={{
+                                                heading: 'text-zinc-500 font-bold'
                                             }}
                                             items={(() => {
                                                 const items: ChatSessionGroup[] = [];
@@ -282,14 +307,40 @@ export default function Component({ children }: { children: React.ReactNode }) {
                                                 base: 'data-[selected=true]:bg-primary-400 data-[selected=true]:focus:bg-primary-400 dark:data-[selected=true]:bg-primary-300 data-[hover=true]:bg-default-300/20 dark:data-[hover=true]:bg-default-200/40',
                                                 title: 'group-data-[selected=true]:text-primary-foreground'
                                             }}
-                                            items={resourceList}
-                                            onSelect={key => {
-                                                for (const item of resourceList) {
-                                                    if (item.id === key) {
-                                                        setCurrentSelectedResource(item);
-                                                        break;
-                                                    }
+                                            sectionClasses={{
+                                                heading: 'text-zinc-500 font-bold'
+                                            }}
+                                            items={(() => {
+                                                const items: ChatSessionGroup[] = [];
+
+                                                for (const item of groupedResources) {
+                                                    items.push({
+                                                        key: item.title,
+                                                        title: t(item.title),
+                                                        items: item.items?.map(v => {
+                                                            return {
+                                                                key: v.id,
+                                                                title: t(v.title) || v.id
+                                                            };
+                                                        })
+                                                    });
                                                 }
+
+                                                return items;
+                                            })()}
+                                            onSelect={key => {
+                                                const targetResource = resourceList?.find(v => v.id === key);
+                                                if (targetResource) {
+                                                    setCurrentSelectedResource(
+                                                        targetResource.id === 'knowledge'
+                                                            ? {
+                                                                  ...targetResource,
+                                                                  title: t(targetResource.title)
+                                                              }
+                                                            : targetResource
+                                                    );
+                                                }
+
                                                 if (isMobile && isOpen) {
                                                     onOpenChange();
                                                 }
@@ -342,22 +393,24 @@ export default function Component({ children }: { children: React.ReactNode }) {
                         <DropdownTrigger>
                             {userInfo && userInfo.userID ? (
                                 <Button
-                                    className="mb-4 h-20 items-center justify-between"
+                                    className="mb-4 h-[80px] items-center justify-between"
                                     variant="bordered"
                                     endContent={
-                                        <>
-                                            <Chip
-                                                variant="shadow"
-                                                size="sm"
-                                                classNames={{
-                                                    base: 'bg-gradient-to-br from-indigo-500 to-pink-500 border-small border-white/50 shadow-pink-500/30',
-                                                    content: 'drop-shadow shadow-black text-white'
-                                                }}
-                                            >
-                                                Pro
-                                            </Chip>
-                                            <Icon className="text-default-400" icon="lucide:chevrons-up-down" width={16} />
-                                        </>
+                                        userInfo.planID && (
+                                            <>
+                                                <Chip
+                                                    variant="shadow"
+                                                    size="sm"
+                                                    classNames={{
+                                                        base: 'bg-gradient-to-br from-indigo-500 to-pink-500 border-small border-white/50 shadow-pink-500/30',
+                                                        content: 'drop-shadow shadow-black text-white'
+                                                    }}
+                                                >
+                                                    {userPlan}
+                                                </Chip>
+                                                <Icon className="text-default-400" icon="lucide:chevrons-up-down" width={16} />
+                                            </>
+                                        )
                                     }
                                 >
                                     <User
@@ -413,9 +466,9 @@ export default function Component({ children }: { children: React.ReactNode }) {
 
 function useResourceMode() {
     const { t } = useTranslation();
-    const [resourceList, setResourceList] = useState<SidebarItem[]>([]);
+    // const [resourceList, setResourceList] = useState<SidebarItem[]>([]);
     const [resourceLoading, setResourceLoading] = useState(false);
-    const { currentSelectedResource } = useSnapshot(resourceStore);
+    const { currentSelectedResource, currentSpaceResources } = useSnapshot(resourceStore);
     const { currentSelectedSpace } = useSnapshot(spaceStore);
 
     useEffect(() => {
@@ -427,40 +480,43 @@ function useResourceMode() {
         });
     }, [currentSelectedSpace]);
 
+    const { groupedResources } = useGroupedResources();
+
+    const appendAllForGroupedResources = useMemo(() => {
+        return [
+            {
+                title: '',
+                items: [
+                    {
+                        id: '',
+                        title: 'all'
+                    }
+                ]
+            },
+            ...groupedResources
+        ];
+    }, [groupedResources]);
     const listResource = useCallback(
         async function (spaceID: string) {
             setResourceLoading(true);
             try {
-                let resp = await ListResources(spaceID);
-                const items: SidebarItem[] = [
-                    {
-                        id: '',
-                        title: t('All')
-                    }
-                ];
+                let resp = await loadSpaceResource(spaceID);
 
                 let currentSelectedResourceAlreadyExist = currentSelectedResource && currentSelectedResource.id === '';
 
                 resp.forEach(v => {
                     if (currentSelectedResource && v.id === currentSelectedResource.id && v.space_id === currentSelectedResource.space_id) {
                         currentSelectedResourceAlreadyExist = true;
+                        return;
                     }
-                    items.push({
-                        id: v.id,
-                        title: v.title,
-                        cycle: v.cycle,
-                        space_id: v.space_id,
-                        description: v.description
-                    });
                 });
 
-                if (!currentSelectedResourceAlreadyExist) {
-                    console.log('set new resources');
-                    setCurrentSelectedResource(items[0]);
+                if (!currentSelectedResourceAlreadyExist && resp.length > 0) {
+                    setCurrentSelectedResource({
+                        id: '',
+                        title: t('all')
+                    });
                 }
-
-                setSpaceResource(items);
-                setResourceList(items);
             } catch (e: any) {
                 console.error(e);
             }
@@ -469,9 +525,22 @@ function useResourceMode() {
         [currentSelectedResource, currentSelectedSpace]
     );
 
+    const resourceList = useMemo(() => {
+        if (!currentSpaceResources) {
+            return [];
+        }
+        return [
+            {
+                id: '',
+                title: t('all')
+            },
+            ...currentSpaceResources
+        ];
+    }, [currentSpaceResources]);
+
     return {
         resourceList,
-        setResourceList,
+        groupedResources: appendAllForGroupedResources,
         resourceLoading,
         listResource
     };
@@ -616,7 +685,6 @@ function useChatMode() {
                 return;
             }
 
-            console.log(sessionList[0].items[0].id);
             if (sessionList[0].items && sessionList[0].items[0] && (sessionList[0].items[0].id !== sessionID || sessionList[0].key !== 'today')) {
                 reload(sessionList[0].items[0].space_id);
             }

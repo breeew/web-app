@@ -1,71 +1,90 @@
-import { ReactNode, useEffect } from 'react';
+import axios from 'axios';
+import { ReactNode, useEffect, useMemo } from 'react';
 import { createBrowserRouter, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 
-import { LoginWithAccessToken } from '@/apis/user';
+import { GetUserInfo, LoginWithAccessToken } from '@/apis/user';
 import { App } from '@/App';
 import { autoLoginDirect } from '@/lib/utils';
 import Dashboard from '@/pages/dashboard';
 import ChatSession from '@/pages/dashboard/chat/chat-session.tsx';
 import Chat from '@/pages/dashboard/chat/chat.tsx';
+import CreateKnowledge from '@/pages/dashboard/create-knowledge';
+import EditKnowledge from '@/pages/dashboard/edit-knowledge';
+import Journal from '@/pages/dashboard/journal/journal';
 import Knowledge from '@/pages/dashboard/knowledge';
 import Setting from '@/pages/dashboard/setting/setting';
+import Forgot from '@/pages/forgot';
 import IndexPage from '@/pages/index';
 import Login from '@/pages/login';
+import Reset from '@/pages/reset';
+import ShareKnowledge from '@/pages/share/knowledge';
+import ShareSessionPage from '@/pages/share/session';
+import TestIframe from '@/pages/share/test-iframe';
 import { buildTower } from '@/stores/socket';
-import spaceStore, { setCurrentSelectedSpace } from '@/stores/space';
-import userStore, { setUserAccessToken, setUserInfo } from '@/stores/user';
+import spaceStore, { loadUserSpaces, setCurrentSelectedSpace } from '@/stores/space';
+import userStore, { logout, setUserInfo } from '@/stores/user';
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
-    const { accessToken, userInfo } = useSnapshot(userStore);
+    const { accessToken, loginToken, userInfo } = useSnapshot(userStore);
     const navigate = useNavigate();
     const { pathname } = useLocation();
-    const { currentSelectedSpace } = useSnapshot(spaceStore);
+    const { currentSelectedSpace, spaces } = useSnapshot(spaceStore);
+
+    const isLogin = useMemo(() => {
+        return accessToken || loginToken;
+    }, [accessToken, loginToken]);
 
     useEffect(() => {
-        if (pathname === '/dashboard' && currentSelectedSpace) {
-            navigate(`/dashboard/${currentSelectedSpace}/chat`);
-
+        if (pathname === '/dashboard' && currentSelectedSpace && userInfo) {
+            navigate(`/dashboard/${currentSelectedSpace}/chat`, { replace: true });
             return;
         }
 
-        if (accessToken && (!userInfo || !userInfo.userID)) {
+        if (isLogin && (!userInfo || !userInfo.userID)) {
             // load user info
-            async function Login(accessToken: string) {
+            async function Login(type: string, accessToken: string) {
                 try {
-                    const resp = await LoginWithAccessToken(accessToken);
-
+                    const resp = await GetUserInfo();
                     setUserInfo({
                         userID: resp.user_id,
-                        email: resp.email,
                         // avatar: resp.avatar,
-                        avatar: 'https://avatar.vercel.sh/' + resp.user_id,
-                        userName: resp.user_name
+                        avatar: resp.avatar || 'https://avatar.vercel.sh/' + resp.user_id,
+                        userName: resp.user_name,
+                        email: resp.email,
+                        planID: resp.plan_id,
+                        serviceMode: resp.service_mode
                     });
 
+                    await loadUserSpaces();
+
+                    if (type == 'authorization') {
+                        accessToken = `${accessToken}&token-type=authorization`;
+                    }
                     buildTower(resp.user_id, accessToken, () => {
                         console.log('socket connected');
                     });
                 } catch (e: any) {
-                    console.error(e);
-
-                    setUserAccessToken('');
-                    navigate('/');
+                    if (axios.isAxiosError(e) && e.status === 403) {
+                        logout();
+                        navigate('/login');
+                    }
                 }
             }
-            Login(accessToken);
+            Login(accessToken ? '' : 'authorization', accessToken || loginToken);
         }
-    }, [accessToken, currentSelectedSpace]);
+    }, [isLogin, currentSelectedSpace, spaces]);
 
-    return accessToken ? children : <Navigate to="/login" />;
+    return isLogin ? children : <Navigate to="/login" />;
 }
 
-const IS_FIRST_VIEW_KEY = 'brew_login_auto_redirect';
-
 function PreLogin({ init, children }: { init: boolean; children: ReactNode }) {
-    const { accessToken } = useSnapshot(userStore);
+    const { accessToken, loginToken, userInfo } = useSnapshot(userStore);
+    const isLogin = useMemo(() => {
+        return accessToken || loginToken;
+    }, [accessToken, loginToken]);
 
-    if (accessToken) {
+    if (userInfo && userInfo.userID) {
         setCurrentSelectedSpace('');
 
         if (init) {
@@ -77,13 +96,13 @@ function PreLogin({ init, children }: { init: boolean; children: ReactNode }) {
         }
     }
 
-    return accessToken ? <Navigate to="/dashboard" /> : children;
+    return isLogin ? <Navigate to="/dashboard" /> : children;
 }
 
 const routes = createBrowserRouter([
     {
         path: '*',
-        element: <Navigate to="/login" />
+        element: <Navigate to="/" />
     },
     {
         path: '/',
@@ -99,11 +118,56 @@ const routes = createBrowserRouter([
                 )
             },
             {
+                index: true,
+                path: '/test',
+                element: <TestIframe />
+            },
+            {
                 path: '/login',
                 element: (
                     <PreLogin>
                         <Login />
                     </PreLogin>
+                )
+            },
+            {
+                path: '/reset/password/:token',
+                element: <Reset />
+            },
+            {
+                path: '/forgot/password',
+                element: <Forgot />
+            },
+            {
+                path: '/s/k/:token', // /share/knowledge
+                element: <ShareKnowledge />
+            },
+            {
+                path: '/s/s/:token',
+                element: <ShareSessionPage />
+            },
+            {
+                path: '/dashboard/:spaceID/journal/:selectDate',
+                element: (
+                    <ProtectedRoute>
+                        <Journal />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: '/dashboard/:spaceID/knowledge/create',
+                element: (
+                    <ProtectedRoute>
+                        <CreateKnowledge />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: '/dashboard/:spaceID/knowledge/:knowledgeID/editor',
+                element: (
+                    <ProtectedRoute>
+                        <EditKnowledge />
+                    </ProtectedRoute>
                 )
             },
             {

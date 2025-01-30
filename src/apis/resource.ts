@@ -5,28 +5,28 @@ export interface Resource {
     title: string;
     space_id: string;
     description: string;
-    prompt: string;
+    tag: string;
     cycle: number;
     created_at: number;
 }
 
-export async function CreateResource(spaceID: string, id: string, title: string, cycle: number, description: string): Promise<void> {
+export async function CreateResource(spaceID: string, id: string, title: string, cycle: number, tag: string, description: string): Promise<void> {
     await instance.post(`/${spaceID}/resource`, {
         id,
         title,
         description,
         cycle: Number(cycle),
-        prompt: ''
+        tag: tag
     });
 }
 
-export async function UpdateResource(spaceID: string, id: string, title: string, cycle: number, description: string): Promise<void> {
+export async function UpdateResource(spaceID: string, id: string, title: string, cycle: number, tag: string, description: string): Promise<void> {
     await instance.put(`/${spaceID}/resource`, {
         id,
         title,
         description,
         cycle: Number(cycle),
-        prompt: ''
+        tag: tag
     });
 }
 

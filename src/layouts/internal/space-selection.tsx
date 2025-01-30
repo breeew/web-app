@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Button, Select, SelectItem, SelectSection, Skeleton } from '@nextui-org/react';
+import { Button, Select, SelectItem, SelectSection, Skeleton } from "@heroui/react";
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -9,7 +9,7 @@ import { subscribeKey } from 'valtio/utils';
 import { UserSpace } from '@/apis/space';
 import CreateSpace from '@/components/create-space';
 import { useChatPageCondition } from '@/hooks/use-chat-page';
-import spaceStore, { loadUserSpaces, setCurrentSelectedSpace } from '@/stores/space';
+import spaceStore, { latestPickedSpace, loadUserSpaces, setCurrentSelectedSpace } from '@/stores/space';
 
 interface WorkSpace {
     value: string;
@@ -60,8 +60,8 @@ export default function Component() {
             {
                 value: '0',
                 label: t('Workspace'),
-                items: datas.map((val: UserSpace, i: number) => {
-                    if ((!spaceID && i === 0) || val.space_id === spaceID) {
+                items: datas.map((val: UserSpace, _: number) => {
+                    if (val.space_id === spaceID) {
                         // default
                         onSelected(val.space_id);
                         selected = val.space_id;
@@ -78,8 +78,13 @@ export default function Component() {
         setWorkspaces(spacesSelector);
 
         if (!selected && spacesSelector[0].items) {
-            // on user deleted space
-            onSelected(spacesSelector[0].items[0].value, true);
+            const latestPicked = latestPickedSpace();
+
+            if (spacesSelector[0].items.find(v => v.value === latestPicked)) {
+                onSelected(latestPicked, true);
+            } else {
+                onSelected(spacesSelector[0].items[0].value, true);
+            }
         }
     }
 
@@ -110,8 +115,9 @@ export default function Component() {
 
             return;
         }
+
         loadData();
-    }, []);
+    }, [spaces]);
 
     // @ts-ignore
     function handleSelectionChange(e) {
@@ -161,7 +167,7 @@ export default function Component() {
                     }}
                     showScrollIndicators={false}
                     placeholder="Select workspace"
-                    selectorIcon={<Icon color="hsl(var(--nextui-default-500))" icon="lucide:chevrons-up-down" />}
+                    selectorIcon={<Icon color="hsl(var(--heroui-default-500))" icon="lucide:chevrons-up-down" />}
                     startContent={
                         <div className="relative h-10 w-10 flex-none rounded-full border-small border-default-300">
                             <Icon className="ml-2 mt-2 text-default-500" icon="solar:users-group-rounded-linear" width={24} />

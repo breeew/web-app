@@ -2,6 +2,7 @@ declare type Resource = {
     id: string;
     title: string;
     cycle: number;
+    tag: string;
     space_id: string;
     description: string;
 };
@@ -27,6 +28,7 @@ declare type ResourceStore = {
     currentSelectedResource: Resource | undefined;
     currentSpaceResources: Resource[] | undefined;
     onResourceUpdate: boolean;
+    resourceTags: string[];
 };
 
 type callbackFunc = (msg: FireTowerMsg) => void;
@@ -49,6 +51,7 @@ declare type UserSpace = {
 declare type SpaceStore = {
     spaces: UserSpace[];
     currentSelectedSpace: string;
+    spaceRole: string;
 };
 
 declare type UserInfo = {
@@ -56,10 +59,13 @@ declare type UserInfo = {
     userName: string;
     email: string;
     avatar: string;
+    planID: string;
+    serviceMode: string;
 };
 
 declare type UserStore = {
     accessToken: string | null;
+    loginToken: string | null;
     userInfo: UserInfo;
     host: string;
 };

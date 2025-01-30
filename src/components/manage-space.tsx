@@ -1,4 +1,4 @@
-import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Popover, PopoverContent, PopoverTrigger, Textarea, useDisclosure } from '@nextui-org/react';
+import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Popover, PopoverContent, PopoverTrigger, Textarea, useDisclosure } from "@heroui/react";
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -69,7 +69,7 @@ const ManageSpaceComponent = forwardRef(({ space, className, label, variant, rad
 
     return (
         <>
-            <Button {...{ className, variant, radius }} onClick={trigger}>
+            <Button {...{ className, variant, radius }} onPress={trigger}>
                 {label}
             </Button>
             <Modal backdrop="blur" className="z-[1000000]" isOpen={isOpen} onClose={onClose}>

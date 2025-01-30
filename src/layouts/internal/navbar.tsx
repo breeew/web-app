@@ -1,14 +1,18 @@
 import { Icon } from '@iconify/react';
-import { Button, Input, Kbd, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@nextui-org/react';
+import { Button, Input, Kbd, Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/react";
 import { PressEvent } from '@react-types/shared/src';
 import { useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 
+import { CreateSessionShareURL } from '@/apis/share';
 import ManageSpaceComponent from '@/components/manage-space';
 import ResourceManage from '@/components/resource-modal';
+import ShareButton from '@/components/share-button';
 import { useChatPageCondition } from '@/hooks/use-chat-page';
+import { usePlan } from '@/hooks/use-plan';
+import { useRole } from '@/hooks/use-role';
 import { triggerKnowledgeSearch } from '@/stores/knowledge';
 import { onKnowledgeSearchKeywordsChange } from '@/stores/knowledge';
 // import NotificationsCard from './notifications-card';
@@ -19,11 +23,12 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
     const { t } = useTranslation();
     const { currentSelectedResource } = useSnapshot(resourceStore);
     const { spaces, currentSelectedSpace } = useSnapshot(spaceStore);
-    const { isChat } = useChatPageCondition();
+    const { isChat, isSession } = useChatPageCondition();
     const resourceManage = useRef<HTMLElement>();
     const currentSpace = useMemo(() => {
         return spaces.find(v => v.space_id === currentSelectedSpace);
     }, [spaces, currentSelectedSpace]);
+    const { sessionID } = useParams();
 
     const navigate = useNavigate();
     const { pathname, state } = useLocation();
@@ -64,10 +69,13 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
         }
     };
 
+    const { userIsPro } = usePlan();
+    const { isSpaceViewer } = useRole();
+
     return (
         <Navbar
             classNames={{
-                base: 'bg-transparent lg:backdrop-filter-none mt-3 flex',
+                base: 'bg-transparent lg:backdrop-filter-none md:mt-3 flex',
                 item: 'data-[active=true]:text-primary',
                 wrapper: 'px-2 w-full max-w-full justify-between items-center'
             }}
@@ -83,7 +91,7 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
                             <Button
                                 className="float-right text-white bg-gradient-to-br from-pink-300 from-15%  to-indigo-600 dark:from-indigo-500 dark:to-pink-500"
                                 endContent={<Icon icon="material-symbols:arrow-forward-ios-rounded" />}
-                                onClick={goToKnowledge}
+                                onPress={goToKnowledge}
                             >
                                 {t('View Brain')}
                             </Button>
@@ -94,7 +102,7 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
                         <Button
                             className="float-right text-white bg-gradient-to-br from-pink-300 from-15%  to-indigo-600 dark:from-indigo-500 dark:to-pink-500"
                             startContent={<Icon icon="material-symbols:arrow-back-ios-rounded" />}
-                            onClick={goToChat}
+                            onPress={goToChat}
                         >
                             {t('Back to chat')}
                         </Button>
@@ -106,14 +114,30 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
                     // return <Skeleton className="h-6 w-1/2 rounded-lg" />;
                 })()}
             </NavbarBrand>
-            {!isChat && (
+
+            {isSession && userIsPro && (
+                <NavbarContent className="ml-4 h-12 w-full max-w-fit gap-4 rounded-full" justify="end">
+                    <ShareButton
+                        genUrlFunc={async () => {
+                            try {
+                                const res = await CreateSessionShareURL(currentSelectedSpace, window.location.origin + '/s/s/{token}', sessionID);
+                                return res.url;
+                            } catch (e: any) {
+                                console.error(e);
+                            }
+                        }}
+                    ></ShareButton>
+                </NavbarContent>
+            )}
+
+            {!isChat && !isSpaceViewer && (
                 <NavbarContent className="ml-4 hidden h-12 w-full max-w-fit gap-4 rounded-full px-4  lg:flex" justify="end">
                     {/* <NavbarItem>
                         <Link className="flex gap-2 text-inherit" href="#">
                             Prompt
                         </Link>
                     </NavbarItem> */}
-                    {currentSpace && currentSpace.title !== 'Main' && (
+                    {currentSpace && (
                         <NavbarItem>
                             <ManageSpaceComponent radius="full" label={t('Space Setting')} variant="ghost" className="flex gap-2 text-inherit" space={currentSpace} />
                         </NavbarItem>
@@ -122,7 +146,7 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
                     {currentSelectedResource && currentSelectedResource.id && currentSelectedResource.id !== 'knowledge' && (
                         <>
                             <NavbarItem>
-                                <Button radius="full" variant="ghost" className="flex gap-2 text-inherit" onClick={showResourceSetting}>
+                                <Button radius="full" variant="ghost" className="flex gap-2 text-inherit" onPress={showResourceSetting}>
                                     {t('Resource Setting')}
                                 </Button>
                             </NavbarItem>
@@ -137,8 +161,8 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
                 </NavbarContent>
             )}
 
-            <NavbarContent className="flex gap-2 h-12 max-w-fit items-center rounded-full p-0 lg:px-1" justify="end">
-                {isChat || (
+            {!isChat && (
+                <NavbarContent className="flex gap-2 h-12 max-w-fit items-center rounded-full p-0 lg:px-1" justify="end">
                     <NavbarItem className="flex">
                         {/* <Button isIconOnly radius="full" variant="light">
                         <Icon className="text-default-500" icon="solar:magnifer-linear" width={22} />
@@ -159,8 +183,8 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
                             onKeyDown={handleKeyDown}
                         />
                     </NavbarItem>
-                )}
-                {/* <NavbarItem className="flex">
+
+                    {/* <NavbarItem className="flex">
                     <Popover offset={12} placement="bottom-end">
                         <PopoverTrigger>
                             <Button disableRipple isIconOnly className="overflow-visible" radius="full" variant="light">
@@ -174,7 +198,8 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
                         </PopoverContent>
                     </Popover>
                 </NavbarItem> */}
-            </NavbarContent>
+                </NavbarContent>
+            )}
 
             {/* Mobile Menu */}
         </Navbar>

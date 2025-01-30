@@ -1,7 +1,9 @@
 import axios, { AxiosError } from 'axios';
+import { UNSAFE_ErrorResponseImpl } from 'react-router-dom';
 
 import { toast } from '@/hooks/use-toast';
-import userStore from '@/stores/user';
+import i18n from '@/lib/i18n';
+import userStore, { logout } from '@/stores/user';
 
 const instance = axios.create({
     baseURL: userStore.host
@@ -11,15 +13,21 @@ export function ChangeBaseURL(url: string) {
     instance.defaults.baseURL = url;
 }
 
-const ACCESS_TOKEN_KEY = 'X-Access-Token';
+export const ACCESS_TOKEN_KEY = 'X-Access-Token';
+export const AUTH_TOKEN_KEY = 'X-Authorization';
+export const ACCEPT_LANGUAGE_KEY = 'Accept-Language';
 
 instance.interceptors.request.use(
     function (config) {
         // Do something before request is sent
         config.headers.setContentType('application/json');
-        if (!config.headers.get(ACCESS_TOKEN_KEY)) {
+        if (!config.headers.get(ACCESS_TOKEN_KEY) && userStore.accessToken) {
             config.headers.set(ACCESS_TOKEN_KEY, userStore.accessToken);
         }
+        if (!config.headers.get(AUTH_TOKEN_KEY) && userStore.loginToken) {
+            config.headers.set(AUTH_TOKEN_KEY, userStore.loginToken);
+        }
+        config.headers.set(ACCEPT_LANGUAGE_KEY, i18n.language);
 
         return config;
     },
@@ -48,8 +56,11 @@ instance.interceptors.response.use(
 );
 
 function handleAxiosError(error: AxiosError) {
+    if (error.status && error.status === 401) {
+        logout();
+    }
     toast({
-        title: 'Request Error',
+        title: i18n.t('RequestError'),
         // @ts-ignore
         description: error.response ? error.response.data.meta.message + ', ' + error.message : error.message
     });

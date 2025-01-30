@@ -1,4 +1,4 @@
-import { Button, ButtonProps } from '@nextui-org/react';
+import { Button, ButtonProps } from "@heroui/react";
 
 export default function Component(props: ButtonProps) {
     return (

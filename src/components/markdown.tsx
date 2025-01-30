@@ -3,6 +3,7 @@ import { memo, useMemo } from 'react';
 // https://github.com/remarkjs/react-markdown
 import Markdown, { type ExtraProps, type Options } from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
+import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import stringWidth from 'string-width';
 
@@ -20,11 +21,13 @@ export default memo(function MarkdownComponent(props: Options & { isLight?: bool
     }, [isLight]);
 
     const rehypePlugins = useMemo(() => {
+        let commonPlugins = [[rehypeRaw]];
+
         if (isLight) {
-            return undefined;
+            return commonPlugins;
         }
 
-        return [[rehypeHighlight, { languages: common }]];
+        return [[rehypeHighlight, { languages: common }], ...commonPlugins];
     }, [isLight]);
 
     let markdownClassName = className ? className : '';

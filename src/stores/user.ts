@@ -1,15 +1,17 @@
-import { enableMapSet } from 'immer';
 import { proxy } from 'valtio';
 
 import { ChangeBaseURL } from '@/apis/request';
 
 const userStore = proxy<UserStore>({
     accessToken: localStorage.getItem('access_token'),
+    loginToken: localStorage.getItem('login_token'),
     userInfo: {
         userID: '',
         userName: '',
         avatar: '',
-        email: ''
+        email: '',
+        planID: '',
+        serviceMode: ''
     },
     host: localStorage.getItem('self-host') || import.meta.env.VITE_BASE_URL
 });
@@ -20,26 +22,44 @@ export const setHost = (host: string) => {
     ChangeBaseURL(host);
 };
 
+export const logout = () => {
+    userStore.accessToken = '';
+    userStore.loginToken = '';
+    userStore.userInfo = {};
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('login_token');
+};
+
 export const setUserAccessToken = (token: string) => {
     userStore.accessToken = token;
     localStorage.setItem('access_token', token);
 };
 
-export const setUserInfo = (userInfo?: { userID: string; userName: string; email: string; avatar: string }) => {
+export const setUserLoginToken = (token: strint) => {
+    userStore.loginToken = token;
+    localStorage.setItem('login_token', token);
+};
+
+export const setUserInfo = (userInfo?: UserInfo) => {
     if (!userInfo) {
         userStore.userInfo = {
             email: '',
             userID: '',
             userName: '',
-            avatar: ''
+            avatar: '',
+            planID: '',
+            serviceMode: ''
         };
+
         return;
     }
     userStore.userInfo = {
         userID: userInfo.userID,
         userName: userInfo.userName,
         avatar: userInfo.avatar,
-        email: userInfo.email
+        email: userInfo.email,
+        planID: userInfo.planID,
+        serviceMode: userInfo.serviceMode
     };
 };
 

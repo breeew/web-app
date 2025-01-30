@@ -102,3 +102,24 @@ export async function Query(spaceID: string, query: string): Promise<QueryRespon
 
     return resp.data.data;
 }
+
+export interface KnowledgeLite {
+    id: string;
+    space_id: string;
+    resource: string;
+    title: string;
+    tags: string[];
+    user_id: string;
+}
+
+export async function GetTimeRangeLiteKnowledges(spaceID: string, st: number, et: number): Promise<KnowledgeLite[]> {
+    const resp = await instance.get(`/${spaceID}/knowledge/time/list`, {
+        params: {
+            start_time: st,
+            end_time: et
+        }
+    });
+
+    return resp.data.data;
+}
+

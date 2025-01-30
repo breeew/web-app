@@ -1,20 +1,60 @@
-import {nextui} from '@nextui-org/theme'
+import {heroui} from "@heroui/react"
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: [
     "./index.html",
     './src/layouts/**/*.{js,ts,jsx,tsx,mdx}',
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
-    './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
+    './node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
   	extend: {
   		screens: {
   			xl: '1540px',
   			'2xl': '1860px'
-  		}
+  		},
+		animation: {
+			"shiny-text": "shiny-text 8s infinite",
+			shine: "shine var(--duration) infinite linear",
+			"background-position-spin": "background-position-spin 3000ms infinite alternate",
+			marquee: "marquee var(--duration) linear infinite",
+	        "marquee-vertical": "marquee-vertical var(--duration) linear infinite",
+		},
+		keyframes: {
+			"shiny-text": {
+				"0%, 90%, 100%": {
+					"background-position": "calc(-100% - var(--shiny-width)) 0",
+				},
+				"30%, 60%": {
+					"background-position": "calc(100% + var(--shiny-width)) 0",
+				}
+			},
+			shine: {
+				"0%": {
+					"background-position": "0% 0%",
+				},
+				"50%": {
+					"background-position": "100% 100%",
+				},
+				to: {
+					"background-position": "0% 0%",
+				}
+			},
+			"background-position-spin": {
+				"0%": { backgroundPosition: "top center" },
+				"100%": { backgroundPosition: "bottom center" }
+			},
+			marquee: {
+				from: { transform: "translateX(0)" },
+				to: { transform: "translateX(calc(-100% - var(--gap)))" },
+			},
+			"marquee-vertical": {
+				from: { transform: "translateY(0)" },
+				to: { transform: "translateY(calc(-100% - var(--gap)))" },
+			}
+		}
   		// borderRadius: {
   		// 	lg: 'var(--radius)',
   		// 	md: 'calc(var(--radius) - 2px)',
@@ -65,5 +105,5 @@ module.exports = {
   	}
   },
   darkMode: "class",
- plugins: [nextui(), require("tailwindcss-animate")],
+ plugins: [heroui(), require("tailwindcss-animate")],
 }

@@ -1,7 +1,7 @@
-import type { CardProps } from '@nextui-org/react';
+import type { CardProps } from "@heroui/react";
 
 import React from 'react';
-import { Button, Card, CardBody, CardHeader, Chip, Tabs, Tab, ScrollShadow, CardFooter } from '@nextui-org/react';
+import { Button, Card, CardBody, CardHeader, Chip, Tabs, Tab, ScrollShadow, CardFooter } from "@heroui/react";
 import { Icon } from '@iconify/react';
 
 import NotificationItem from './notification-item';

@@ -1,4 +1,4 @@
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react';
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@heroui/react";
 import React, { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -12,7 +12,7 @@ export default memo(function DeleteKnowledgePopover({
 }: {
     children: React.ReactElement;
     knowledge?: Knowledge;
-    onDelete: (id: string) => void;
+    onDelete?: (id: string) => void;
     backdrop?: 'transparent' | 'opaque' | 'blur' | undefined;
 }) {
     // const backdrops = ['opaque', 'blur', 'transparent'];
@@ -27,7 +27,7 @@ export default memo(function DeleteKnowledgePopover({
         setLoading(true);
         try {
             await DeleteKnowledge(knowledge.space_id, knowledge.id);
-            onDelete(knowledge.id);
+            onDelete && onDelete(knowledge.id);
             onOpenChange();
         } catch (e: any) {
             console.error(e);
@@ -38,7 +38,7 @@ export default memo(function DeleteKnowledgePopover({
     return (
         <>
             {React.cloneElement(children, {
-                onClick: onOpenChange
+                onPress: onOpenChange
             })}
             {knowledge && (
                 <Modal backdrop={backdrop} isOpen={isOpen} onOpenChange={onOpenChange}>

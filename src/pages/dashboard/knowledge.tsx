@@ -2,6 +2,7 @@ import {
     BreadcrumbItem,
     Breadcrumbs,
     Button,
+    ButtonGroup,
     Card,
     CardBody,
     CardFooter,
@@ -10,14 +11,16 @@ import {
     Modal,
     ModalBody,
     ModalContent,
+    ModalFooter,
     ModalHeader,
     Progress,
     ScrollShadow,
     Skeleton,
     useDisclosure
-} from '@nextui-org/react';
+} from '@heroui/react';
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useMediaQuery } from 'usehooks-ts';
 import { useSnapshot } from 'valtio';
 import { subscribeKey } from 'valtio/utils';
@@ -30,12 +33,14 @@ import KnowledgeModal from '@/components/knowledge-modal';
 import MainQuery from '@/components/main-query';
 import Markdown from '@/components/markdown';
 import { useMedia } from '@/hooks/use-media';
+import { useRole } from '@/hooks/use-role';
 import { useUserAgent } from '@/hooks/use-user-agent';
 import { FireTowerMsg } from '@/lib/firetower';
-import knowledgeStore from '@/stores/knowledge';
+import knowledgeStore, { onKnowledgeSearchKeywordsChange } from '@/stores/knowledge';
 import resourceStore from '@/stores/resource';
 import socketStore, { CONNECTION_OK } from '@/stores/socket';
 import spaceStore from '@/stores/space';
+import { Role } from '@/types';
 
 export default memo(function Component() {
     const { t } = useTranslation();
@@ -49,6 +54,9 @@ export default memo(function Component() {
     const [hasMore, setHasMore] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const { onKnowledgeSearch } = useSnapshot(knowledgeStore);
+    const navigate = useNavigate();
+
+    const { isSpaceViewer } = useRole();
 
     useEffect(() => {
         if (!currentSelectedResource || !currentSelectedSpace) {
@@ -140,6 +148,10 @@ export default memo(function Component() {
 
     const showKnowledge = useCallback(
         (knowledge: Knowledge) => {
+            if (isMobile) {
+                navigate(`/dashboard/${knowledge.space_id}/knowledge/${knowledge.id}/editor`);
+                return;
+            }
             if (viewKnowledge && viewKnowledge.current) {
                 // @ts-ignore
                 viewKnowledge.current.show(knowledge);
@@ -194,6 +206,10 @@ export default memo(function Component() {
     //@ts-ignore
     const ssDom = useRef<{ goToTop: () => void }>();
 
+    const isShowCreate = useMemo(() => {
+        return !isSpaceViewer;
+    }, [isMobile, isSpaceViewer]);
+
     return (
         <>
             <div className="overflow-hidden w-full h-full flex flex-col relative p-3">
@@ -207,12 +223,11 @@ export default memo(function Component() {
                         <p className="text-small text-default-400">{t('memories count', { total: total, title: currentSelectedResource?.title })}</p>
                     </Skeleton>
                 </div>
-                <KnowledgeList ref={ssDom} knowledgeList={dataList} onSelect={showKnowledge} onChanges={onChanges} onLoadMore={onLoadMore} />
-                {isMobile || (
-                    <div className="absolute w-auto bottom-2 right-1/2 mr-[-130px]">
-                        <MainQuery onClick={showCreate} />
-                    </div>
-                )}
+                <KnowledgeList ref={ssDom} isShowCreate={isShowCreate} knowledgeList={dataList} onShowCreate={showCreate} onSelect={showKnowledge} onChanges={onChanges} onLoadMore={onLoadMore} />
+
+                <div className="absolute w-auto bottom-2 right-1/2 mr-[-130px]">
+                    <MainQuery onClick={showCreate} />
+                </div>
             </div>
 
             <KnowledgeModal
@@ -237,13 +252,15 @@ export default memo(function Component() {
 
 interface KnowledgeListProps {
     knowledgeList: Knowledge[];
+    isShowCreate: boolean;
     onSelect: (data: Knowledge) => void;
     onChanges: () => void;
     onLoadMore: () => void;
+    onShowCreate: () => void;
 }
 
 const KnowledgeList = memo(
-    forwardRef(function KnowledgeList({ knowledgeList, onSelect, onChanges, onLoadMore }: KnowledgeListProps, ref: any) {
+    forwardRef(function KnowledgeList({ knowledgeList, onSelect, isShowCreate = true, onShowCreate, onChanges, onLoadMore }: KnowledgeListProps, ref: any) {
         const [dataList, setDataList] = useState(knowledgeList);
         const [onEvent, setEvent] = useState<FireTowerMsg | null>();
         const { currentSelectedSpace } = useSnapshot(spaceStore);
@@ -347,9 +364,11 @@ const KnowledgeList = memo(
             <>
                 <ScrollShadow ref={ssDom} hideScrollBar className="w-full flex-grow box-border mb-6 p-2" onScroll={scrollChanged}>
                     <div className={[isSafari ? 'm-auto w-full max-w-[900px]' : 'columns-1 sm:columns-2 lg:columns-3 xl:columns-4 2xl:columns-5 3xl:columns-5', 'gap-[24px]'].join(' ')}>
-                        <div className="mb-[24px]">
-                            <CreateKnowledge shadow={isMobile ? 'none' : 'sm'} onChanges={onChanges} />
-                        </div>
+                        {isShowCreate && (
+                            <div className="mb-[24px]">
+                                <CreateKnowledge shadow={isMobile ? 'none' : 'sm'} onChanges={onChanges} openCreateKnowledge={onShowCreate} />
+                            </div>
+                        )}
                         {dataList.map(item => {
                             return (
                                 <div key={item.id} role="button" tabIndex={0} className="mb-[24px] relative" onClick={() => onSelect(item)} onKeyDown={() => {}}>
@@ -359,7 +378,7 @@ const KnowledgeList = memo(
                         })}
                     </div>
                 </ScrollShadow>
-                {showGoTop && <GoTop className="fixed bottom-6 right-6 backdrop-blur backdrop-saturate-150 dark:border-white/20 dark:bg-white/10 dark:text-white text-gray-500" onClick={goToTop} />}
+                {showGoTop && <GoTop className="fixed bottom-6 right-6 backdrop-blur backdrop-saturate-150 dark:border-white/20 dark:bg-white/10 dark:text-white text-gray-500" onPress={goToTop} />}
             </>
         );
     })
@@ -423,6 +442,18 @@ const CreateKnowledgeModal = memo(
             };
         });
 
+        const editor = useRef();
+        const [createLoading, setCreateLoading] = useState(false);
+        const submit = useCallback(async () => {
+            try {
+                setCreateLoading(true);
+                await editor.current.submit();
+            } catch (e: any) {
+                console.error(e);
+            }
+            setCreateLoading(false);
+        }, [editor]);
+
         return (
             <>
                 <Modal backdrop="blur" placement="bottom" scrollBehavior="inside" size={size} isOpen={isOpen} isKeyboardDismissDisabled={true} onClose={onCancelFunc}>
@@ -431,14 +462,22 @@ const CreateKnowledgeModal = memo(
                             <>
                                 <ModalHeader className="flex flex-col gap-1 dark:text-gray-100 text-gray-800">
                                     <Breadcrumbs>
-                                        <BreadcrumbItem>Home</BreadcrumbItem>
+                                        <BreadcrumbItem onClick={onClose}>{t('Home')}</BreadcrumbItem>
                                         <BreadcrumbItem onClick={onClose}>{spaceTitle === 'Main' ? t('MainSpace') : spaceTitle}</BreadcrumbItem>
                                         <BreadcrumbItem>{t('Create')}</BreadcrumbItem>
                                     </Breadcrumbs>
                                 </ModalHeader>
                                 <ModalBody className="w-full overflow-hidden flex flex-col items-center">
-                                    <KnowledgeEdit knowledge={knowledge} onChange={onChangeFunc} onCancel={onCancelFunc} />
+                                    <KnowledgeEdit ref={editor} classNames={{ editor: '!mx-0' }} knowledge={knowledge} hideSubmit onChange={onChangeFunc} onCancel={onCancelFunc} />
                                 </ModalBody>
+                                <ModalFooter className="flex justify-center">
+                                    <ButtonGroup variant="flat" size="base" className="mb-4">
+                                        <Button color="primary" onPress={submit} isLoading={createLoading}>
+                                            {t('Save')}
+                                        </Button>
+                                        <Button onPress={onClose}>{t('Close')}</Button>
+                                    </ButtonGroup>
+                                </ModalFooter>
                             </>
                         )}
                     </ModalContent>

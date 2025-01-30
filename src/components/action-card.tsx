@@ -1,6 +1,6 @@
 import { Icon } from '@iconify/react';
-import { Card, CardBody, CardFooter, CardHeader, type CardProps, Progress } from '@nextui-org/react';
-import { cn } from '@nextui-org/react';
+import { Card, CardBody, CardFooter, CardHeader, type CardProps, Progress } from "@heroui/react";
+import { cn } from "@heroui/react";
 import React from 'react';
 
 export type ActionCardProps = CardProps & {
@@ -61,7 +61,13 @@ const ActionCard = React.forwardRef<HTMLDivElement, ActionCardProps>(({ inProgre
             </CardBody>
             {inProgress && (
                 <CardFooter>
-                    <Progress isIndeterminate size="sm" aria-label="Loading..." className="max-w-md" classNames={{ indicator: '!duration-[2000ms] bg-gradient-to-r from-pink-500 to-yellow-500' }} />
+                    <Progress
+                        isIndeterminate
+                        size="sm"
+                        aria-label="Loading..."
+                        className="max-w-md"
+                        classNames={{ indicator: '!duration-&lsqb;2000ms&rsqb; bg-gradient-to-r from-pink-500 to-yellow-500' }}
+                    />
                 </CardFooter>
             )}
         </Card>

@@ -1,12 +1,7 @@
 import ImageTool from '@editorjs/image';
-import { useTranslation } from 'react-i18next';
-
-
 
 import { DescribeImage } from '@/apis/tools';
-import { toast } from '@/hooks/use-toast';
 import { notifyTaskProgress } from '@/stores/event';
-
 
 const genenrating = new Map<string, bool>();
 
@@ -71,7 +66,6 @@ export default class CustomImage extends ImageTool {
      * @param tuneName - tune that has been clicked
      */
     private async tuneToggled(tuneName: keyof ImageToolData): void {
-        console.log(this);
         switch (tuneName) {
             case 'aiGenImageDescript':
                 this._data[tuneName] = true;

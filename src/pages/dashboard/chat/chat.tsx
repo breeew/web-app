@@ -6,7 +6,7 @@ import { useSnapshot } from 'valtio';
 import PromptInputWithEnclosedActions from './prompt-input-with-enclosed-actions';
 
 import { CreateChatSession } from '@/apis/chat';
-import { Logo } from '@/components/icons';
+import { LogoIcon, Name } from '@/components/logo';
 import spaceStore from '@/stores/space';
 
 export default function Chat() {
@@ -48,7 +48,7 @@ export default function Chat() {
             <div className="flex w-full h-full flex-col px-4 sm:max-w-[760px] justify-center">
                 <div className="flex h-full flex-col items-center justify-center gap-10">
                     <div className="flex rounded-full items-center">
-                        <Logo size={52} />
+                        <LogoIcon size={60} />
                     </div>
                     <div className="flex flex-col w-full">
                         <PromptInputWithEnclosedActions
@@ -57,7 +57,7 @@ export default function Chat() {
                                 buttonIcon: 'text-background',
                                 input: 'placeholder:text-default-500'
                             }}
-                            placeholder={t('chatToBrew')}
+                            placeholder={t('chatToBrew', { name: Name })}
                             onSubmitFunc={onSubmit}
                         />
                         <p className="p-2 text-center text-small font-medium leading-5 text-default-500">{t('chatNotice')}</p>

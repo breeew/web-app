@@ -1,4 +1,4 @@
-import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Textarea, useDisclosure } from '@nextui-org/react';
+import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Textarea, useDisclosure } from "@heroui/react";
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -68,3 +68,4 @@ const CreateSpaceComponent = forwardRef((_, ref) => {
 CreateSpaceComponent.displayName = 'CreateSpace';
 
 export default CreateSpaceComponent;
+
