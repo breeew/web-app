@@ -27,6 +27,8 @@ async function aiGenImageDescription(i18n: (string) => string, url: string): Pro
         return undefined;
     }
 
+    let result = '';
+
     try {
         notifyTaskProgress({
             id: id,
@@ -35,18 +37,13 @@ async function aiGenImageDescription(i18n: (string) => string, url: string): Pro
             status: 'processing'
         });
         genenrating.set(url, true);
-        const result = await DescribeImage(url);
-
-        genenrating.delete(url);
-
+        result = await DescribeImage(url);
         notifyTaskProgress({
             id: id,
             title: 'AI Task Notify',
             description: 'Done',
             status: 'success'
         });
-
-        return result;
     } catch (e: any) {
         console.error(e);
         notifyTaskProgress({
@@ -55,9 +52,9 @@ async function aiGenImageDescription(i18n: (string) => string, url: string): Pro
             description: 'Failed',
             status: 'failed'
         });
-
-        return;
     }
+    genenrating.delete(url);
+    return result;
 }
 
 export default class CustomImage extends ImageTool {
