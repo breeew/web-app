@@ -17,7 +17,7 @@ import {
     ScrollShadow,
     Skeleton,
     useDisclosure
-} from '@nextui-org/react';
+} from '@heroui/react';
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -207,7 +207,7 @@ export default memo(function Component() {
     const ssDom = useRef<{ goToTop: () => void }>();
 
     const isShowCreate = useMemo(() => {
-        return !isMobile && !isSpaceViewer;
+        return !isSpaceViewer;
     }, [isMobile, isSpaceViewer]);
 
     return (
@@ -223,7 +223,7 @@ export default memo(function Component() {
                         <p className="text-small text-default-400">{t('memories count', { total: total, title: currentSelectedResource?.title })}</p>
                     </Skeleton>
                 </div>
-                <KnowledgeList ref={ssDom} isShowCreate={isShowCreate} knowledgeList={dataList} onSelect={showKnowledge} onChanges={onChanges} onLoadMore={onLoadMore} />
+                <KnowledgeList ref={ssDom} isShowCreate={isShowCreate} knowledgeList={dataList} onShowCreate={showCreate} onSelect={showKnowledge} onChanges={onChanges} onLoadMore={onLoadMore} />
 
                 <div className="absolute w-auto bottom-2 right-1/2 mr-[-130px]">
                     <MainQuery onClick={showCreate} />
@@ -256,10 +256,11 @@ interface KnowledgeListProps {
     onSelect: (data: Knowledge) => void;
     onChanges: () => void;
     onLoadMore: () => void;
+    onShowCreate: () => void;
 }
 
 const KnowledgeList = memo(
-    forwardRef(function KnowledgeList({ knowledgeList, onSelect, isShowCreate = true, onChanges, onLoadMore }: KnowledgeListProps, ref: any) {
+    forwardRef(function KnowledgeList({ knowledgeList, onSelect, isShowCreate = true, onShowCreate, onChanges, onLoadMore }: KnowledgeListProps, ref: any) {
         const [dataList, setDataList] = useState(knowledgeList);
         const [onEvent, setEvent] = useState<FireTowerMsg | null>();
         const { currentSelectedSpace } = useSnapshot(spaceStore);
@@ -365,7 +366,7 @@ const KnowledgeList = memo(
                     <div className={[isSafari ? 'm-auto w-full max-w-[900px]' : 'columns-1 sm:columns-2 lg:columns-3 xl:columns-4 2xl:columns-5 3xl:columns-5', 'gap-[24px]'].join(' ')}>
                         {isShowCreate && (
                             <div className="mb-[24px]">
-                                <CreateKnowledge shadow={isMobile ? 'none' : 'sm'} onChanges={onChanges} />
+                                <CreateKnowledge shadow={isMobile ? 'none' : 'sm'} onChanges={onChanges} openCreateKnowledge={onShowCreate} />
                             </div>
                         )}
                         {dataList.map(item => {

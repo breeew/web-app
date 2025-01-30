@@ -1,4 +1,4 @@
-import { Accordion, AccordionItem, Avatar, Listbox, ListboxItem, ScrollShadow } from '@nextui-org/react';
+import { Accordion, AccordionItem, Avatar, Listbox, ListboxItem, ScrollShadow } from '@heroui/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -54,6 +54,8 @@ export default function Chat() {
     const [hasMore, setHasMore] = useState<boolean>(true);
 
     const ssDom = useRef<HTMLElement>(null);
+
+    const getScrollBottom = useScrollBottom(ssDom);
 
     function goToBottom() {
         if (ssDom) {
@@ -191,7 +193,10 @@ export default function Chat() {
                             break;
                         default:
                     }
-                    goToBottom();
+
+                    if (getScrollBottom() < 50) {
+                        goToBottom();
+                    }
                 }
                 interval();
             }, 200);
@@ -515,4 +520,15 @@ export default function Chat() {
             <KnowledgeModal ref={viewKnowledge} />
         </>
     );
+}
+
+function useScrollBottom(ref: React.RefObject<HTMLElement>) {
+    const getScrollBottom = (): number => {
+        if (ref.current) {
+            return ref.current.scrollHeight - (ref.current.clientHeight + ref.current.scrollTop);
+        }
+        return 0;
+    };
+
+    return getScrollBottom;
 }

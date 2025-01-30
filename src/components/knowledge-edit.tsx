@@ -1,5 +1,5 @@
 import { OutputData } from '@editorjs/editorjs';
-import { Button, Input, ScrollShadow, Select, SelectItem, SelectSection, Skeleton, Spacer } from '@nextui-org/react';
+import { Button, Input, ScrollShadow, Select, SelectItem, SelectSection, Skeleton, Spacer } from '@heroui/react';
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSnapshot } from 'valtio';

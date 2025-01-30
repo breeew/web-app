@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Button, Input, Tooltip } from '@nextui-org/react';
+import { Button, Input, Tooltip } from "@heroui/react";
 import axios from 'axios';
 import { AnimatePresence, domAnimation, LazyMotion, m } from 'framer-motion';
 import React, { useCallback, useMemo, useState } from 'react';

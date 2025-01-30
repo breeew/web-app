@@ -93,3 +93,11 @@ export async function GetSharedSession(token: string): Promise<SharedSessionDeta
 
     return res.data.data;
 }
+
+export async function CopyKnowledge(shareToken: string, spaceID: string, resource: string): Promise<void> {
+    await instance.post('/share/copy/knowledge', {
+        token: shareToken,
+        user_space: spaceID,
+        user_resource: resource
+    });
+}

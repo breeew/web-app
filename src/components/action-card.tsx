@@ -1,6 +1,6 @@
 import { Icon } from '@iconify/react';
-import { Card, CardBody, CardFooter, CardHeader, type CardProps, Progress } from '@nextui-org/react';
-import { cn } from '@nextui-org/react';
+import { Card, CardBody, CardFooter, CardHeader, type CardProps, Progress } from "@heroui/react";
+import { cn } from "@heroui/react";
 import React from 'react';
 
 export type ActionCardProps = CardProps & {

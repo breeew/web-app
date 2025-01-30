@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Avatar, AvatarGroup, Button, Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerHeader, Image, Link, Tooltip, useDisclosure } from '@nextui-org/react';
+import { Avatar, AvatarGroup, Button, Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerHeader, Image, Link, Tooltip, useDisclosure } from "@heroui/react";
 import { t } from 'i18next';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';

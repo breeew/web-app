@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { BreadcrumbItem, Breadcrumbs, Button, ButtonGroup, Kbd, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Skeleton, Spacer, useDisclosure } from '@nextui-org/react';
+import { BreadcrumbItem, Breadcrumbs, Button, ButtonGroup, Kbd, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Skeleton, Spacer, useDisclosure } from "@heroui/react";
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';

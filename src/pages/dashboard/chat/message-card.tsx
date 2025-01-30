@@ -1,7 +1,7 @@
 import { Icon } from '@iconify/react';
-import { Avatar, Badge, Button, Link, Skeleton, Tooltip } from '@nextui-org/react';
-import { cn } from '@nextui-org/react';
-import { useClipboard } from '@nextui-org/use-clipboard';
+import { Avatar, Badge, Button, Link, Skeleton, Tooltip } from "@heroui/react";
+import { cn } from "@heroui/react";
+import { useClipboard } from "@heroui/use-clipboard";
 import React, { ReactNode } from 'react';
 
 import { RelDoc } from '@/apis/chat';

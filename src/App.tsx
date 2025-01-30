@@ -1,9 +1,10 @@
 'use client';
 
-import { NextUIProvider } from '@nextui-org/react';
+import { HeroUIProvider } from '@heroui/react';
 import { enableMapSet } from 'immer';
 import { useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
+import { Toaster as SonnerTotaster } from 'sonner';
 import { subscribeKey } from 'valtio/utils';
 
 import { setNotAutoLoginDirect } from './lib/utils';
@@ -14,7 +15,7 @@ import { useTheme } from '@/hooks/use-theme';
 import '@/lib/i18n';
 
 export function App({ children }: { children: React.ReactNode }) {
-    const { theme } = useTheme();
+    const { theme, isDark } = useTheme();
     const navigate = useNavigate();
 
     enableMapSet();
@@ -30,7 +31,6 @@ export function App({ children }: { children: React.ReactNode }) {
     });
 
     useEffect(() => {
-        const isDark = currentTheme === 'dark';
         const link = document.createElement('link');
 
         link.rel = 'stylesheet';
@@ -53,10 +53,11 @@ export function App({ children }: { children: React.ReactNode }) {
     }, 2000);
 
     return (
-        <NextUIProvider navigate={navigate}>
+        <HeroUIProvider navigate={navigate}>
             <Outlet />
             <Toaster />
+            <SonnerTotaster theme={isDark ? 'dark' : 'light'} />
             <span className="bg-zinc-800" />
-        </NextUIProvider>
+        </HeroUIProvider>
     );
 }

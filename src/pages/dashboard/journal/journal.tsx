@@ -1,7 +1,7 @@
 import { OutputBlockData, OutputData } from '@editorjs/editorjs';
 import { Icon } from '@iconify/react';
 import { getLocalTimeZone, parseDate, today } from '@internationalized/date';
-import type { CalendarDate, Selection } from '@nextui-org/react';
+import type { CalendarDate, Selection } from "@heroui/react";
 import {
     BreadcrumbItem,
     Breadcrumbs,
@@ -25,8 +25,8 @@ import {
     SelectSection,
     Slider,
     Textarea
-} from '@nextui-org/react';
-import { Calendar } from '@nextui-org/react';
+} from "@heroui/react";
+import { Calendar } from "@heroui/react";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -308,14 +308,12 @@ export default function Component() {
                     <div className="mt-2 flex w-full flex-col gap-2 px-4 overflow-hidden text-wrap break-words">
                         {journalTodos.length > 0 && <div className="pb-2 text-zinc-500 text-sm font-bold">{t('Journal Todos')}</div>}
                         {journalTodos.map(v => {
-                            return (
-                                <>
-                                    <h1 key={v.title}>{v.title.replace(/&nbsp;/gi, '').trim()}</h1>
-                                    <div className="journal__todo" key={'todo_title_' + v.title}>
-                                        {renderTodoListItem(false, v.list)}
-                                    </div>
-                                </>
-                            );
+                            return (<>
+                                <h1 key={v.title}>{v.title.replace(/&nbsp;/gi, '').trim()}</h1>
+                                <div className="journal__todo" key={'todo_title_' + v.title}>
+                                    {renderTodoListItem(false, v.list)}
+                                </div>
+                            </>);
                         })}
                     </div>
                 </div>

@@ -7,7 +7,7 @@ import EditorjsList from '@editorjs/list';
 import Marker from '@editorjs/marker';
 import Quote from '@editorjs/quote';
 import Table from '@editorjs/table';
-import { Skeleton } from '@nextui-org/react';
+import { Skeleton } from '@heroui/react';
 import { forwardRef, memo, useEffect, useImperativeHandle, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import showdown from 'showdown';
@@ -40,8 +40,6 @@ function getUploader(toast: (d: ToastProps) => void, t: (d: string) => string, c
                     fileKind = 'video';
                 }
 
-                const resp = await CreateUploadKey(currentSelectedSpace, 'knowledge', fileKind, file.name, file.size);
-
                 if (result.error) {
                     toast({
                         title: t('Error'),
@@ -53,6 +51,8 @@ function getUploader(toast: (d: ToastProps) => void, t: (d: string) => string, c
                         success: 0
                     };
                 }
+
+                const resp = await CreateUploadKey(currentSelectedSpace, 'knowledge', fileKind, file.name, file.size);
 
                 if (resp.status === 'exist') {
                     return {
@@ -380,9 +380,9 @@ export const Editor = memo(
         });
 
         return (
-            <div id={'brew-editor-' + randomID} className={cn('editor lg:mx-[60px]', className)} />
             //     <Skeleton isLoaded={isReady}>
             // </Skeleton>
+            <div id={'brew-editor-' + randomID} className={cn('editor lg:mx-[60px]', className)} />
         );
     })
 );

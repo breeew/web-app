@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Button, Checkbox, Input, Link, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react';
+import { Button, Checkbox, Input, Link, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@heroui/react";
 import { forwardRef, memo, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 

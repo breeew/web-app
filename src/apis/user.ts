@@ -92,3 +92,8 @@ export async function GetUserPlanDescription(): Promise<UserPlanDescription> {
     const resp = await instance.get('/user/plan');
     return resp.data.data;
 }
+
+export async function ListUserResources(): Promise<Resource[]> {
+    const resp = await instance.get('/resource/list');
+    return resp.data.data.list;
+}

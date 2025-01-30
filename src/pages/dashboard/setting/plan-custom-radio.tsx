@@ -1,6 +1,6 @@
-import { type RadioProps } from '@nextui-org/react';
-import { useRadio, VisuallyHidden } from '@nextui-org/react';
-import { cn } from '@nextui-org/react';
+import { type RadioProps } from "@heroui/react";
+import { useRadio, VisuallyHidden } from "@heroui/react";
+import { cn } from "@heroui/react";
 import React from 'react';
 
 export const PlanCustomRadio = (props: RadioProps) => {

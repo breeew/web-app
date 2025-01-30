@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Input, Kbd, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, Textarea, useDisclosure } from '@nextui-org/react';
+import { Button, ButtonGroup, Input, Kbd, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, Textarea, useDisclosure } from "@heroui/react";
 import { TargetIcon } from '@radix-ui/react-icons';
 import { forwardRef, memo, useCallback, useImperativeHandle, useState } from 'react';
 import { useTranslation } from 'react-i18next';

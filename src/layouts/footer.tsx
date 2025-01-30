@@ -1,4 +1,4 @@
-import { Chip, Divider } from '@nextui-org/react';
+import { Chip, Divider } from "@heroui/react";
 import React from 'react';
 
 import { LogoIcon, Name } from '@/components/logo';

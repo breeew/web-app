@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Button, cn, Spinner, type TextAreaProps, Tooltip } from '@nextui-org/react';
+import { Button, cn, Spinner, type TextAreaProps, Tooltip } from "@heroui/react";
 import { KeyboardEvent, useRef, useState } from 'react';
 
 import PromptInput from './prompt-input';

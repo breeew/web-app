@@ -1,11 +1,12 @@
+import { Calendar } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { getLocalTimeZone, today } from '@internationalized/date';
-import { Calendar } from '@nextui-org/react';
 
 import { XiaohongshuLogo } from './icons';
 import AnimatedBeamMultipleOutput from './index-beam';
 import { LogoIcon } from './logo';
 import Marquee from './marquee';
+import { VelocityScroll } from './scroll-based-velocity';
 
 import { BentoCard, BentoGrid } from '@/components/bento-grid';
 import { cn } from '@/lib/utils';
@@ -27,6 +28,7 @@ const files = [
 
 const features = [
     {
+        Icon: Brain,
         name: 'SaveYourMemory',
         description: 'SiteDescription',
         href: '#',
@@ -67,12 +69,17 @@ const features = [
         )
     },
     {
-        Icon: XiaohongshuLogo,
-        name: '正在努力创造基于小红书的中文群组',
-        description: '待第一阶段研发结束，将在小红书正式与用户朋友们见面',
+        Icon: LockIcon,
+        name: 'PrivacySecurity',
+        description: 'PrivacySecurityDescription',
         href: '#',
         cta: 'Learn more',
-        className: 'col-span-3 lg:col-span-2'
+        className: 'col-span-3 lg:col-span-2',
+        background: (
+            <VelocityScroll defaultVelocity={1} numRows="2" className="absolute right-4 text-zinc-600 top-4">
+                0e477179d37ad20781bbecef6e4f81025fba2da5e775e0ef9e9a78
+            </VelocityScroll>
+        )
     },
     {
         Icon: CalendarIcon,
@@ -94,6 +101,14 @@ const features = [
 
 function CalendarIcon(props) {
     return <Icon icon="stash:data-date" width={24} {...props} />;
+}
+
+function LockIcon(props) {
+    return <Icon icon="mdi:database-lock-outline" width={24} {...props} />;
+}
+
+function Brain(props) {
+    return <Icon icon="fluent:brain-sparkle-20-regular" width={24} {...props} />;
 }
 
 export default function BentoDemo() {

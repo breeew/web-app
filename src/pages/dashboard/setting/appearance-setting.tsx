@@ -1,5 +1,5 @@
-import { RadioGroup, Select, SelectItem, Spacer } from '@nextui-org/react';
-import { cn } from '@nextui-org/react';
+import { RadioGroup, Select, SelectItem, Spacer } from "@heroui/react";
+import { cn } from "@heroui/react";
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 

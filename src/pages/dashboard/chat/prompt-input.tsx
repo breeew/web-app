@@ -1,5 +1,5 @@
-import { Textarea, type TextAreaProps } from '@nextui-org/react';
-import { cn } from '@nextui-org/react';
+import { Textarea, type TextAreaProps } from "@heroui/react";
+import { cn } from "@heroui/react";
 import React from 'react';
 
 const PromptInput = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(({ classNames = {}, ...props }, ref) => {

@@ -1,14 +1,52 @@
+import {
+    Button,
+    Card,
+    CardBody,
+    CardFooter,
+    type CardProps,
+    Chip,
+    cn,
+    Divider,
+    Link,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+    Select,
+    SelectItem,
+    SelectSection,
+    Spinner,
+    Table,
+    TableBody,
+    TableCell,
+    TableColumn,
+    TableHeader,
+    TableRow,
+    Textarea,
+    User
+} from '@heroui/react';
 import { Icon } from '@iconify/react';
-import { Button, Card, CardBody, CardFooter, type CardProps, cn, Divider, Link, Select, SelectItem, Textarea } from '@nextui-org/react';
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { useImmer } from 'use-immer';
 import { useSnapshot } from 'valtio';
 
+import { ChunkTask, CreateFileChunkTask, DeleteTask, GetTaskList } from '@/apis/chunk-task';
 import { CreateKnowledge } from '@/apis/knowledge';
+import { FilePreview, FileUploader } from '@/components/file-uploader';
+import { useMedia } from '@/hooks/use-media';
+import { useGroupedResources } from '@/hooks/use-resource';
+import { useUploader } from '@/hooks/use-uploader';
 import resourceStore from '@/stores/resource';
 import spaceStore from '@/stores/space';
 
-export default memo(function Component(props: CardProps & { onChanges: () => void }) {
+export default memo(function Component(props: CardProps & { onChanges: () => void; openCreateKnowledge: () => void }) {
     const { t } = useTranslation();
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [knowledge, setKnowledge] = useState<string>('');
@@ -17,31 +55,21 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
     const [errorMessage, setErrorMessage] = useState('');
     const [loading, setLoading] = useState(false);
     const { currentSpaceResources, currentSelectedResource } = useSnapshot(resourceStore);
-    const resources = useMemo(() => {
-        let list = [];
+    const { currentSelectedSpace } = useSnapshot(spaceStore);
 
-        if (currentSpaceResources) {
-            for (const item of currentSpaceResources) {
-                if (item.id !== '') {
-                    list.push(item);
-                }
-            }
-        }
-
-        return list;
-    }, [currentSpaceResources]);
+    const { groupedResources } = useGroupedResources();
 
     const defaultResource = useMemo(() => {
         if (currentSelectedResource && currentSelectedResource.id) {
             return currentSelectedResource.id;
         }
 
-        if (resources.length > 0) {
-            return resources[0].id;
+        if (groupedResources.length > 0 && groupedResources[0].items.length > 0) {
+            return groupedResources[0].items[0].id;
         }
 
         return '';
-    }, [resources, currentSelectedResource]);
+    }, [groupedResources, currentSelectedResource]);
     const [resource, setResource] = useState('');
 
     const onKnowledgeContentChanged = useCallback((value: string) => {
@@ -52,60 +80,118 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
         setKnowledge(value);
     }, []);
 
-    async function createNewKnowledge() {
-        if (knowledge === '') {
-            setErrorMessage('knowledge content is empty');
-            setInvalid(true);
-
-            return;
-        }
-        if (spaceStore.currentSelectedSpace === '') {
-            setErrorMessage('space error, try refresh browser');
-            setInvalid(true);
-
-            return;
-        }
-
-        setLoading(true);
-        try {
-            await CreateKnowledge(spaceStore.currentSelectedSpace, resource || defaultResource, knowledge, 'markdown');
-
-            if (props.onChanges) {
-                props.onChanges();
+    async function createChunkTask() {
+        if (chunkFile.url !== '') {
+            setLoading(true);
+            try {
+                await CreateFileChunkTask(currentSelectedSpace, resource || defaultResource, chunkFile.name, chunkFile.url);
+                setChunkFile({});
+                toast.info(t('Success'));
+            } catch (e: any) {
+                console.error(e);
             }
-            setIsOpen(false);
-        } catch (e: any) {
-            console.error(e);
+            setLoading(false);
+            return;
         }
-        setLoading(false);
     }
+
+    const { uploader } = useUploader();
+    const [chunkFile, setChunkFile] = useState<{ name: string; url: string; file: File }>({});
+    const navigate = useNavigate();
+    const { isMobile } = useMedia();
+    const [isShowTaskList, setIsShowTaskList] = useState(false);
 
     const content = isOpen ? (
         <div className="h-full w-full items-start justify-center box-border overflow-scroll pb-10 pt-10">
             <div className="flex flex-col gap-2">
                 <form className="flex w-full flex-col gap-2">
-                    <div className="mt-1 flex w-full items-center justify-end gap-2 px-1">
-                        <p className="text-tiny text-default-400 dark:text-default-300">{t('One thing, One memory')}</p>
-                    </div>
-                    <Textarea
-                        minRows={8}
-                        name="knowledge"
-                        placeholder="Ideas or knowledges to create new memory"
-                        variant="faded"
-                        isInvalid={isInvalid}
-                        errorMessage={errorMessage}
-                        onValueChange={onKnowledgeContentChanged}
-                    />
-                    <div className="mt-1 flex w-full items-center justify-end gap-2 px-1">
-                        <Icon className="text-default-400 dark:text-default-300" icon="la:markdown" width={20} />
-                        <p className="text-tiny text-default-400 dark:text-default-300">
-                            <Link className="text-tiny text-default-500" color="foreground" href="https://guides.github.com/features/mastering-markdown/" rel="noreferrer" target="_blank">
-                                Markdown
-                                <Icon className="[&>path]:stroke-[2px]" icon="solar:arrow-right-up-linear" />
-                            </Link>
-                            &nbsp;supported.
-                        </p>
-                    </div>
+                    {!chunkFile.url && (
+                        <Button
+                            variant="ghost"
+                            size="lg"
+                            onPress={() => {
+                                if (isMobile) {
+                                    navigate(`/dashboard/${currentSelectedSpace}/knowledge/create`);
+                                } else if (props.openCreateKnowledge) {
+                                    props.openCreateKnowledge();
+                                }
+                            }}
+                        >
+                            {t('TypeMemorySelf')}
+                        </Button>
+                    )}
+
+                    {!chunkFile.url && !knowledge && (
+                        <div className="mt-1 flex w-full items-center justify-center gap-2 px-1 text-sm">
+                            {t('OR')}&nbsp;
+                            {t('UseDocs', { types: 'doc(x)、xls(x)、pdf' })}
+                        </div>
+                    )}
+
+                    {!knowledge && (
+                        <>
+                            <div className="flex justify-end">
+                                <Button
+                                    className="w-1/5"
+                                    variant="ghost"
+                                    size="sm"
+                                    onPress={() => {
+                                        setIsShowTaskList(true);
+                                    }}
+                                >
+                                    {t('TaskList')}
+                                </Button>
+                                <TaskList
+                                    spaceID={currentSelectedSpace}
+                                    isShow={isShowTaskList}
+                                    onClose={() => {
+                                        setIsShowTaskList(false);
+                                    }}
+                                />
+                            </div>
+                            {!chunkFile.url ? (
+                                <FileUploader
+                                    className="border-zinc-600"
+                                    accept={{
+                                        'application/vnd.ms-excel': [],
+                                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
+                                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': [],
+                                        'application/msword': [],
+                                        'application/pdf': []
+                                    }}
+                                    onValueChange={e => {
+                                        console.log(e);
+                                    }}
+                                    onUpload={async f => {
+                                        if (f.length === 0) {
+                                            return;
+                                        }
+                                        const resp = await uploader(currentSelectedSpace, f[0], 'knowledge', 'chunk');
+                                        if (resp.success) {
+                                            setChunkFile({
+                                                name: resp.file?.name,
+                                                url: resp.file?.url,
+                                                file: f[0]
+                                            });
+                                        }
+                                    }}
+                                />
+                            ) : (
+                                <>
+                                    <span className="text-white my-2">{t('AIAutoChunkDescription')}</span>
+                                    <FilePreview
+                                        file={chunkFile.file}
+                                        onRemove={() => {
+                                            setChunkFile({});
+                                        }}
+                                    />
+                                </>
+                            )}
+                        </>
+                    )}
+
+                    <Divider className="my-2" />
+
                     {defaultResource && (
                         <Select
                             isRequired
@@ -114,29 +200,34 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
                             defaultSelectedKeys={[defaultResource]}
                             labelPlacement="outside"
                             placeholder="Select an resource"
-                            className="max-w-xs"
+                            className="w-full my-2"
                             onSelectionChange={item => {
                                 if (item) {
                                     setResource(item.currentKey || '');
                                 }
                             }}
                         >
-                            {resources.map(item => {
-                                return <SelectItem key={item.id}>{item.title}</SelectItem>;
+                            {groupedResources.map(item => {
+                                return (
+                                    <SelectSection showDivider key={item.title} title={t(item.title)}>
+                                        {item.items.map(v => {
+                                            return <SelectItem key={v.id}>{v.title}</SelectItem>;
+                                        })}
+                                    </SelectSection>
+                                );
                             })}
                         </Select>
                     )}
-                    <Button className="mt-1 text-white bg-gradient-to-br from-pink-300 from-15%  to-indigo-600 dark:from-indigo-500 dark:to-pink-500" isLoading={loading} onPress={createNewKnowledge}>
+                    <Button
+                        className="mt-1 text-white bg-gradient-to-br from-pink-300 from-15%  to-indigo-600 dark:from-indigo-500 dark:to-pink-500"
+                        isLoading={loading}
+                        isDisabled={!chunkFile.url}
+                        onPress={createChunkTask}
+                    >
                         {t('Submit')}
                     </Button>
                 </form>
             </div>
-            <Divider className="mb-8 mt-10" />
-            <ul className="flex flex-col gap-1">
-                <li>
-                    <span className="text-default-400">{t('One thing, One memory')}</span>
-                </li>
-            </ul>
         </div>
     ) : (
         <ul>
@@ -189,3 +280,228 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
         </Card>
     );
 });
+
+interface TaskListProps {
+    isShow: boolean;
+    spaceID: string;
+    onClose: () => void;
+}
+
+function TaskList({ isShow, spaceID, onClose }: TaskListProps) {
+    const [hasMore, setHasMore] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
+
+    const { t } = useTranslation();
+
+    const [taskList, setTaskList] = useImmer<ChunkTask[]>([]);
+    const [page, setPage] = useState(1);
+    const [total, setTotal] = useState(0);
+    const pageSize = 10;
+    async function loadTaskList(init: boolean = false) {
+        if (!init && !hasMore) {
+            return;
+        }
+        setIsLoading(true);
+        try {
+            const resp = await GetTaskList(spaceID, init ? 1 : page, pageSize);
+            setTotal(resp.total);
+            if (init) {
+                setTaskList(resp.list);
+                setPage(2);
+            } else {
+                setTaskList((prev: ChunkTask[]) => {
+                    prev = prev.concat(resp.list);
+                });
+                setPage(page++);
+            }
+
+            console.log(333, page * pageSize);
+
+            if (page * pageSize >= resp.total) {
+                setHasMore(false);
+            } else {
+                setHasMore(true);
+            }
+        } catch (e: any) {
+            console.error(e);
+        }
+        setIsLoading(false);
+    }
+    useEffect(() => {
+        if (!spaceID || !isShow) {
+            setTaskList([]);
+            return;
+        }
+        loadTaskList(true);
+    }, [spaceID, isShow]);
+
+    const columns = [
+        { name: 'ID', uid: 'task_id' },
+        { name: t('FileName'), uid: 'file_name' },
+        { name: t('Resource'), uid: 'resource_title' },
+        { name: t('Operator'), uid: 'user' },
+        { name: t('Status'), uid: 'status' },
+        { name: t('CreatedAt'), uid: 'created_at' },
+        { name: t('Operate'), uid: 'actions' }
+    ];
+
+    const classNames = useMemo(
+        () => ({
+            wrapper: ['max-h-[382px]', 'max-w-3xl'],
+            th: ['bg-transparent', 'text-default-500', 'border-b', 'border-divider'],
+            td: [
+                // changing the rows border radius
+                // first
+                'group-data-[first=true]/tr:first:before:rounded-none',
+                'group-data-[first=true]/tr:last:before:rounded-none',
+                // middle
+                'group-data-[middle=true]/tr:before:rounded-none',
+                // last
+                'group-data-[last=true]/tr:first:before:rounded-none',
+                'group-data-[last=true]/tr:last:before:rounded-none'
+            ]
+        }),
+        []
+    );
+
+    const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+
+    const renderCell = useCallback(
+        (item, columnKey) => {
+            const cellValue = item[columnKey];
+
+            switch (columnKey) {
+                case 'user':
+                    return (
+                        <User
+                            avatarProps={{ radius: 'full', size: 'sm', src: item.user_avatar }}
+                            classNames={{
+                                description: 'text-default-500'
+                            }}
+                            description={item.user_email}
+                            name={item.user_name}
+                        >
+                            {item.user_name}
+                        </User>
+                    );
+                case 'status':
+                    const color = cellValue === 1 ? 'primary' : item.retry_times === 3 ? 'error' : 'warning';
+                    const desc =
+                        cellValue === 1 ? (
+                            t('Done')
+                        ) : item.retry_times === 3 ? (
+                            t('Failed')
+                        ) : (
+                            <>
+                                <Spinner color="white" size="sm" />
+                                {t('Doing')}
+                            </>
+                        );
+                    return (
+                        <Chip className="capitalize border-none gap-1 text-default-600" color={color} size="sm" variant="dot">
+                            {desc}
+                        </Chip>
+                    );
+                case 'actions':
+                    return (
+                        <div className="relative flex justify-end items-center gap-2">
+                            <Popover showArrow offset={10}>
+                                <PopoverTrigger>
+                                    <Button size="sm" variant="ghost">
+                                        {t('Delete')}
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent>
+                                    <Button
+                                        onPress={async () => {
+                                            toast.promise(deleteTask(item.task_id), {
+                                                loading: t(`Doing`)
+                                            });
+                                        }}
+                                        color="warning"
+                                        size="sm"
+                                    >
+                                        {t('Confirm')}
+                                    </Button>
+                                </PopoverContent>
+                            </Popover>
+                        </div>
+                    );
+                case 'created_at':
+                    return new Date(cellValue * 1000).toLocaleString();
+                default:
+                    return cellValue;
+            }
+        },
+        [spaceID]
+    );
+
+    const deleteTask = useCallback(
+        async (taskID: string) => {
+            console.log(taskID);
+            try {
+                await DeleteTask(spaceID, taskID);
+                loadTaskList(true);
+            } catch (e: any) {
+                console.error(e);
+            }
+            // setIsDeleteLoading(false);
+        },
+        [spaceID]
+    );
+
+    return (
+        <Modal isOpen={isShow} backdrop="blur" size="4xl" onClose={onClose}>
+            <ModalContent>
+                {onClose => (
+                    <>
+                        <ModalHeader className="flex flex-col gap-1">{t('TaskList')}</ModalHeader>
+                        <ModalBody>
+                            <Table
+                                removeWrapper
+                                aria-label="Example table with custom cells, pagination and sorting"
+                                bottomContent={
+                                    hasMore && !isLoading ? (
+                                        <div className="flex w-full justify-center">
+                                            <Button isDisabled={isLoading} variant="flat" onPress={loadTaskList}>
+                                                {isLoading && <Spinner color="white" size="sm" />}
+                                                {t('LoadMore')}
+                                            </Button>
+                                        </div>
+                                    ) : null
+                                }
+                                bottomContentPlacement="outside"
+                                checkboxesProps={{
+                                    classNames: {
+                                        wrapper: 'after:bg-foreground after:text-background text-background'
+                                    }
+                                }}
+                                classNames={classNames}
+                            >
+                                <TableHeader columns={columns}>
+                                    {column => (
+                                        <TableColumn key={column.uid} align={column.uid === 'actions' ? 'center' : 'start'}>
+                                            {column.name}
+                                        </TableColumn>
+                                    )}
+                                </TableHeader>
+                                <TableBody isLoading={isLoading} loadingContent={<Spinner></Spinner>} onLoadMore={loadTaskList} emptyContent={t('Empty')} items={taskList}>
+                                    {item => <TableRow key={item.task_id}>{columnKey => <TableCell>{renderCell(item, columnKey)}</TableCell>}</TableRow>}
+                                </TableBody>
+                            </Table>
+                        </ModalBody>
+                        <ModalFooter></ModalFooter>
+                    </>
+                )}
+            </ModalContent>
+        </Modal>
+    );
+}
+
+export const VerticalDotsIcon = ({ size = 24, width, height, ...props }) => {
+    return (
+        <svg aria-hidden="true" fill="none" focusable="false" height={size || height} role="presentation" viewBox="0 0 24 24" width={size || width} {...props}>
+            <path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 12c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" fill="currentColor" />
+        </svg>
+    );
+};

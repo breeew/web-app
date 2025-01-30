@@ -1,4 +1,4 @@
-import { User } from '@nextui-org/react';
+import { User } from "@heroui/react";
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';

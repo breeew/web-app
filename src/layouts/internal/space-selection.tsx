@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Button, Select, SelectItem, SelectSection, Skeleton } from '@nextui-org/react';
+import { Button, Select, SelectItem, SelectSection, Skeleton } from "@heroui/react";
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -167,7 +167,7 @@ export default function Component() {
                     }}
                     showScrollIndicators={false}
                     placeholder="Select workspace"
-                    selectorIcon={<Icon color="hsl(var(--nextui-default-500))" icon="lucide:chevrons-up-down" />}
+                    selectorIcon={<Icon color="hsl(var(--heroui-default-500))" icon="lucide:chevrons-up-down" />}
                     startContent={
                         <div className="relative h-10 w-10 flex-none rounded-full border-small border-default-300">
                             <Icon className="ml-2 mt-2 text-default-500" icon="solar:users-group-rounded-linear" width={24} />

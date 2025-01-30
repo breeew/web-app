@@ -1,6 +1,6 @@
 import { Icon } from '@iconify/react';
-import { Avatar, Badge, Button } from '@nextui-org/react';
-import { cn } from '@nextui-org/react';
+import { Avatar, Badge, Button } from "@heroui/react";
+import { cn } from "@heroui/react";
 import React from 'react';
 
 export type NotificationType = 'default' | 'request' | 'file';

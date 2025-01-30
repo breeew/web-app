@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Button, Divider, Input, Link } from '@nextui-org/react';
+import { Button, Divider, Input, Link } from "@heroui/react";
 import { AxiosError } from 'axios';
 import { memo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -1,9 +1,10 @@
-import { Button, cn, Image, Link, Snippet } from '@nextui-org/react';
+import { Button, cn, Image, Link, Snippet } from '@heroui/react';
+import { Icon } from '@iconify/react';
 import { t } from 'i18next';
 import { useState } from 'react';
 
 import DotPattern from '@/components/dot-pattern';
-import { DiscordIcon, GithubIcon } from '@/components/icons';
+import { DiscordIcon, GithubIcon, XiaohongshuLogo } from '@/components/icons';
 import AnimatedBeamMultipleOutput from '@/components/index-beam';
 import BentoDemo from '@/components/index-bento-gird';
 import { Name } from '@/components/logo';
@@ -92,6 +93,32 @@ export default function IndexPage() {
                 )}
 
                 <Image src="demo-screen.png" className="hidden" onLoad={() => demoOnLoad()} />
+
+                <div id="feature" className="mt-32 mb-10 relative flex  w-full md:w-1/2 flex-col items-center justify-center overflow-hidden rounded-lg bg-background md:shadow-xl">
+                    <DotPattern className={cn('[mask-image:radial-gradient(260px_circle_at_center,white,transparent)]')} />
+                    <p className="z-10 whitespace-pre-wrap text-center text-5xl font-medium tracking-tighter text-black dark:text-white">{t('Community')}</p>
+                    <p className="z-10 whitespace-pre-wrap text-center text-lg font-medium tracking-tighter text-zinc-400 mt-4">{t('siteCommunityDescription')}</p>
+
+                    <div className="flex flex-col md:flex-row gap-10 my-10">
+                        <Link target="_blank" href="https://github.com/breeew/brew">
+                            <Button startContent={<Icon icon="uil:github" height={50} className="" />} variant="light" className="text-2xl font-semibold">
+                                GitHub
+                            </Button>
+                        </Link>
+
+                        <Link target="_blank" href="https://discord.gg/PUGpfmVBWq">
+                            <Button variant="light" startContent={<Icon icon="carbon:logo-discord" height={50} />} className="text-2xl font-semibold">
+                                Discrod
+                            </Button>
+                        </Link>
+
+                        <Link target="_blank" href="https://www.xiaohongshu.com/user/profile/638bf78a000000001f01d0e6">
+                            <Button variant="light" startContent={<XiaohongshuLogo className="p-1" size={50} />} className="text-2xl font-semibold">
+                                小红书
+                            </Button>
+                        </Link>
+                    </div>
+                </div>
                 <div id="feature" className="my-10 relative flex h-[160px] w-full md:w-1/2 flex-col items-center justify-center overflow-hidden rounded-lg bg-background md:shadow-xl">
                     <p className="z-10 whitespace-pre-wrap text-center text-5xl font-medium tracking-tighter text-black dark:text-white">{t('Features')}</p>
                     <p className="z-10 whitespace-pre-wrap text-center text-lg font-medium tracking-tighter text-zinc-400 mt-4">{t('siteFeaturesDescription')}</p>

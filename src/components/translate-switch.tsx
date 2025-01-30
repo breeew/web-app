@@ -1,5 +1,5 @@
-import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react';
-import { SwitchProps, useSwitch } from '@nextui-org/switch';
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/react";
+import { SwitchProps, useSwitch } from "@heroui/switch";
 import clsx from 'clsx';
 import { FC, useEffect, useState } from 'react';
 

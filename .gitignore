@@ -13,6 +13,7 @@ dist-ssr
 *.local
 *.production
 *.beta
+.home
 
 # Editor directories and files
 .vscode/*

@@ -18,7 +18,7 @@ import {
     Spacer,
     useDisclosure,
     User
-} from '@nextui-org/react';
+} from "@heroui/react";
 import React, { Key, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';

@@ -1,4 +1,4 @@
-import { Button, Kbd, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarProps } from '@nextui-org/react';
+import { Button, Kbd, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarProps } from "@heroui/react";
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useSnapshot } from 'valtio';

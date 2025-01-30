@@ -1,4 +1,4 @@
-import { Chip, ScrollShadow } from '@nextui-org/react';
+import { Chip, ScrollShadow } from "@heroui/react";
 import { memo } from 'react';
 
 import { Knowledge } from '@/apis/knowledge';

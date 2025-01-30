@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Button, Input, Kbd, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@nextui-org/react';
+import { Button, Input, Kbd, Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/react";
 import { PressEvent } from '@react-types/shared/src';
 import { useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';

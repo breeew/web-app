@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Button, Tab, Tabs } from '@nextui-org/react';
+import { Button, Tab, Tabs } from "@heroui/react";
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';

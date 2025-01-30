@@ -1,4 +1,4 @@
-import { BreadcrumbItem, Breadcrumbs, Button, ButtonGroup, ModalHeader } from '@nextui-org/react';
+import { BreadcrumbItem, Breadcrumbs, Button, ButtonGroup, ModalHeader } from '@heroui/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -71,7 +71,7 @@ const CreateKnowledge = () => {
                 </Breadcrumbs>
             </div>
             <div className="w-full overflow-hidden p-4">
-                <KnowledgeEdit ref={editor} knowledge={{ space_id: spaceID }} classNames={{ editor: '!mx-0' }} hideSubmit />
+                <KnowledgeEdit ref={editor} knowledge={{ space_id: spaceID }} classNames={{ editor: '!mx-0 ' }} hideSubmit />
             </div>
             <div className="fixed w-full left-0 bottom-0 h-14 flex justify-center items-center bg-content1">
                 <ButtonGroup variant="flat" size="base" className="mb-4">

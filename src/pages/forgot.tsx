@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Alert, Button, Checkbox, Input, Link } from '@nextui-org/react';
+import { Alert, Button, Checkbox, Input, Link } from "@heroui/react";
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';

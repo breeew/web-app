@@ -1,4 +1,4 @@
-import { Tooltip } from '@nextui-org/react';
+import { Tooltip } from "@heroui/react";
 import { ReactElement } from 'react';
 
 export default function Component(props: { children: ReactElement; content: string }) {
