@@ -41,6 +41,7 @@ import { ChunkTask, CreateFileChunkTask, DeleteTask, GetTaskList } from '@/apis/
 import { CreateKnowledge } from '@/apis/knowledge';
 import { FilePreview, FileUploader } from '@/components/file-uploader';
 import { useMedia } from '@/hooks/use-media';
+import { usePlan } from '@/hooks/use-plan';
 import { useGroupedResources } from '@/hooks/use-resource';
 import { useUploader } from '@/hooks/use-uploader';
 import resourceStore from '@/stores/resource';
@@ -81,6 +82,10 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
     }, []);
 
     async function createChunkTask() {
+        if (!userIsPro) {
+            // TODO alert upgrade plan
+            return;
+        }
         if (chunkFile.url !== '') {
             setLoading(true);
             try {
@@ -100,6 +105,7 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
     const navigate = useNavigate();
     const { isMobile } = useMedia();
     const [isShowTaskList, setIsShowTaskList] = useState(false);
+    const { userIsPro, isPlatform } = usePlan();
 
     const content = isOpen ? (
         <div className="h-full w-full items-start justify-center box-border overflow-scroll pb-10 pt-10">
@@ -120,112 +126,116 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
                             {t('TypeMemorySelf')}
                         </Button>
                     )}
-
-                    {!chunkFile.url && !knowledge && (
-                        <div className="mt-1 flex w-full items-center justify-center gap-2 px-1 text-sm">
-                            {t('OR')}&nbsp;
-                            {t('UseDocs', { types: 'doc(x)、xls(x)、pdf' })}
-                        </div>
-                    )}
-
-                    {!knowledge && (
+                    {isPlatform && (
                         <>
-                            <div className="flex justify-end">
-                                <Button
-                                    className="w-1/5"
-                                    variant="ghost"
-                                    size="sm"
-                                    onPress={() => {
-                                        setIsShowTaskList(true);
-                                    }}
-                                >
-                                    {t('TaskList')}
-                                </Button>
-                                <TaskList
-                                    spaceID={currentSelectedSpace}
-                                    isShow={isShowTaskList}
-                                    onClose={() => {
-                                        setIsShowTaskList(false);
-                                    }}
-                                />
-                            </div>
-                            {!chunkFile.url ? (
-                                <FileUploader
-                                    className="border-zinc-600"
-                                    accept={{
-                                        'application/vnd.ms-excel': [],
-                                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
-                                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': [],
-                                        'application/msword': [],
-                                        'application/pdf': []
-                                    }}
-                                    onValueChange={e => {
-                                        console.log(e);
-                                    }}
-                                    onUpload={async f => {
-                                        if (f.length === 0) {
-                                            return;
-                                        }
-                                        const resp = await uploader(currentSelectedSpace, f[0], 'knowledge', 'chunk');
-                                        if (resp.success) {
-                                            setChunkFile({
-                                                name: resp.file?.name,
-                                                url: resp.file?.url,
-                                                file: f[0]
-                                            });
-                                        }
-                                    }}
-                                />
-                            ) : (
+                            {!chunkFile.url && !knowledge && (
+                                <div className="mt-1 flex w-full items-center justify-center gap-2 px-1 text-sm">
+                                    {t('OR')}&nbsp;
+                                    {t('UseDocs', { types: 'doc(x)、xls(x)、pdf' })}
+                                </div>
+                            )}
+
+                            {!knowledge && (
                                 <>
-                                    <span className="text-white my-2">{t('AIAutoChunkDescription')}</span>
-                                    <FilePreview
-                                        file={chunkFile.file}
-                                        onRemove={() => {
-                                            setChunkFile({});
-                                        }}
-                                    />
+                                    <div className="flex justify-end">
+                                        <Button
+                                            className="w-1/5"
+                                            variant="ghost"
+                                            size="sm"
+                                            onPress={() => {
+                                                setIsShowTaskList(true);
+                                            }}
+                                        >
+                                            {t('TaskList')}
+                                        </Button>
+                                        <TaskList
+                                            spaceID={currentSelectedSpace}
+                                            isShow={isShowTaskList}
+                                            onClose={() => {
+                                                setIsShowTaskList(false);
+                                            }}
+                                        />
+                                    </div>
+                                    {!chunkFile.url ? (
+                                        <FileUploader
+                                            className="border-zinc-600"
+                                            accept={{
+                                                'application/vnd.ms-excel': [],
+                                                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
+                                                'application/vnd.openxmlformats-officedocument.wordprocessingml.document': [],
+                                                'application/msword': [],
+                                                'application/pdf': []
+                                            }}
+                                            onValueChange={e => {
+                                                console.log(e);
+                                            }}
+                                            onUpload={async f => {
+                                                if (f.length === 0) {
+                                                    return;
+                                                }
+                                                const resp = await uploader(currentSelectedSpace, f[0], 'knowledge', 'chunk');
+                                                if (resp.success) {
+                                                    setChunkFile({
+                                                        name: resp.file?.name,
+                                                        url: resp.file?.url,
+                                                        file: f[0]
+                                                    });
+                                                }
+                                            }}
+                                            disabled={!userIsPro}
+                                        />
+                                    ) : (
+                                        <>
+                                            <span className="text-white my-2">{t('AIAutoChunkDescription')}</span>
+                                            <FilePreview
+                                                file={chunkFile.file}
+                                                onRemove={() => {
+                                                    setChunkFile({});
+                                                }}
+                                            />
+                                        </>
+                                    )}
                                 </>
                             )}
+
+                            <Divider className="my-2" />
+
+                            {defaultResource && (
+                                <Select
+                                    isRequired
+                                    variant="faded"
+                                    label={t('knowledgeCreateResourceLable')}
+                                    defaultSelectedKeys={[defaultResource]}
+                                    labelPlacement="outside"
+                                    placeholder="Select an resource"
+                                    className="w-full my-2"
+                                    onSelectionChange={item => {
+                                        if (item) {
+                                            setResource(item.currentKey || '');
+                                        }
+                                    }}
+                                >
+                                    {groupedResources.map(item => {
+                                        return (
+                                            <SelectSection showDivider key={item.title} title={t(item.title)}>
+                                                {item.items.map(v => {
+                                                    return <SelectItem key={v.id}>{v.title}</SelectItem>;
+                                                })}
+                                            </SelectSection>
+                                        );
+                                    })}
+                                </Select>
+                            )}
+                            <Button
+                                className="mt-1 text-white bg-gradient-to-br from-pink-300 from-15%  to-indigo-600 dark:from-indigo-500 dark:to-pink-500"
+                                isLoading={loading}
+                                isDisabled={!chunkFile.url}
+                                onPress={createChunkTask}
+                            >
+                                {t('Submit')}
+                            </Button>
                         </>
                     )}
-
-                    <Divider className="my-2" />
-
-                    {defaultResource && (
-                        <Select
-                            isRequired
-                            variant="faded"
-                            label={t('knowledgeCreateResourceLable')}
-                            defaultSelectedKeys={[defaultResource]}
-                            labelPlacement="outside"
-                            placeholder="Select an resource"
-                            className="w-full my-2"
-                            onSelectionChange={item => {
-                                if (item) {
-                                    setResource(item.currentKey || '');
-                                }
-                            }}
-                        >
-                            {groupedResources.map(item => {
-                                return (
-                                    <SelectSection showDivider key={item.title} title={t(item.title)}>
-                                        {item.items.map(v => {
-                                            return <SelectItem key={v.id}>{v.title}</SelectItem>;
-                                        })}
-                                    </SelectSection>
-                                );
-                            })}
-                        </Select>
-                    )}
-                    <Button
-                        className="mt-1 text-white bg-gradient-to-br from-pink-300 from-15%  to-indigo-600 dark:from-indigo-500 dark:to-pink-500"
-                        isLoading={loading}
-                        isDisabled={!chunkFile.url}
-                        onPress={createChunkTask}
-                    >
-                        {t('Submit')}
-                    </Button>
                 </form>
             </div>
         </div>

@@ -73,7 +73,7 @@ const CreateKnowledge = () => {
             <div className="w-full overflow-hidden p-4">
                 <KnowledgeEdit ref={editor} knowledge={{ space_id: spaceID }} classNames={{ editor: '!mx-0 ' }} hideSubmit />
             </div>
-            <div className="fixed w-full left-0 bottom-0 h-14 flex justify-center items-center bg-content1">
+            <div className="fixed w-full left-0 bottom-0 h-14 flex justify-center items-center bg-content1 z-50">
                 <ButtonGroup variant="flat" size="base" className="mb-4">
                     <Button color="primary" onPress={submit} isLoading={createLoading}>
                         {t('Save')}

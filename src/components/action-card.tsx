@@ -1,6 +1,6 @@
+import { Card, CardBody, CardFooter, CardHeader, type CardProps, Progress } from '@heroui/react';
+import { cn } from '@heroui/react';
 import { Icon } from '@iconify/react';
-import { Card, CardBody, CardFooter, CardHeader, type CardProps, Progress } from "@heroui/react";
-import { cn } from "@heroui/react";
 import React from 'react';
 
 export type ActionCardProps = CardProps & {
@@ -66,7 +66,7 @@ const ActionCard = React.forwardRef<HTMLDivElement, ActionCardProps>(({ inProgre
                         size="sm"
                         aria-label="Loading..."
                         className="max-w-md"
-                        classNames={{ indicator: '!duration-&lsqb;2000ms&rsqb; bg-gradient-to-r from-pink-500 to-yellow-500' }}
+                        classNames={{ indicator: '!duration-&lsqb;3000ms&rsqb; bg-gradient-to-r from-pink-500 to-yellow-500' }}
                     />
                 </CardFooter>
             )}
