@@ -25,4 +25,19 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
+
+  <script>
+    const moduleScripts = document.querySelectorAll('script[type="module"]');
+    if (moduleScripts) {
+      moduleScripts.forEach(script => {
+        // 监听加载失败
+        script.addEventListener('error', () => {
+          console.warn(`检测到 JS 资源加载失败：${script.src}`);
+          // 强制刷新页面，绕过缓存
+          window.location.reload(true);
+        });
+      });
+    }
+      
+  </script>
 </html>

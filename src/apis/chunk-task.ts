@@ -46,3 +46,19 @@ export async function CreateFileChunkTask(spaceID: string, resource: string, fil
         file_url: fileURL
     });
 }
+
+export interface TaskStatus {
+    task_id: string;
+    status: number;
+    updated_at: number;
+    retry_times: number;
+}
+
+export async function LoadTasksStatus(spaceID: string, taskIDs: string[]): Promise<TaskStatus[]> {
+    const resp = await instance.get(`/${spaceID}/task/status`, {
+        params: {
+            task_ids: taskIDs
+        }
+    });
+    return resp.data.data;
+}

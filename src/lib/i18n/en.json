@@ -82,7 +82,7 @@
     "Upgrade": "Upgrade",
     "preProInfo": "unlock all the features of the pro plan.",
     "chatNotice": "The generated data may contain errors, please verify.",
-    "chatToBrew": "Send a message to {{name}}",
+    "chatToBrew": "Use @ to send a message to {{name}}",
     "memories count": "{{total}} memories about {{title}}",
     "createCardTag1": "Auto Title & Tags",
     "createCardTag2": "Embedding your memory",
@@ -116,6 +116,7 @@
     "Doing": "Doing",
     "Operator": "Operator",
     "TaskList": "Task List",
+    "fileMemoryTaskCreated": "The file memory task has been created. You can check the progress in the ‘Task List’.",
     "Welcome to signup": "Welcome to sign-up.",
     "ResetEmailSended": "An email containing the password reset link has been sent to your mailbox. Please check it.",
     "Previous": "Previous",
@@ -215,5 +216,9 @@
     "siteCommunityDescription": "We will meet users in the following communities and look forward to your valuable feedback. At the same time, our core functionality code remains open-source, making the system more transparent.",
     "SaveMemory": "Save this memory",
     "SaveItTo": "Select Space",
-    "SaveMemoryNotice": "Can only be saved in a space with a configured resource type."
+    "SaveMemoryNotice": "Can only be saved in a space with a configured resource type.",
+    "UserManage": "User Management",
+    "SpaceProfile": "Space Profile",
+    "agent-jihe": "jihe",
+    "agent-bulter": "bulter"
 }

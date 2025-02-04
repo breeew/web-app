@@ -28,7 +28,7 @@ export default function IndexPage() {
     return (
         <DefaultLayout>
             <section className="flex h-full flex-col items-center gap-4 py-10">
-                <div className="flex flex-col justify-center items-center lg:py-32">
+                <div className="flex flex-col justify-center items-center lg:py-16">
                     <div className="z-10 mb-10 flex items-center justify-center">
                         <div
                             className={cn(
@@ -87,7 +87,7 @@ export default function IndexPage() {
                 </div> */}
 
                 {demoLoaded && (
-                    <NeonGradientCard className="justify-center text-center w-full max-w-[1200px]">
+                    <NeonGradientCard className="justify-center text-center w-full max-w-[1600px]">
                         <Image src="demo-screen.png" className="w-full" />
                     </NeonGradientCard>
                 )}
@@ -124,7 +124,10 @@ export default function IndexPage() {
                     <p className="z-10 whitespace-pre-wrap text-center text-lg font-medium tracking-tighter text-zinc-400 mt-4">{t('siteFeaturesDescription')}</p>
                     <DotPattern className={cn('[mask-image:radial-gradient(260px_circle_at_center,white,transparent)]')} />
                 </div>
-                <BentoDemo />
+
+                <div className="max-w-[1200px]">
+                    <BentoDemo />
+                </div>
 
                 <TextRevealByWord className={title()} text="Oblivion Your Memory to reach beyond your limits." />
             </section>

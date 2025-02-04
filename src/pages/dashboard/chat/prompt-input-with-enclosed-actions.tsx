@@ -1,10 +1,13 @@
+import { Button, cn, Listbox, ListboxItem, Spinner, type TextAreaProps, Tooltip, useDisclosure } from '@heroui/react';
 import { Icon } from '@iconify/react';
-import { Button, cn, Spinner, type TextAreaProps, Tooltip } from "@heroui/react";
-import { KeyboardEvent, useRef, useState } from 'react';
+import { t } from 'i18next';
+import { KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import PromptInput from './prompt-input';
 
 export default function Component(props: TextAreaProps & { classNames?: Record<'button' | 'buttonIcon', string>; onSubmitFunc: (data: string) => Promise<void> }) {
+    const { t } = useTranslation();
     const [prompt, setPrompt] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -46,8 +49,79 @@ export default function Component(props: TextAreaProps & { classNames?: Record<'
         }
     };
 
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    function setSelectedKeys(e) {
+        setPrompt(prompt + e + ' ');
+        onClose();
+        inputRef.current.focus();
+    }
+
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape' && isOpen) {
+                onClose();
+                inputRef.current.focus();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isOpen, inputRef]);
+
+    const onSetPrompt = useCallback(
+        (data: string) => {
+            if (data.length < prompt.length) {
+                setPrompt(data);
+                return;
+            }
+            setPrompt(data);
+            const lastChar = data.trim().charAt(data.length - 1);
+            if (lastChar === '@') {
+                onOpen();
+            } else if (isOpen) {
+                onClose();
+            }
+        },
+        [isOpen, prompt]
+    );
+
+    const agents = useMemo(() => {
+        return [
+            {
+                title: t('agent-jihe'),
+                description: 'RAG 助理'
+            },
+            {
+                title: t('agent-bulter'),
+                description: '家庭助理'
+            }
+        ];
+    }, []);
+
     return (
-        <form className="flex w-full items-start gap-2">
+        <form className="flex flex-col w-full items-start gap-2 relative">
+            {isOpen && (
+                <div className="absolute w-full left-0 top-0">
+                    <Listbox
+                        disallowEmptySelection
+                        aria-label="Single agent selection"
+                        className="absolute bottom-1 left-0 bg-content2 rounded-xl"
+                        autoFocus="first"
+                        selectionMode="single"
+                        variant="flat"
+                        onAction={setSelectedKeys}
+                    >
+                        {agents.map(v => {
+                            return (
+                                <ListboxItem key={v.title} className="h-12">
+                                    {v.title}
+                                </ListboxItem>
+                            );
+                        })}
+                    </Listbox>
+                </div>
+            )}
+
             <PromptInput
                 {...props}
                 ref={inputRef}
@@ -98,7 +172,7 @@ export default function Component(props: TextAreaProps & { classNames?: Record<'
                 //     </NextFeatureToolTip>
                 // }
                 value={prompt}
-                onValueChange={setPrompt}
+                onValueChange={onSetPrompt}
                 onKeyDown={handleKeyDown}
             />
         </form>

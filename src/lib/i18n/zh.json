@@ -81,8 +81,8 @@
     "Upgrade to Pro": "升级到 Pro",
     "Upgrade": "立即升级",
     "preProInfo": "解锁全部功能限制",
-    "chatNotice": "对话生成的内容并不一定正确，请核查。",
-    "chatToBrew": "与{{name}}对话",
+    "chatNotice": "对话生成的内容并不一定正确，注意甄别。",
+    "chatToBrew": "使用@与{{name}}进行对话",
     "memories count": "关于{{title}}的记忆共有{{total}}条",
     "createCardTag1": "自动为您生成记忆标题及标签",
     "createCardTag2": "自动为您的记忆进行嵌入",
@@ -114,6 +114,7 @@
     "Done": "完成",
     "Operator": "操作人",
     "TaskList": "任务列表",
+    "fileMemoryTaskCreated": "文件记忆任务已创建，你可以在任务列表中查看进度",
     "Failed": "失败",
     "Doing": "处理中",
     "Welcome to signup": "注册成功，欢迎使用",
@@ -213,7 +214,11 @@
     "PrivacySecurityDescription": "我们视用户的隐私安全于一切，所有功能设计均基于隐私安全之上，所有用户记忆都将加密存储",
     "Community": "用户社区",
     "siteCommunityDescription": "我们将在以下社区与用户相见，期待大家的宝贵意见。同时我们的基础功能代码保持开源，系统更透明。",
-    "SaveMemory": "保存这份记忆",
+    "SaveMemory": "保存该记忆",
     "SaveItTo": "选择存储空间",
-    "SaveMemoryNotice": "仅能保存到配有资源类型的空间下"
+    "SaveMemoryNotice": "仅能保存到配有资源类型的空间下",
+    "UserManage": "用户管理",
+    "SpaceProfile": "空间基本信息",
+    "agent-jihe": "极核",
+    "agent-bulter": "管家"
 }

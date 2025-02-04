@@ -247,3 +247,7 @@ video {
     @apply break-words;
     @apply break-all;
 }
+
+.editor .codex-editor-overlay__rectangle {
+    border: none !important;
+}

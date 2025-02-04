@@ -2,7 +2,7 @@ import { Button, Link, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader,
 import { Icon } from '@iconify/react';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { json, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useSnapshot } from 'valtio';
 
@@ -30,13 +30,18 @@ export default memo(({ controlsContent }: ShareHeaderProps) => {
     const { spaces } = useSnapshot(spaceStore);
 
     function groupResourcesBySpace(resources: Resource[]): Map<string, Resource[]> {
-        return resources.reduce((acc, resource) => {
-            if (!acc.has(resource.space_id)) {
-                acc.set(resource.space_id, []);
-            }
-            acc.get(resource.space_id)!.push(resource);
+        const acc = new Map<string, Resource[]>();
+        if (!resources) {
             return acc;
-        }, new Map<string, Resource[]>());
+        }
+        resources.forEach(resource => {
+            if (!acc.has(resource.space_id)) {
+                acc.set(resource.space_id, [resource]);
+                return;
+            }
+            acc.get(resource.space_id).push(resource);
+        });
+        return acc;
     }
 
     async function loudUserInfo() {
@@ -55,7 +60,6 @@ export default memo(({ controlsContent }: ShareHeaderProps) => {
             await loadUserSpaces();
             const resources = await ListUserResources();
             setUserResources(groupResourcesBySpace(resources));
-            console.log(groupResourcesBySpace(resources));
         } catch (e: any) {
             console.error(e);
         }
@@ -165,7 +169,9 @@ export default memo(({ controlsContent }: ShareHeaderProps) => {
                                                         onChange={onSpaceSelect}
                                                     >
                                                         {canBeSelectSpaces.map(item => (
-                                                            <SelectItem key={item.space_id}>{item.title}</SelectItem>
+                                                            <SelectItem key={item.space_id} className="h-12">
+                                                                {item.title}
+                                                            </SelectItem>
                                                         ))}
                                                     </Select>
                                                     {resourceSelector.length > 0 && (
@@ -180,7 +186,9 @@ export default memo(({ controlsContent }: ShareHeaderProps) => {
                                                             onChange={onResourceSelect}
                                                         >
                                                             {resourceSelector.map(item => (
-                                                                <SelectItem key={item.id}>{item.title}</SelectItem>
+                                                                <SelectItem key={item.id} className="h-12">
+                                                                    {item.title}
+                                                                </SelectItem>
                                                             ))}
                                                         </Select>
                                                     )}
@@ -189,10 +197,10 @@ export default memo(({ controlsContent }: ShareHeaderProps) => {
                                                     </div>
                                                 </ModalBody>
                                                 <ModalFooter>
-                                                    <Button color="danger" variant="flat" onPress={onClose}>
+                                                    <Button color="danger" size="lg" variant="flat" onPress={onClose}>
                                                         {t('Close')}
                                                     </Button>
-                                                    <Button color="primary" isLoading={saveLoading} onPress={submitCopy}>
+                                                    <Button color="primary" size="lg" isLoading={saveLoading} onPress={submitCopy}>
                                                         {t('Submit')}
                                                     </Button>
                                                 </ModalFooter>
@@ -220,7 +228,7 @@ export default memo(({ controlsContent }: ShareHeaderProps) => {
                                     window.parent.location.href = '/';
                                 }}
                             >
-                                {t('StartCyberMemory')}
+                                {t('SaveMemory')}
                             </Button>
                         )}
                     </>

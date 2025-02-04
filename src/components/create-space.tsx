@@ -1,4 +1,4 @@
-import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Textarea, useDisclosure } from "@heroui/react";
+import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Textarea, useDisclosure } from '@heroui/react';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -42,8 +42,9 @@ const CreateSpaceComponent = forwardRef((_, ref) => {
                         <>
                             <ModalHeader className="flex flex-col gap-1">{t('Create new space')}</ModalHeader>
                             <ModalBody>
-                                <Input label={t('createSpaceNameLabel')} labelPlacement="outside" placeholder="Named your space" variant="bordered" onValueChange={setTitle} />
+                                <Input label={t('createSpaceNameLabel')} size="lg" labelPlacement="outside" placeholder="Named your space" variant="bordered" onValueChange={setTitle} />
                                 <Textarea
+                                    size="lg"
                                     label={t('createSpaceDescriptionLabel')}
                                     variant="bordered"
                                     labelPlacement="outside"
@@ -68,4 +69,3 @@ const CreateSpaceComponent = forwardRef((_, ref) => {
 CreateSpaceComponent.displayName = 'CreateSpace';
 
 export default CreateSpaceComponent;
-

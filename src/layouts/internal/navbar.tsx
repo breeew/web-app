@@ -1,5 +1,5 @@
+import { Button, Input, Kbd, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@heroui/react';
 import { Icon } from '@iconify/react';
-import { Button, Input, Kbd, Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/react";
 import { PressEvent } from '@react-types/shared/src';
 import { useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,6 +13,7 @@ import ShareButton from '@/components/share-button';
 import { useChatPageCondition } from '@/hooks/use-chat-page';
 import { usePlan } from '@/hooks/use-plan';
 import { useRole } from '@/hooks/use-role';
+import { SpaceSetting } from '@/pages/dashboard/space-setting';
 import { triggerKnowledgeSearch } from '@/stores/knowledge';
 import { onKnowledgeSearchKeywordsChange } from '@/stores/knowledge';
 // import NotificationsCard from './notifications-card';
@@ -139,7 +140,8 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
                     </NavbarItem> */}
                     {currentSpace && (
                         <NavbarItem>
-                            <ManageSpaceComponent radius="full" label={t('Space Setting')} variant="ghost" className="flex gap-2 text-inherit" space={currentSpace} />
+                            <SpaceSetting space={currentSpace} />
+                            {/* <ManageSpaceComponent radius="full" label={t('Space Setting')} variant="ghost" className="flex gap-2 text-inherit" space={currentSpace} /> */}
                         </NavbarItem>
                     )}
 

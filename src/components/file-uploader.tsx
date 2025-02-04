@@ -95,7 +95,7 @@ export function FileUploader(props: FileUploaderProps) {
         accept = {
             'image/*': []
         },
-        maxSize = 1024 * 1024 * 1,
+        maxSize = 1024 * 1024 * 5,
         maxFileCount = 1,
         multiple = false,
         disabled = false,
@@ -272,7 +272,7 @@ export function FilePreview({ file, onRemove }: FilePreviewProps) {
     }
 
     return (
-        <Chip variant="dot" size="lg" color="warning" onClose={() => onRemove && onRemove(file)}>
+        <Chip variant="light" radius="sm" color="warning" className="w-full overflow-hidden" onClose={() => onRemove && onRemove(file)}>
             {file.name}
         </Chip>
     );

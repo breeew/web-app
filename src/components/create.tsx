@@ -30,6 +30,7 @@ import {
     User
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
+import { formToJSON } from 'axios';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -37,7 +38,7 @@ import { toast } from 'sonner';
 import { useImmer } from 'use-immer';
 import { useSnapshot } from 'valtio';
 
-import { ChunkTask, CreateFileChunkTask, DeleteTask, GetTaskList } from '@/apis/chunk-task';
+import { ChunkTask, CreateFileChunkTask, DeleteTask, GetTaskList, LoadTasksStatus } from '@/apis/chunk-task';
 import { CreateKnowledge } from '@/apis/knowledge';
 import { FilePreview, FileUploader } from '@/components/file-uploader';
 import { useMedia } from '@/hooks/use-media';
@@ -91,7 +92,7 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
             try {
                 await CreateFileChunkTask(currentSelectedSpace, resource || defaultResource, chunkFile.name, chunkFile.url);
                 setChunkFile({});
-                toast.info(t('Success'));
+                toast.info(t('fileMemoryTaskCreated'));
             } catch (e: any) {
                 console.error(e);
             }
@@ -137,7 +138,7 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
 
                             {!knowledge && (
                                 <>
-                                    <div className="flex justify-end">
+                                    <div className="flex justify-end px-1">
                                         <Button
                                             className="w-1/5"
                                             variant="ghost"
@@ -160,10 +161,8 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
                                         <FileUploader
                                             className="border-zinc-600"
                                             accept={{
-                                                'application/vnd.ms-excel': [],
                                                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
                                                 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': [],
-                                                'application/msword': [],
                                                 'application/pdf': []
                                             }}
                                             onValueChange={e => {
@@ -304,45 +303,86 @@ function TaskList({ isShow, spaceID, onClose }: TaskListProps) {
     const { t } = useTranslation();
 
     const [taskList, setTaskList] = useImmer<ChunkTask[]>([]);
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useImmer(1);
     const [total, setTotal] = useState(0);
-    const pageSize = 10;
-    async function loadTaskList(init: boolean = false) {
-        if (!init && !hasMore) {
+    const pageSize = 20;
+    async function loadTaskList(page: number) {
+        if (page !== 1 && !hasMore) {
             return;
         }
         setIsLoading(true);
         try {
-            const resp = await GetTaskList(spaceID, init ? 1 : page, pageSize);
+            const resp = await GetTaskList(spaceID, page, pageSize);
             setTotal(resp.total);
-            if (init) {
+            if (page == 1) {
                 setTaskList(resp.list);
-                setPage(2);
             } else {
                 setTaskList((prev: ChunkTask[]) => {
                     prev = prev.concat(resp.list);
                 });
-                setPage(page++);
             }
-
-            console.log(333, page * pageSize);
-
             if (page * pageSize >= resp.total) {
                 setHasMore(false);
             } else {
                 setHasMore(true);
             }
+            setPage(page);
         } catch (e: any) {
             console.error(e);
         }
         setIsLoading(false);
+    }
+
+    useEffect(() => {
+        if (isShow) {
+            // 创建 interval
+            const intervalID = setInterval(() => {
+                refreshTaskStatus();
+            }, 10000);
+
+            // 清理函数：组件销毁时清除 interval
+            return () => {
+                clearInterval(intervalID);
+            };
+        }
+    }, [isShow]);
+
+    async function refreshTaskStatus() {
+        const needToRefresh = [];
+        const taskMap = new Map<string, number>();
+        taskList.forEach(v => {
+            if (v.status !== 1 && v.retry_times < 3) {
+                console.log(v);
+                needToRefresh.push(v.task_id);
+                taskMap.set(v.task_id, v.status);
+            }
+        });
+
+        if (needToRefresh.length == 0) {
+            return;
+        }
+        try {
+            const resp = await LoadTasksStatus(spaceID, needToRefresh);
+            resp.forEach(v => {
+                if (taskMap.get(v.task_id) != v.status) {
+                    setTaskList(prev => {
+                        let task = prev.find(item => item.task_id == v.task_id);
+                        if (task) {
+                            task.status = v.status;
+                        }
+                    });
+                }
+            });
+        } catch (e: any) {
+            console.error(e);
+        }
     }
     useEffect(() => {
         if (!spaceID || !isShow) {
             setTaskList([]);
             return;
         }
-        loadTaskList(true);
+        loadTaskList(1);
     }, [spaceID, isShow]);
 
     const columns = [
@@ -398,20 +438,20 @@ function TaskList({ isShow, spaceID, onClose }: TaskListProps) {
                     const color = cellValue === 1 ? 'primary' : item.retry_times === 3 ? 'error' : 'warning';
                     const desc =
                         cellValue === 1 ? (
-                            t('Done')
+                            <Chip className="capitalize border-none gap-1 text-default-600" color={color} size="sm" variant="dot">
+                                {t('Done')}
+                            </Chip>
                         ) : item.retry_times === 3 ? (
-                            t('Failed')
+                            <Chip className="capitalize border-none gap-1 text-default-600" color={color} size="sm" variant="dot">
+                                {t('Failed')}
+                            </Chip>
                         ) : (
-                            <>
+                            <div className="flex justify-center items-center gap-2">
                                 <Spinner color="white" size="sm" />
                                 {t('Doing')}
-                            </>
+                            </div>
                         );
-                    return (
-                        <Chip className="capitalize border-none gap-1 text-default-600" color={color} size="sm" variant="dot">
-                            {desc}
-                        </Chip>
-                    );
+                    return desc;
                 case 'actions':
                     return (
                         <div className="relative flex justify-end items-center gap-2">
@@ -448,10 +488,9 @@ function TaskList({ isShow, spaceID, onClose }: TaskListProps) {
 
     const deleteTask = useCallback(
         async (taskID: string) => {
-            console.log(taskID);
             try {
                 await DeleteTask(spaceID, taskID);
-                loadTaskList(true);
+                loadTaskList(1);
             } catch (e: any) {
                 console.error(e);
             }
@@ -461,7 +500,7 @@ function TaskList({ isShow, spaceID, onClose }: TaskListProps) {
     );
 
     return (
-        <Modal isOpen={isShow} backdrop="blur" size="4xl" onClose={onClose}>
+        <Modal isOpen={isShow} backdrop="blur" size="5xl" onClose={onClose}>
             <ModalContent>
                 {onClose => (
                     <>
@@ -473,9 +512,22 @@ function TaskList({ isShow, spaceID, onClose }: TaskListProps) {
                                 bottomContent={
                                     hasMore && !isLoading ? (
                                         <div className="flex w-full justify-center">
-                                            <Button isDisabled={isLoading} variant="flat" onPress={loadTaskList}>
+                                            <Button
+                                                isDisabled={isLoading}
+                                                variant="flat"
+                                                onPress={async () => {
+                                                    const nextPage = page + 1;
+                                                    try {
+                                                        await loadTaskList(nextPage);
+                                                        setPage(nextPage);
+                                                    } catch (e: any) {
+                                                        console.error(e);
+                                                    }
+                                                }}
+                                            >
                                                 {isLoading && <Spinner color="white" size="sm" />}
                                                 {t('LoadMore')}
+                                                {'' + hasMore}
                                             </Button>
                                         </div>
                                     ) : null
