@@ -16,9 +16,11 @@ import userStore, { setUserInfo } from '@/stores/user';
 
 export interface ShareHeaderProps {
     controlsContent: React.ReactNode;
+    type: string;
+    createdUser: string;
 }
 
-export default memo(({ controlsContent }: ShareHeaderProps) => {
+export default memo(({ controlsContent, type, createdUser }: ShareHeaderProps) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { token } = useParams(); // share token
@@ -67,7 +69,7 @@ export default memo(({ controlsContent }: ShareHeaderProps) => {
     }
 
     useEffect(() => {
-        if (!accessToken && !loginToken) {
+        if ((!accessToken && !loginToken) || type === 'session') {
             setIsLoadUserInfo(false);
             return;
         }
@@ -150,7 +152,7 @@ export default memo(({ controlsContent }: ShareHeaderProps) => {
             <div className="flex items-center gap-2">
                 {!isLoadUserInfo && (
                     <>
-                        {canBeSelectSpaces && canBeSelectSpaces.length > 0 ? (
+                        {type === 'knowledge' && createdUser !== userInfo.userID && canBeSelectSpaces && canBeSelectSpaces.length > 0 ? (
                             <>
                                 <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange} onClose={onModalOpenChange}>
                                     <ModalContent>
@@ -228,7 +230,7 @@ export default memo(({ controlsContent }: ShareHeaderProps) => {
                                     window.parent.location.href = '/';
                                 }}
                             >
-                                {t('SaveMemory')}
+                                {t('StartCyberMemory')}
                             </Button>
                         )}
                     </>

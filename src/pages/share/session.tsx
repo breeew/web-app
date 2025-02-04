@@ -1,4 +1,4 @@
-import { Accordion, AccordionItem, Avatar, Listbox, ListboxItem, ScrollShadow, User } from "@heroui/react";
+import { Accordion, AccordionItem, Avatar, Listbox, ListboxItem, ScrollShadow, User } from '@heroui/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -18,7 +18,6 @@ const ShareSessionPage = function () {
         setIsLoading(true);
         try {
             let data = await GetSharedSession(token);
-            console.log(data);
             setSession(data);
         } catch (e: any) {
             console.error(e);
@@ -33,16 +32,27 @@ const ShareSessionPage = function () {
     const controlsContent = useMemo(() => {
         return (
             <>
-                {session && session.user && (
+                {session && (
                     <div className="flex flex-col gap-4">
-                        <User
-                            className="mt-4"
-                            avatarProps={{
-                                src: session.user.avatar
+                        {session.user && (
+                            <User
+                                className="my-4 justify-start"
+                                avatarProps={{
+                                    src: session.user.avatar
+                                }}
+                                description={t('CreatedOn') + ' ' + new Date(session.session.created_at * 1000).toLocaleDateString()}
+                                name={session.user.name}
+                            />
+                        )}
+
+                        <Button
+                            variant="ghost"
+                            onPress={() => {
+                                navigator('/');
                             }}
-                            description={t('CreatedOn') + ' ' + new Date(session.session.created_at * 1000).toLocaleDateString()}
-                            name={session.user.name}
-                        />
+                        >
+                            {t('Back') + ' ' + t('Home')}
+                        </Button>
                     </div>
                 )}
             </>
@@ -52,7 +62,7 @@ const ShareSessionPage = function () {
     return (
         <>
             <section className="h-screen flex flex-col w-full p-4 overflow-hidden items-center bg-content2">
-                <ShareHeader controlsContent={controlsContent}></ShareHeader>
+                <ShareHeader controlsContent={controlsContent} type="session" createdUser={session ? session.user.id : ''}></ShareHeader>
                 <main className="flex gap-6 w-full max-w-[1400px] h-full items-stretch justify-center relative">
                     <div className="hidden w-[260px] overflow-hidden flex-col gap-4 lg:flex sticky top-0">{controlsContent}</div>
                     <div className="relative flex flex-col h-full gap-2 w-full md:max-w-[720px] rounded-xl overflow-hidden">

@@ -2,6 +2,7 @@ import { Accordion, AccordionItem, Avatar, Listbox, ListboxItem, ScrollShadow } 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import runes from 'runes';
 import { useImmer } from 'use-immer';
 import { useSnapshot } from 'valtio';
 
@@ -25,6 +26,7 @@ interface Message {
     sequence: number;
     spaceID: string;
     ext: MessageExt;
+    len: number;
 }
 
 interface MessageEvent {
@@ -40,6 +42,26 @@ interface MessageEvent {
 function delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+const messageDaemon: Map<string, number> = new Map();
+
+function setMessageDaemon(messageID: string, callback: () => void) {
+    const existInterval = messageDaemon.get(messageID);
+    if (existInterval) {
+        clearTimeout(existInterval);
+    }
+    const id = setTimeout(callback, 100000);
+    messageDaemon.set(messageID, id);
+}
+
+function removeMessageDaemon(messageID: string) {
+    const existInterval = messageDaemon.get(messageID);
+    if (existInterval) {
+        clearTimeout(existInterval);
+        messageDaemon.delete(messageID);
+    }
+}
+
 export default function Chat() {
     const { t } = useTranslation();
     const [messages, setMessages] = useImmer<Message[]>([]);
@@ -135,28 +157,29 @@ export default function Chat() {
                                     role: 'assistant',
                                     status: 'continue',
                                     sequence: data.sequence || 0,
+                                    len: 0,
                                     ext: {}
                                 });
                             });
 
+                            setMessageDaemon(data.messageID, reloadFunc);
+
                             break;
                         case EventType.EVENT_ASSISTANT_CONTINUE:
-                            let index = 0;
-
-                            for (let i = 0; i < data.message.length; i += 2) {
+                            const messageRunes = runes(data.message);
+                            const totalLength = messageRunes.length;
+                            for (let i = 0; i < messageRunes.length; i += 2) {
                                 setMessages((prev: Message[]) => {
-                                    if (index === 0) {
-                                        index = prev.findIndex(todo => todo.key === data.messageID);
-                                    }
-                                    const todo = prev[index];
+                                    const todo = prev.find(todo => todo.key === data.messageID);
 
-                                    if (!todo || todo.message.length !== data.startAt) {
+                                    if (!todo || todo.len !== data.startAt) {
                                         return;
                                     }
 
-                                    let char = data.message.substr(i, 2); // append two words at once
+                                    let char = messageRunes.slice(i, i + 2); // append two words at once
 
-                                    todo.message += char;
+                                    todo.message += char.join('');
+                                    todo.len += char.length;
                                     data.startAt += char.length;
                                 });
 
@@ -166,13 +189,13 @@ export default function Chat() {
 
                                 await delay(30);
                             }
+                            setMessageDaemon(data.messageID, reloadFunc);
 
                             break;
                         case EventType.EVENT_ASSISTANT_DONE:
                             setMessages((prev: Message[]) => {
                                 const todo = prev.find(todo => todo.key === data.messageID);
-
-                                if (!todo || todo.message.length !== data.startAt) {
+                                if (!todo || todo.len !== data.startAt) {
                                     console.warn('reload history');
                                     reloadFunc();
                                 } else {
@@ -181,6 +204,7 @@ export default function Chat() {
                                 }
                             });
                             // todo load this message exts
+                            removeMessageDaemon(data.messageID);
                             break;
                         case EventType.EVENT_ASSISTANT_FAILED:
                             setMessages((prev: Message[]) => {
@@ -190,6 +214,7 @@ export default function Chat() {
                                     todo.status = 'failed';
                                 }
                             });
+                            removeMessageDaemon(data.messageID);
                             break;
                         default:
                     }
