@@ -39,8 +39,9 @@ export async function DeleteTask(spaceID: string, taskID: string): Promise<void>
     });
 }
 
-export async function CreateFileChunkTask(spaceID: string, resource: string, fileName: string, fileURL: string): Promise<void> {
+export async function CreateFileChunkTask(spaceID: string, meta: string, resource: string, fileName: string, fileURL: string): Promise<void> {
     await instance.post(`/${spaceID}/task/file-chunk`, {
+        meta_info: meta,
         resource: resource,
         file_name: fileName,
         file_url: fileURL

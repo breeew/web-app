@@ -184,7 +184,9 @@ export default function Chat() {
                                 });
 
                                 if (i % 26 === 0) {
-                                    goToBottom();
+                                    if (getScrollBottom() < 50) {
+                                        goToBottom();
+                                    }
                                 }
 
                                 await delay(30);

@@ -1,4 +1,5 @@
 import ImageTool from '@editorjs/image';
+import { toast } from 'sonner';
 
 import { DescribeImage } from '@/apis/tools';
 import { notifyTaskProgress } from '@/stores/event';
@@ -30,28 +31,25 @@ async function aiGenImageDescription(i18n: (string) => string, url: string): Pro
     let result = '';
 
     try {
-        notifyTaskProgress({
-            id: id,
-            title: 'AI Task Notify',
-            description: 'AI is processing the image, please wait a moment',
-            status: 'processing'
-        });
         genenrating.set(url, true);
-        result = await DescribeImage(url);
-        notifyTaskProgress({
-            id: id,
-            title: 'AI Task Notify',
-            description: 'Done',
-            status: 'success'
+        result = await toast.promise(DescribeImage(url), {
+            loading: t(`AI is processing the image, please wait a moment`)
         });
+        // result = await DescribeImage(url);
+        // notifyTaskProgress({
+        //     id: id,
+        //     title: 'AI Task Notify',
+        //     description: 'Done',
+        //     status: 'success'
+        // });
     } catch (e: any) {
         console.error(e);
-        notifyTaskProgress({
-            id: id,
-            title: 'AI Task Notify',
-            description: 'Failed',
-            status: 'failed'
-        });
+        // notifyTaskProgress({
+        //     id: id,
+        //     title: 'AI Task Notify',
+        //     description: 'Failed',
+        //     status: 'failed'
+        // });
     }
     genenrating.delete(url);
     return result;

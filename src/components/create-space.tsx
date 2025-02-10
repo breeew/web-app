@@ -1,6 +1,7 @@
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Textarea, useDisclosure } from '@heroui/react';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 import { CreateUserSpace } from '@/apis/space';
 import { loadUserSpaces } from '@/stores/space';
@@ -28,6 +29,7 @@ const CreateSpaceComponent = forwardRef((_, ref) => {
 
             await loadUserSpaces();
             onClose();
+            toast.success(t('Success'));
         } catch (e: any) {
             console.error(e);
         }

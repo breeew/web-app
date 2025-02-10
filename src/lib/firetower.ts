@@ -25,7 +25,7 @@ export class FireTower {
     subscribeOperation = 2;
     unSubscribeOperation = 3;
 
-    logging = true; // 开启log
+    logging = false; // 开启log
 
     onmessage?: (event: MessageEvent) => void;
 

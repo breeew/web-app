@@ -73,6 +73,7 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
         return '';
     }, [groupedResources, currentSelectedResource]);
     const [resource, setResource] = useState('');
+    const [fileMeta, setFileMeta] = useState('');
 
     const onKnowledgeContentChanged = useCallback((value: string) => {
         if (isInvalid) {
@@ -82,6 +83,12 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
         setKnowledge(value);
     }, []);
 
+    function init() {
+        setChunkFile({});
+        setFileMeta('');
+        setResource('');
+    }
+
     async function createChunkTask() {
         if (!userIsPro) {
             // TODO alert upgrade plan
@@ -90,9 +97,9 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
         if (chunkFile.url !== '') {
             setLoading(true);
             try {
-                await CreateFileChunkTask(currentSelectedSpace, resource || defaultResource, chunkFile.name, chunkFile.url);
-                setChunkFile({});
+                await CreateFileChunkTask(currentSelectedSpace, fileMeta, resource || defaultResource, chunkFile.name, chunkFile.url);
                 toast.info(t('fileMemoryTaskCreated'));
+                init();
             } catch (e: any) {
                 console.error(e);
             }
@@ -198,6 +205,7 @@ export default memo(function Component(props: CardProps & { onChanges: () => voi
                             )}
 
                             <Divider className="my-2" />
+                            <Textarea variant="faded" maxLength={100} labelPlacement="outside" label="简介" placeholder="提供简介可以让检索效果更优秀" onValueChange={setFileMeta} />
 
                             {defaultResource && (
                                 <Select
@@ -297,7 +305,7 @@ interface TaskListProps {
 }
 
 function TaskList({ isShow, spaceID, onClose }: TaskListProps) {
-    const [hasMore, setHasMore] = useState(true);
+    const [hasMore, setHasMore] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
     const { t } = useTranslation();
@@ -527,7 +535,6 @@ function TaskList({ isShow, spaceID, onClose }: TaskListProps) {
                                             >
                                                 {isLoading && <Spinner color="white" size="sm" />}
                                                 {t('LoadMore')}
-                                                {'' + hasMore}
                                             </Button>
                                         </div>
                                     ) : null
