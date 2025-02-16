@@ -339,7 +339,7 @@ export default function Chat() {
                             key: v.meta.message_id,
                             message: v.meta.message.text,
                             role: v.meta.role === 1 ? 'user' : 'assistant',
-                            status: 'success',
+                            status: v.meta.complete === 1 ? 'success' : 'failed',
                             sequence: v.meta.sequence,
                             spaceID: currentSelectedSpace,
                             ext: {
@@ -375,6 +375,8 @@ export default function Chat() {
             if (!currentSelectedSpace || !sessionID) {
                 return;
             }
+
+            message = message.replace(/\n/g, '  \n');
 
             try {
                 const msgID = await GenChatMessageID(currentSelectedSpace, sessionID);

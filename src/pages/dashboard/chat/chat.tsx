@@ -18,6 +18,8 @@ export default function Chat() {
             if (!currentSelectedSpace) {
                 throw new Error('uninited');
             }
+
+            message = message.replace(/\n/g, '  \n');
             // create new session
             try {
                 const sessionID = await CreateChatSession(currentSelectedSpace);

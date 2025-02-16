@@ -6,6 +6,7 @@ import React, { ReactNode } from 'react';
 
 import { RelDoc } from '@/apis/chat';
 import Markdown from '@/components/markdown';
+import { t } from 'i18next';
 
 // import { useMedia } from '@/hooks/use-media';
 
@@ -62,10 +63,11 @@ const MessageCard = React.forwardRef<HTMLDivElement, MessageCardProps>(
         const failedMessageClassName = status === 'failed' ? 'bg-danger-100/50 border border-danger-100 text-foreground' : '';
         const failedMessage = (
             <p className="px-4">
-                Something went wrong, if the issue persists please contact us through our help center at&nbsp;
+                {/* Something went wrong, if the issue persists please contact us through our help center at&nbsp;
                 <Link href="mailto:support@brew.re" size="sm">
                     support@brew.re
-                </Link>
+                </Link> */}
+                {t('SystemError')}
             </p>
         );
 

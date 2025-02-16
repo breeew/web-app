@@ -1,5 +1,5 @@
-import { RadioGroup, Select, SelectItem, Spacer } from "@heroui/react";
-import { cn } from "@heroui/react";
+import { RadioGroup, Select, SelectItem, Spacer } from '@heroui/react';
+import { cn } from '@heroui/react';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -13,7 +13,8 @@ interface AppearanceSettingCardProps {
 
 const LanguageOptions = [
     { label: 'English', value: 'en', description: 'English' },
-    { label: '中文', value: 'zh', description: 'Chinese' }
+    { label: '中文', value: 'zh', description: 'Chinese' },
+    { label: '日本語', value: 'ja', description: 'Japanese' }
 ];
 
 const AppearanceSetting = React.forwardRef<HTMLDivElement, AppearanceSettingCardProps>(({ className, ...props }, ref) => {

@@ -1,5 +1,5 @@
+import { Button, Tab, Tabs } from '@heroui/react';
 import { Icon } from '@iconify/react';
-import { Button, Tab, Tabs } from "@heroui/react";
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import AppearanceSetting from './appearance-setting';
 import BillingSetting from './billing-setting';
 import ProfileSetting from './profile-setting';
+import SecretSetting from './secret-setting';
 
 import { usePlan } from '@/hooks/use-plan';
 
@@ -58,6 +59,9 @@ const Setting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>(({ cla
                             <BillingSetting />
                         </Tab>
                     )}
+                    <Tab key="secret" title={t('Secret')}>
+                        <SecretSetting />
+                    </Tab>
                 </Tabs>
             </div>
         </div>

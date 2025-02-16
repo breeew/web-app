@@ -1,5 +1,3 @@
-import { Icon } from '@iconify/react';
-import { getLocalTimeZone, today } from '@internationalized/date';
 import {
     Button,
     Card,
@@ -18,7 +16,9 @@ import {
     Spacer,
     useDisclosure,
     User
-} from "@heroui/react";
+} from '@heroui/react';
+import { Icon } from '@iconify/react';
+import { getLocalTimeZone, today } from '@internationalized/date';
 import React, { Key, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -432,11 +432,11 @@ export default function Component({ children }: { children: React.ReactNode }) {
                             )}
                         </DropdownTrigger>
                         <DropdownMenu aria-label="Account switcher" variant="flat" onAction={userAction}>
-                            <DropdownSection showDivider title={t('UserMenu')}>
+                            <DropdownSection classNames={{ heading: 'text-sm mb-2' }} showDivider title={t('UserMenu')}>
                                 <DropdownItem key="setting" textValue="setting">
                                     <div className="flex items-center gap-x-3">
                                         <div className="flex flex-col">
-                                            <p className="text-small font-medium text-default-600">{t('Setting')}</p>
+                                            <p className="text-base font-medium text-default-600">{t('Setting')}</p>
                                         </div>
                                     </div>
                                 </DropdownItem>
@@ -445,7 +445,7 @@ export default function Component({ children }: { children: React.ReactNode }) {
                                 <DropdownItem key="logout" color="danger" textValue="logout">
                                     <div className="flex items-center gap-x-3">
                                         <div className="flex flex-col">
-                                            <p className="text-small font-medium text-default-600">{t('Logout')}</p>
+                                            <p className="text-base font-medium text-default-600">{t('Logout')}</p>
                                         </div>
                                     </div>
                                 </DropdownItem>

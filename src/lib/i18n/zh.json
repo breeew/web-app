@@ -133,6 +133,7 @@
     "ShareLink": "分享链接",
     "StartCyberMemory": "开启你的赛博记忆",
     "LinkCopied": "链接复制成功",
+    "Copied": "复制成功",
     "Shared on": "分享于",
     "InvalidEmail": "邮箱格式错误",
     "GiftCode": "礼品码",
@@ -220,5 +221,18 @@
     "UserManage": "用户管理",
     "SpaceProfile": "空间基本信息",
     "agent-jihe": "极核",
-    "agent-bulter": "管家"
+    "agent-butler": "管家",
+    "agent-journal": "工作助理",
+    "WithBackground": "背景填充",
+    "SystemError": "系统错误",
+    "AfewDaysOfPreMonth": "每月中仅有几天需要用到",
+    "MostDaysOfPreMonth": "每月中多数天需要用到",
+    "MostHoursInDay": "每天大部分时间都需要使用",
+    "TotalTokens": "共计 {{total}} 个密钥",
+    "Token": "密钥",
+    "Secret": "密钥",
+    "CreatedTime": "创建时间",
+    "ExpiredTime": "过期时间",
+    "NewTokenTitle": "创建新密钥",
+    "TokenDescription": "密钥描述"
 }

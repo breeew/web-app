@@ -97,3 +97,30 @@ export async function ListUserResources(): Promise<Resource[]> {
     const resp = await instance.get('/resource/list');
     return resp.data.data.list;
 }
+
+export interface AccessToken {
+    user_id: string;
+    token: string;
+    desc: string;
+    created_at: number;
+    expires_at: number;
+}
+
+export async function ListUserAccessTokens(page: number, pagesize: number): Promise<AccessToken[]> {
+    const resp = await instance.get('/user/secret/tokens', {
+        params: {
+            page: page,
+            pagesize: pagesize
+        }
+    });
+
+    return resp.data.data.list;
+}
+
+export async function CreateUserAccessToken(desc: string): Promise<string> {
+    const resp = await instance.post('/user/secret/token', {
+        desc: desc
+    });
+
+    return resp.data.data;
+}

@@ -32,9 +32,21 @@ async function aiGenImageDescription(i18n: (string) => string, url: string): Pro
 
     try {
         genenrating.set(url, true);
-        result = await toast.promise(DescribeImage(url), {
-            loading: t(`AI is processing the image, please wait a moment`)
+
+        result = await new Promise((resolve, reject) => {
+            toast.promise(DescribeImage(url), {
+                loading: i18n(`AI is processing the image, please wait a moment`),
+                success: data => {
+                    resolve(data);
+                    return i18n(`Success`);
+                },
+                error: err => {
+                    return err;
+                }
+            });
         });
+
+        console.log('result', result);
         // result = await DescribeImage(url);
         // notifyTaskProgress({
         //     id: id,

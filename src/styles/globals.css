@@ -7,23 +7,26 @@
     /* 隐藏滚动条 */
 }
 
-.markdown-box option li,
-.markdown-box ul li,
-.markdown-box ol li {
-    list-style-type: disc;
-    list-style-position: inside;
-    padding-inline-start: 20px;
+
+
+.markdown-body option li,
+.markdown-body ul li,
+.markdown-body ol li {
+    list-style-type: disc !important;
+    list-style-position: inside !important;
+    padding-inline-start: 20px !important;
 }
 
-.markdown-box ol li p,
-.markdown-box ul li p {
-    display: inline;
+.markdown-body ol li p,
+.markdown-body ul li p {
+    display: inline !important;
 }
 
-.markdown-box ol,
-.markdown-box ul {
-    white-space-collapse: collapse;
-    white-space: normal;
+.markdown-body ol,
+.markdown-body ul {
+    white-space-collapse: collapse !important;
+    white-space: normal !important;
+    padding-inline-start: 0 !important;
 }
 
 /* 避免主题切换导致 代码块抖动的问题，主要在于 padding: 1em，在代码块主题样式更换时，同时需要调整该内容 */

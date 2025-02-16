@@ -89,11 +89,15 @@ export default function Component(props: TextAreaProps & { classNames?: Record<'
         return [
             {
                 title: t('agent-jihe'),
-                description: 'RAG 助理'
+                description: '唤起记忆'
             },
             {
-                title: t('agent-bulter'),
-                description: '家庭助理'
+                title: t('agent-butler'),
+                description: '家庭助理，可以帮您记录任何与清单相关的内容'
+            },
+            {
+                title: t('agent-journal'),
+                description: '工作助理，可以查看您的日记并总结'
             }
         ];
     }, []);
@@ -114,7 +118,7 @@ export default function Component(props: TextAreaProps & { classNames?: Record<'
                         {agents.map(v => {
                             return (
                                 <ListboxItem key={v.title} className="h-12">
-                                    {v.title}
+                                    {v.title} <span className="text-sm text-zinc-400">（{v.description}）</span>
                                 </ListboxItem>
                             );
                         })}

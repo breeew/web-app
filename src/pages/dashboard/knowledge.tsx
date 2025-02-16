@@ -48,7 +48,7 @@ export default memo(function Component() {
     const { currentSelectedSpace } = useSnapshot(spaceStore);
     const { currentSelectedResource } = useSnapshot(resourceStore);
     const [page, setPage] = useState(1);
-    const [pageSize, _] = useState(20);
+    const [pageSize, _] = useState(isMobile ? 10 : 30);
     let [dataList, setDataList] = useState<Knowledge[]>([]);
     const [total, setTotal] = useState(0);
     const [hasMore, setHasMore] = useState(true);

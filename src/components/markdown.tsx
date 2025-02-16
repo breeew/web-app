@@ -32,7 +32,7 @@ export default memo(function MarkdownComponent(props: Options & { isLight?: bool
 
     let markdownClassName = className ? className : '';
 
-    markdownClassName += ' markdown-box ' + (isDark ? 'github-dark' : 'github');
+    markdownClassName += 'markdown-box markdown-body ' + (isDark ? 'github-dark' : 'github');
 
     return (
         <>
@@ -44,7 +44,7 @@ export default memo(function MarkdownComponent(props: Options & { isLight?: bool
 });
 
 const LightLink = ({ children }) => {
-    return <a href="#">{children}</a>;
+    return <span>{children}</span>;
 };
 
 const CustomLink = ({ href, children }) => {

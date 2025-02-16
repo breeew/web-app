@@ -1,9 +1,8 @@
+import { Button, Checkbox, Input, Link, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@heroui/react';
 import { Icon } from '@iconify/react';
-import { Button, Checkbox, Input, Link, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@heroui/react";
 import { forwardRef, memo, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 export interface ShareLinkModalProps {}
 
@@ -17,18 +16,12 @@ const ShareLinkModal = memo(
             onOpen();
         };
 
-        const { toast } = useToast();
-
         const input = useRef();
         const copyLink = useCallback(() => {
             if (input.current) {
                 input.current.select();
                 document.execCommand('copy');
-                toast({
-                    title: t('Success'),
-                    description: t('LinkCopied')
-                });
-                onOpenChange();
+                toast.success(t('LinkCopied'));
             }
         }, [link, input]);
 

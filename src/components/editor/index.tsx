@@ -231,6 +231,12 @@ export const Editor = memo(
                                 'Heading 4': t('Heading') + '4',
                                 'Heading 5': t('Heading') + '5',
                                 'Heading 6': t('Heading') + '6'
+                            },
+                            image: {
+                                'With background': t('WithBackground')
+                            },
+                            video: {
+                                'With background': t('WithBackground')
                             }
                         },
                         blockTunes: {
@@ -272,6 +278,10 @@ export const Editor = memo(
                         class: CustomImage,
                         config: {
                             types: 'image/*',
+                            features: {
+                                border: false,
+                                stretch: false
+                            },
                             actions: [
                                 {
                                     name: 'aiGenImageDescript',
@@ -295,6 +305,10 @@ export const Editor = memo(
                         class: Video,
                         config: {
                             types: 'video/*',
+                            features: {
+                                border: false,
+                                stretch: false
+                            },
                             uploader: getUploader(toast, t, currentSelectedSpace)
                         }
                     },

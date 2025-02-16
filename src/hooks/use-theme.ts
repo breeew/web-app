@@ -26,6 +26,7 @@ export const useTheme = (defaultTheme?: Theme) => {
 
     const _setTheme = (theme: Theme) => {
         localStorage.setItem(ThemeProps.key, theme);
+        document.body.setAttribute('data-theme', theme);
         document.documentElement.classList.remove(ThemeProps.light, ThemeProps.dark);
         document.documentElement.classList.add(theme);
         setTheme(theme);
