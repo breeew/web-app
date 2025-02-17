@@ -99,6 +99,7 @@ export async function ListUserResources(): Promise<Resource[]> {
 }
 
 export interface AccessToken {
+    id: number;
     user_id: string;
     token: string;
     desc: string;
@@ -123,4 +124,12 @@ export async function CreateUserAccessToken(desc: string): Promise<string> {
     });
 
     return resp.data.data;
+}
+
+export async function DeleteUserAccessTokens(ids: number[]): Promise<void> {
+    await instance.delete('/user/secret/tokens', {
+        data: {
+            ids: ids
+        }
+    });
 }

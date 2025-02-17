@@ -7,6 +7,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 
 import { CreateSessionShareURL } from '@/apis/share';
+import KnowledgeDrawer from '@/components/knowledge-drawer';
 import ManageSpaceComponent from '@/components/manage-space';
 import ResourceManage from '@/components/resource-modal';
 import ShareButton from '@/components/share-button';
@@ -117,18 +118,21 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
             </NavbarBrand>
 
             {isSession && userIsPro && (
-                <NavbarContent className="ml-4 h-12 w-full max-w-fit gap-4 rounded-full" justify="end">
-                    <ShareButton
-                        genUrlFunc={async () => {
-                            try {
-                                const res = await CreateSessionShareURL(currentSelectedSpace, window.location.origin + '/s/s/{token}', sessionID);
-                                return res.url;
-                            } catch (e: any) {
-                                console.error(e);
-                            }
-                        }}
-                    ></ShareButton>
-                </NavbarContent>
+                <>
+                    <NavbarContent className="h-12 max-w-fit gap-4 rounded-full" justify="end">
+                        <ShareButton
+                            genUrlFunc={async () => {
+                                try {
+                                    const res = await CreateSessionShareURL(currentSelectedSpace, window.location.origin + '/s/s/{token}', sessionID);
+                                    return res.url;
+                                } catch (e: any) {
+                                    console.error(e);
+                                }
+                            }}
+                        />
+                        <KnowledgeDrawer temporaryStorage="session-knowledge" />
+                    </NavbarContent>
+                </>
             )}
 
             {!isChat && !isSpaceViewer && (

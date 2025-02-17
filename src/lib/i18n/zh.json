@@ -234,5 +234,6 @@
     "CreatedTime": "创建时间",
     "ExpiredTime": "过期时间",
     "NewTokenTitle": "创建新密钥",
-    "TokenDescription": "密钥描述"
+    "TokenDescription": "密钥描述",
+    "TokenDeleteDescription": "确认要删除所有选中的密钥吗？"
 }

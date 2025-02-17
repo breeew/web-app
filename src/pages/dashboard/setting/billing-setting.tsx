@@ -1,7 +1,7 @@
+import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, RadioGroup, Select, SelectItem, Skeleton, Spacer, useDisclosure, user } from '@heroui/react';
+import { cn } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { fromAbsolute, getLocalTimeZone } from '@internationalized/date';
-import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, RadioGroup, Select, SelectItem, Skeleton, Spacer, useDisclosure, user } from "@heroui/react";
-import { cn } from "@heroui/react";
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSnapshot } from 'valtio';
@@ -133,7 +133,6 @@ const BillingSetting = React.forwardRef<HTMLDivElement, BillingSettingCardProps>
                                     wrapper: 'gap-4 flex-row flex-wrap'
                                 }}
                                 defaultValue={userPlan?.planID}
-                                orientation="horizontal"
                                 isReadOnly
                             >
                                 {planList.map((v: Plan) => {

@@ -234,5 +234,6 @@
     "CreatedTime": "Created Time",
     "ExpiredTime": "Expired Time",
     "NewTokenTitle": "Create a new token",
-    "TokenDescription": "Token Description"
+    "TokenDescription": "Token Description",
+    "TokenDeleteDescription": "Confirm to delete selected tokens"
 }

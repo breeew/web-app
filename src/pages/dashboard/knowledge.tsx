@@ -212,7 +212,7 @@ export default memo(function Component() {
 
     return (
         <>
-            <div className="overflow-hidden w-full h-full flex flex-col relative p-3">
+            <div className="overflow-hidden w-full h-full flex flex-col relative px-3">
                 <div className="space-y-1 mb-6">
                     <div className="flex justify-between">
                         <h1 className="text-2xl font-bold leading-9 text-default-foreground mb-4">{t('Your Memories')}</h1>
@@ -378,7 +378,7 @@ const KnowledgeList = memo(
                         })}
                     </div>
                 </ScrollShadow>
-                {showGoTop && <GoTop className="fixed bottom-6 right-6 backdrop-blur backdrop-saturate-150 dark:border-white/20 dark:bg-white/10 dark:text-white text-gray-500" onPress={goToTop} />}
+                {showGoTop && <GoTop className="fixed bottom-7 right-2 backdrop-blur backdrop-saturate-150 dark:border-white/20 dark:bg-white/10 dark:text-white text-gray-500" onPress={goToTop} />}
             </>
         );
     })

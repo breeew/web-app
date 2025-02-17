@@ -471,7 +471,7 @@ export default function Chat() {
 
     return (
         <>
-            <div className="overflow-hidden w-full h-full flex flex-col relative p-3">
+            <div className="overflow-hidden w-full h-full flex flex-col relative px-3">
                 <main className="h-full w-full relative gap-4 py-3 flex flex-col justify-center items-center">
                     <ScrollShadow ref={ssDom} hideScrollBar className="w-full py-6 flex-grow items-center">
                         <div className="w-full m-auto max-w-[760px] overflow-hidden relative flex flex-col gap-6">

@@ -1,6 +1,6 @@
-import { type RadioProps } from "@heroui/react";
-import { useRadio, VisuallyHidden } from "@heroui/react";
-import { cn } from "@heroui/react";
+import { type RadioProps } from '@heroui/react';
+import { useRadio, VisuallyHidden } from '@heroui/react';
+import { cn } from '@heroui/react';
 import React from 'react';
 
 export const PlanCustomRadio = (props: RadioProps) => {
@@ -11,7 +11,11 @@ export const PlanCustomRadio = (props: RadioProps) => {
     return (
         <Component
             {...getBaseProps()}
-            className={cn('group px-4 py-4', 'max-w-[300px] cursor-pointer gap-4 rounded-lg border-2 border-transparent', 'flex-1 bg-default-100 data-[selected=true]:border-default-foreground')}
+            className={cn(
+                'group px-4 py-4',
+                'min-w-[300px] max-w-full cursor-pointer gap-4 rounded-lg border-2 border-transparent',
+                'flex-1 bg-default-100 data-[selected=true]:border-default-foreground'
+            )}
         >
             {/*header*/}
             <section className={'flex flex-row-reverse justify-between hover:bg-content2'}>
