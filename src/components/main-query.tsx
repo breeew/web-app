@@ -1,11 +1,10 @@
-import { Button, Kbd, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarProps } from "@heroui/react";
+import { Button, Kbd, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarProps } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 
 import { LogoIcon } from './logo';
 
-import KnowledgeDrawer from '@/components/knowledge-drawer';
 import { useMedia } from '@/hooks/use-media';
 import spaceStore from '@/stores/space';
 

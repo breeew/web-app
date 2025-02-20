@@ -1,20 +1,67 @@
+import { Avatar, AvatarGroup, Button, Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerHeader, Image, Link, Tooltip, useDisclosure } from '@heroui/react';
 import { Icon } from '@iconify/react';
-import { Avatar, AvatarGroup, Button, Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerHeader, Image, Link, Tooltip, useDisclosure } from "@heroui/react";
 import { t } from 'i18next';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSnapshot } from 'valtio';
 
 import KnowledgeEdit from '@/components/knowledge-edit';
 import spaceStore from '@/stores/space';
 
+const KnowledgeDrawerContext = createContext(null);
+
+export function KnowledgeProvider({ children }) {
+    const [temporaryStorage, setTemporaryStorage] = useState('');
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    return (
+        <KnowledgeDrawerContext.Provider
+            value={{
+                temporaryStorage,
+                setTemporaryStorage,
+                isOpen,
+                onOpen,
+                onOpenChange
+            }}
+        >
+            {children}
+            <KnowledgeDrawer temporaryStorage={temporaryStorage} isOpen={isOpen} onOpenChange={onOpenChange} />
+        </KnowledgeDrawerContext.Provider>
+    );
+}
+
+export interface KnowledgeDrawerButtonProps {
+    temporaryStorage?: string;
+    size?: string;
+    className?: string;
+}
+
+export default function KnowledgeDrawerButton({ size, className, temporaryStorage }: KnowledgeDrawerButtonProps) {
+    const { t } = useTranslation();
+    const { onOpen, setTemporaryStorage } = useContext(KnowledgeDrawerContext);
+
+    useEffect(() => {
+        setTemporaryStorage(temporaryStorage);
+        return () => {
+            setTemporaryStorage('');
+        };
+    }, [temporaryStorage]);
+
+    className = 'bg-gradient-to-br from-pink-400 to-indigo-400 dark:from-indigo-500 dark:to-pink-500 ' + className;
+    return (
+        <Button size={size} className={className} startContent={<Icon icon="fluent:brain-sparkle-20-regular" width={20} />} variant="flat" size="sm" onPress={onOpen}>
+            {t('Quick Create Knowledge')}
+        </Button>
+    );
+}
+
 export interface KnowledgeDrawerProps {
     temporaryStorage?: string;
     handleButton?: (onOpen: () => void) => React.ReactDOM;
+    isOpen: boolean;
+    onOpenChange: () => void;
 }
 
-export default function App({ temporaryStorage, handleButton }: KnowledgeDrawerProps) {
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+export function KnowledgeDrawer({ temporaryStorage, handleButton, isOpen, onOpenChange }: KnowledgeDrawerProps) {
     const { t } = useTranslation();
     const { currentSelectedSpace } = useSnapshot(spaceStore);
     const [isLoading, setIsLoading] = useState(false);
@@ -39,20 +86,6 @@ export default function App({ temporaryStorage, handleButton }: KnowledgeDrawerP
 
     return (
         <>
-            {handleButton ? (
-                handleButton(onOpen)
-            ) : (
-                <Button
-                    className="bg-gradient-to-br from-pink-400 to-indigo-400 dark:from-indigo-500 dark:to-pink-500"
-                    startContent={<Icon icon="fluent:brain-sparkle-20-regular" width={20} />}
-                    variant="flat"
-                    size="sm"
-                    onPress={onOpen}
-                >
-                    {t('Quick Create Knowledge')}
-                </Button>
-            )}
-
             <Drawer
                 hideCloseButton
                 backdrop="opaque"

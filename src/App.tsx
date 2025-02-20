@@ -7,9 +7,11 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { Toaster as SonnerTotaster } from 'sonner';
 import { subscribeKey } from 'valtio/utils';
 
+import { ShareProvider } from './components/share-button';
 import { setNotAutoLoginDirect } from './lib/utils';
 import eventStore from './stores/event';
 
+import { KnowledgeProvider } from '@/components/knowledge-drawer';
 import { Toaster } from '@/components/ui/toaster';
 import { useTheme } from '@/hooks/use-theme';
 import '@/lib/i18n';
@@ -54,10 +56,14 @@ export function App({ children }: { children: React.ReactNode }) {
 
     return (
         <HeroUIProvider navigate={navigate}>
-            <Outlet />
-            <Toaster />
-            <SonnerTotaster theme={isDark ? 'dark' : 'light'} />
-            <span className="bg-zinc-800" />
+            <KnowledgeProvider>
+                <ShareProvider>
+                    <Outlet />
+                    <Toaster />
+                    <SonnerTotaster theme={isDark ? 'dark' : 'light'} />
+                    <span className="bg-zinc-800" />
+                </ShareProvider>
+            </KnowledgeProvider>
         </HeroUIProvider>
     );
 }

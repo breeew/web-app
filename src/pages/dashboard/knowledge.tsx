@@ -506,7 +506,7 @@ const NormalCard = memo(function NormalCard({
         <>
             <Card
                 shadow={shadow}
-                className="w-full flex flex-col relative max-h-[460px] border-small border-foreground/10 bg-right-bottom bg-no-repeat
+                className="w-full flex flex-col relative border-small border-foreground/10 bg-right-bottom bg-no-repeat
                 hover:border-indigo-500/50 hover:outset-1 hover:outset-x-1 hover:outset-y-1 hover:blur-2.5 hover:spread-1 cursor-pointer"
             >
                 {title !== '' ? (
@@ -518,7 +518,7 @@ const NormalCard = memo(function NormalCard({
                 ) : (
                     <></>
                 )}
-                <CardBody className="px-3 relative">
+                <CardBody className="px-3 relative max-h-[460px]">
                     <div className="flex flex-col gap-2 px-1 w-full overflow-hidden">
                         {tags && (
                             <div className="flex flex-wrap gap-1">

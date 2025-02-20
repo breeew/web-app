@@ -393,7 +393,7 @@ export default function Component({ children }: { children: React.ReactNode }) {
                         <DropdownTrigger>
                             {userInfo && userInfo.userID ? (
                                 <Button
-                                    className="mb-4 h-[80px] items-center justify-between"
+                                    className="mb-2 min-h-14 items-center justify-between"
                                     variant="bordered"
                                     endContent={
                                         userInfo.planID && (

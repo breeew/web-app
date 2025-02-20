@@ -7,11 +7,12 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useSnapshot } from 'valtio';
 
 import { CreateSessionShareURL } from '@/apis/share';
-import KnowledgeDrawer from '@/components/knowledge-drawer';
+import KnowledgeDrawerButton from '@/components/knowledge-drawer';
 import ManageSpaceComponent from '@/components/manage-space';
 import ResourceManage from '@/components/resource-modal';
 import ShareButton from '@/components/share-button';
 import { useChatPageCondition } from '@/hooks/use-chat-page';
+import { useMedia } from '@/hooks/use-media';
 import { usePlan } from '@/hooks/use-plan';
 import { useRole } from '@/hooks/use-role';
 import { SpaceSetting } from '@/pages/dashboard/space-setting';
@@ -73,6 +74,7 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
 
     const { userIsPro } = usePlan();
     const { isSpaceViewer } = useRole();
+    const { isMobile } = useMedia();
 
     return (
         <Navbar
@@ -130,7 +132,7 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
                                 }
                             }}
                         />
-                        <KnowledgeDrawer temporaryStorage="session-knowledge" />
+                        {!isMobile && <KnowledgeDrawerButton temporaryStorage="session-knowledge" />}
                     </NavbarContent>
                 </>
             )}
@@ -152,7 +154,7 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
                     {currentSelectedResource && currentSelectedResource.id && currentSelectedResource.id !== 'knowledge' && (
                         <>
                             <NavbarItem>
-                                <Button radius="full" variant="ghost" className="flex gap-2 text-inherit" onPress={showResourceSetting}>
+                                <Button variant="ghost" className="flex gap-2 text-inherit" onPress={showResourceSetting}>
                                     {t('Resource Setting')}
                                 </Button>
                             </NavbarItem>
