@@ -1,4 +1,4 @@
-import { Button, Input, Kbd, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@heroui/react';
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, Kbd, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { PressEvent } from '@react-types/shared/src';
 import { useCallback, useMemo, useRef } from 'react';
@@ -10,7 +10,7 @@ import { CreateSessionShareURL } from '@/apis/share';
 import KnowledgeDrawerButton from '@/components/knowledge-drawer';
 import ManageSpaceComponent from '@/components/manage-space';
 import ResourceManage from '@/components/resource-modal';
-import ShareButton from '@/components/share-button';
+import ShareButton, { useShare } from '@/components/share-button';
 import { useChatPageCondition } from '@/hooks/use-chat-page';
 import { useMedia } from '@/hooks/use-media';
 import { usePlan } from '@/hooks/use-plan';
@@ -76,6 +76,22 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
     const { isSpaceViewer } = useRole();
     const { isMobile } = useMedia();
 
+    const {
+        createShareURL,
+        shareText,
+        shareIcon,
+        isLoading: createShareURLLoading
+    } = useShare({
+        genUrlFunc: async () => {
+            try {
+                const res = await CreateSessionShareURL(currentSelectedSpace, window.location.origin + '/s/s/{token}', sessionID);
+                return res.url;
+            } catch (e: any) {
+                console.error(e);
+            }
+        }
+    });
+
     return (
         <Navbar
             classNames={{
@@ -122,17 +138,37 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
             {isSession && userIsPro && (
                 <>
                     <NavbarContent className="h-12 max-w-fit gap-4 rounded-full" justify="end">
-                        <ShareButton
-                            genUrlFunc={async () => {
-                                try {
-                                    const res = await CreateSessionShareURL(currentSelectedSpace, window.location.origin + '/s/s/{token}', sessionID);
-                                    return res.url;
-                                } catch (e: any) {
-                                    console.error(e);
-                                }
-                            }}
-                        />
-                        {!isMobile && <KnowledgeDrawerButton temporaryStorage="session-knowledge" />}
+                        {isMobile ? (
+                            <Dropdown>
+                                <DropdownTrigger>
+                                    <Button isIconOnly variant="ghost" isLoading={createShareURLLoading}>
+                                        <Icon icon="tabler:dots" width={24} />
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu variant="faded">
+                                    <DropdownItem key="share" className="h-10" startContent={<Icon icon={shareIcon} width={24} />} onPress={createShareURL}>
+                                        {shareText}
+                                    </DropdownItem>
+                                    <DropdownItem key="new-content">
+                                        <KnowledgeDrawerButton className="w-full" temporaryStorage="session-knowledge" />
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                        ) : (
+                            <>
+                                <ShareButton
+                                    genUrlFunc={async () => {
+                                        try {
+                                            const res = await CreateSessionShareURL(currentSelectedSpace, window.location.origin + '/s/s/{token}', sessionID);
+                                            return res.url;
+                                        } catch (e: any) {
+                                            console.error(e);
+                                        }
+                                    }}
+                                />
+                                <KnowledgeDrawerButton temporaryStorage="session-knowledge" />
+                            </>
+                        )}
                     </NavbarContent>
                 </>
             )}

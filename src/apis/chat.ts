@@ -95,6 +95,7 @@ export async function GenChatMessageID(spaceID: string, sessionID: string): Prom
 export interface SendMessageArgs {
     messageID: string;
     message: string;
+    agent: string;
 }
 
 export interface SendMessageResponse {
@@ -104,7 +105,8 @@ export interface SendMessageResponse {
 export async function SendMessage(spaceID: string, sessionID: string, args: SendMessageArgs): Promise<SendMessageResponse> {
     const resp = await instance.post(`/${spaceID}/chat/${sessionID}/message`, {
         message_id: args.messageID,
-        message: args.message
+        message: args.message,
+        agent: args.agent
     });
 
     return resp.data.data;

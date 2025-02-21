@@ -13,8 +13,8 @@ export default function Chat() {
     const navigate = useNavigate();
     const { currentSelectedSpace } = useSnapshot(spaceStore);
 
-    const onSubmit = useCallback<(msg: string) => Promise<void>>(
-        async (message: string) => {
+    const onSubmit = useCallback<(msg: string, agent: string) => Promise<void>>(
+        async (message: string, agent: string) => {
             if (!currentSelectedSpace) {
                 throw new Error('uninited');
             }
@@ -32,7 +32,8 @@ export default function Chat() {
                                 message: message,
                                 key: 1
                             }
-                        ]
+                        ],
+                        agent: agent
                     }
                 });
             } catch (e: any) {
@@ -59,7 +60,7 @@ export default function Chat() {
                                 buttonIcon: 'text-background',
                                 input: 'placeholder:text-default-500'
                             }}
-                            placeholder={t('chatToBrew', { name: Name })}
+                            placeholder={t('chatToAgent')}
                             onSubmitFunc={onSubmit}
                         />
                         <p className="p-2 text-center text-small font-medium leading-5 text-default-500">{t('chatNotice')}</p>

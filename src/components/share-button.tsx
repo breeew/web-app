@@ -25,11 +25,7 @@ export function ShareProvider({ children }) {
     );
 }
 
-export interface ShareButtonProps {
-    genUrlFunc: () => Promise<string>;
-}
-
-export default function ShareButton({ genUrlFunc }: ShareButtonProps) {
+export function useShare({ genUrlFunc }: ShareButtonProps) {
     const { t } = useTranslation();
 
     const { onOpen, setShareURL } = useContext(ShareContext);
@@ -50,9 +46,24 @@ export default function ShareButton({ genUrlFunc }: ShareButtonProps) {
         setCreateShareLoading(false);
     }, [genUrlFunc, onOpen, setShareURL]);
 
+    return {
+        createShareURL: createShareURL,
+        shareText: t('Share'),
+        shareIcon: 'fluent:share-24-regular',
+        isLoading: createShareLoading
+    };
+}
+
+export interface ShareButtonProps {
+    genUrlFunc: () => Promise<string>;
+}
+
+export default function ShareButton({ genUrlFunc }: ShareButtonProps) {
+    const { createShareURL, shareText, shareIcon, isLoading } = useShare({ genUrlFunc });
+
     return (
-        <Button size="sm" variant="faded" endContent={<Icon icon="mingcute:share-3-line" />} isLoading={createShareLoading} onPress={createShareURL}>
-            {t('Share')}
+        <Button size="sm" variant="faded" endContent={<Icon icon={shareIcon} />} isLoading={isLoading} onPress={createShareURL}>
+            {shareText}
         </Button>
     );
 }
@@ -67,12 +78,17 @@ const ShareLinkModal = memo(
     forwardRef(({ isOpen, onOpenChange, shareURL }: ShareLinkModalProps, ref: any) => {
         const { t } = useTranslation();
 
+        const [isCopied, setIsCopied] = useState(false);
         const input = useRef();
         const copyLink = useCallback(() => {
             if (input.current) {
                 input.current.select();
                 document.execCommand('copy');
                 toast.success(t('LinkCopied'));
+                setIsCopied(true);
+                setTimeout(() => {
+                    setIsCopied(false);
+                }, 3000);
             }
         }, [shareURL, input]);
 
@@ -93,10 +109,17 @@ const ShareLinkModal = memo(
                                         <Input
                                             ref={input}
                                             endContent={
-                                                <button onClick={copyLink}>
-                                                    <Icon icon="tabler:copy" />
-                                                </button>
+                                                isCopied ? (
+                                                    <button onClick={() => {}}>
+                                                        <Icon icon="tabler:checks" color="green" width={24} />
+                                                    </button>
+                                                ) : (
+                                                    <button onClick={copyLink}>
+                                                        <Icon icon="tabler:copy" width={24} />
+                                                    </button>
+                                                )
                                             }
+                                            size="lg"
                                             readOnly
                                             variant="bordered"
                                             value={shareURL}

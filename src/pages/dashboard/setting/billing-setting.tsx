@@ -92,7 +92,7 @@ const BillingSetting = React.forwardRef<HTMLDivElement, BillingSettingCardProps>
 
     return (
         <div ref={ref} className={cn('p-2', className)} {...props}>
-            <Skeleton isLoaded={!isLoading}>
+            <Skeleton isLoaded={!isLoading} className=" rounded-lg">
                 {/* Payment Method */}
                 {userPlan && userPlan.planID != '' && (
                     <div>
@@ -173,7 +173,7 @@ const BillingSetting = React.forwardRef<HTMLDivElement, BillingSettingCardProps>
                     </div>
                 </div>
                 <div className="mt-2 space-y-2">
-                    <Input placeholder="Enter your gift code" value={giftCode} onValueChange={setGiftCode} />
+                    <Input placeholder="Enter your gift code" size="lg" value={giftCode} onValueChange={setGiftCode} />
                 </div>
                 <Button className="mt-5 bg-default-foreground text-background" isLoading={redeemLoading} value={giftCode} isDisabled={!giftCode || giftCode.length < 10} onPress={redeem}>
                     {t('Redeem')}

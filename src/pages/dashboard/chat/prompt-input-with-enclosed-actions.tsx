@@ -1,4 +1,4 @@
-import { Button, cn, Listbox, ListboxItem, Spinner, type TextAreaProps, Tooltip, useDisclosure } from '@heroui/react';
+import { Button, cn, Listbox, ListboxItem, Spinner, Switch, type TextAreaProps, Tooltip, useDisclosure } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { t } from 'i18next';
 import { KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -6,10 +6,18 @@ import { useTranslation } from 'react-i18next';
 
 import PromptInput from './prompt-input';
 
-export default function Component(props: TextAreaProps & { classNames?: Record<'button' | 'buttonIcon', string>; onSubmitFunc: (data: string) => Promise<void> }) {
+export default function Component(
+    props: TextAreaProps & { classNames?: Record<'button' | 'buttonIcon', string>; selectedUseMemory: boolean; onSubmitFunc: (data: string, agent: string) => Promise<void> }
+) {
     const { t } = useTranslation();
     const [prompt, setPrompt] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
+
+    const [useRag, setUseRag] = useState(false);
+
+    useEffect(() => {
+        setUseRag(props.selectedUseMemory === undefined ? false : props.selectedUseMemory);
+    }, [props.selectedUseMemory]);
 
     // @ts-ignore
     const inputRef = useRef<any>();
@@ -41,7 +49,7 @@ export default function Component(props: TextAreaProps & { classNames?: Record<'
             if (props.onSubmitFunc && prompt) {
                 setLoading(true);
                 try {
-                    await props.onSubmitFunc(prompt);
+                    await props.onSubmitFunc(prompt, useRag ? 'rag' : '');
                     setPrompt('');
                 } catch (e: any) {}
                 setLoading(false);
@@ -103,7 +111,7 @@ export default function Component(props: TextAreaProps & { classNames?: Record<'
     }, []);
 
     return (
-        <form className="flex flex-col w-full items-start gap-2 relative">
+        <form className="flex flex-col w-full items-start gap-2 relative rounded-medium bg-default-100 transition-colors">
             {isOpen && (
                 <div className="absolute w-full left-0 top-0">
                     <Listbox
@@ -130,17 +138,16 @@ export default function Component(props: TextAreaProps & { classNames?: Record<'
                 {...props}
                 ref={inputRef}
                 classNames={{
-                    innerWrapper: cn('items-center', props.classNames?.innerWrapper),
-                    input: cn('text-medium data-[has-start-content=true]:ps-0 data-[has-start-content=true]:pe-0', props.classNames?.input)
+                    inputWrapper: '!bg-transparent shadow-none',
+                    innerWrapper: cn('items-center outline-0', props.classNames?.innerWrapper),
+                    input: cn('text-medium pl-1 data-[has-start-content=true]:ps-0 data-[has-start-content=true]:pe-0', props.classNames?.input)
                 }}
                 endContent={
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 pt-1">
                         {/* {!prompt && (
-                            <NextFeatureToolTip content="Speak">
-                                <Button isIconOnly radius="full" variant="light">
-                                    <Icon className="text-default-500" icon="solar:microphone-3-linear" width={20} />
-                                </Button>
-                            </NextFeatureToolTip>
+                            <Button isIconOnly radius="full" variant="light">
+                                <Icon className="text-default-500" icon="solar:microphone-3-linear" width={20} />
+                            </Button>
                         )} */}
                         <Tooltip showArrow content="Send message">
                             <Button
@@ -151,7 +158,7 @@ export default function Component(props: TextAreaProps & { classNames?: Record<'
                                 radius="full"
                                 variant={!prompt ? 'flat' : 'solid'}
                                 onPress={() => {
-                                    props.onSubmitFunc(prompt);
+                                    props.onSubmitFunc(prompt, useRag ? 'rag' : '');
                                     setPrompt('');
                                 }}
                             >
@@ -169,16 +176,44 @@ export default function Component(props: TextAreaProps & { classNames?: Record<'
                     </div>
                 }
                 // startContent={
-                //     <NextFeatureToolTip content="Add file">
-                //         <Button isIconOnly className="p-[10px]" radius="full" variant="light">
-                //             <Icon className="text-default-500" icon="solar:paperclip-linear" width={20} />
-                //         </Button>
-                //     </NextFeatureToolTip>
+                //     <Button isIconOnly className="p-[10px]" radius="full" variant="light">
+                //         <Icon className="text-default-500" icon="solar:paperclip-linear" width={20} />
+                //     </Button>
                 // }
                 value={prompt}
                 onValueChange={onSetPrompt}
                 onKeyDown={handleKeyDown}
             />
+            <div className="flex w-full flex-wrap items-center justify-between gap-2 px-3 pb-2">
+                <div className="flex flex-wrap gap-3">
+                    {/* <Button size="sm" startContent={<Icon className="text-default-500" icon="solar:paperclip-linear" width={18} />} variant="flat">
+                        Attach
+                    </Button> */}
+
+                    {/* <Button size="sm" startContent={<Icon className="text-default-500" icon="solar:notes-linear" width={18} />} variant="flat">
+                        Templates
+                    </Button> */}
+                </div>
+                <div className="flex flex-row justify-end items-end gap-4">
+                    <Switch
+                        classNames={{
+                            base: cn(
+                                'inline-flex flex-row-reverse hover:bg-content2 items-center bg-default-100',
+                                'justify-between cursor-pointer rounded-lg gap-2 pl-1 pr-2 border-2 border-transparent',
+                                'border-default h-8'
+                            ),
+                            wrapper: 'p-0 h-4 w-10 overflow-visible'
+                        }}
+                        isSelected={useRag}
+                        onValueChange={setUseRag}
+                    >
+                        <div className="flex flex-col gap-1">
+                            <p className="text-sm text-default-500">{t('UseMemory')}</p>
+                        </div>
+                    </Switch>
+                    <p className="py-1 text-tiny text-default-400 w-16 justify-end flex">{prompt.length}/2000</p>
+                </div>
+            </div>
         </form>
     );
 }

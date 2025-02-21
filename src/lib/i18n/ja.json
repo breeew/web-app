@@ -82,7 +82,7 @@
     "Upgrade": "アップグレード",
     "preProInfo": "プロプランの全機能をアンロック",
     "chatNotice": "生成されたデータに誤りが含まれる場合があります。必ず確認してください",
-    "chatToBrew": "@を使用して{{name}}にメッセージを送信",
+    "chatToAgent": "@を使用してAgentにメッセージを送信",
     "memories count": "{{title}}に関する記憶が{{total}}件あります",
     "createCardTag1": "自動タイトル & タグ",
     "createCardTag2": "記憶を埋め込み中",

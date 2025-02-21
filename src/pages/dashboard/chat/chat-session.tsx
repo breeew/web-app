@@ -371,7 +371,7 @@ export default function Chat() {
     const isNew = urlParams.get('isNew');
 
     const query = useCallback(
-        async (message: string) => {
+        async (message: string, agent: string) => {
             if (!currentSelectedSpace || !sessionID) {
                 return;
             }
@@ -382,7 +382,8 @@ export default function Chat() {
                 const msgID = await GenChatMessageID(currentSelectedSpace, sessionID);
                 const resp = await SendMessage(currentSelectedSpace, sessionID, {
                     messageID: msgID,
-                    message: message
+                    message: message,
+                    agent: agent
                 });
 
                 setMessages((prev: Message[]) => {
@@ -431,6 +432,7 @@ export default function Chat() {
 
     const navigate = useNavigate();
 
+    const [selectedUseMemory, setSelectedUseMemory] = useState(false);
     useEffect(() => {
         async function load() {
             setMessages([]);
@@ -440,7 +442,8 @@ export default function Chat() {
             if (isNew && total === 0) {
                 if (location.state && location.state.messages && location.state.messages.length === 1) {
                     NamedSession(location.state.messages[0].message);
-                    await query(location.state.messages[0].message);
+                    setSelectedUseMemory(location.state.agent === 'rag');
+                    await query(location.state.messages[0].message, location.state.agent);
                     location.state.messages = undefined;
                 }
             } else {
@@ -539,7 +542,8 @@ export default function Chat() {
                                 buttonIcon: 'text-background',
                                 input: 'placeholder:text-default-500'
                             }}
-                            placeholder={t('chatToBrew', { name: Name })}
+                            placeholder={t('chatToAgent')}
+                            selectedUseMemory={selectedUseMemory}
                             onSubmitFunc={query}
                         />
                         <p className="p-2 text-center text-small font-medium leading-5 text-default-500">{t('chatNotice')}</p>

@@ -7,7 +7,26 @@
     /* 隐藏滚动条 */
 }
 
-
+ [type='text']:focus,
+ [type='email']:focus,
+ [type='url']:focus,
+ [type='password']:focus,
+ [type='number']:focus,
+ [type='date']:focus,
+ [type='datetime-local']:focus,
+ [type='month']:focus,
+ [type='search']:focus,
+ [type='tel']:focus,
+ [type='time']:focus,
+ [type='week']:focus,
+ [multiple]:focus,
+ textarea:focus,
+ select:focus,
+ .outline-none {
+     outline: 0px !important;
+     outline-offset: 0px !important;
+     box-shadow: none !important;
+ }
 
 .markdown-body option li,
 .markdown-body ul li,

@@ -16,8 +16,6 @@ const PromptInput = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(({ clas
             }}
             minRows={1}
             placeholder="Enter a prompt here"
-            radius="lg"
-            variant="bordered"
             {...props}
         />
     );
