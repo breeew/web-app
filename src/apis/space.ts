@@ -6,17 +6,21 @@ export async function ListUserSpace(): Promise<UserSpace[]> {
     return resp.data.data.list;
 }
 
-export async function CreateUserSpace(title: string, description: string): Promise<void> {
+export async function CreateUserSpace(title: string, description: string, basePrompt: string, chatPrompt: string): Promise<void> {
     await instance.post(`/space`, {
         title,
-        description
+        description,
+        base_prompt: basePrompt,
+        chat_prompt: chatPrompt
     });
 }
 
-export async function UpdateUserSpace(spaceID: string, title: string, description: string): Promise<void> {
+export async function UpdateUserSpace(spaceID: string, title: string, description: string, basePrompt: string, chatPrompt: string): Promise<void> {
     await instance.put(`/space/${spaceID}`, {
         title,
-        description
+        description,
+        base_prompt: basePrompt,
+        chat_prompt: chatPrompt
     });
 }
 

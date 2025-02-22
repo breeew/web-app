@@ -95,6 +95,8 @@
     "Delete Enter": "Delete Enter",
     "createSpaceNameLabel": "Space Name",
     "createSpaceDescriptionLabel": "Space Description",
+    "createSpaceBasePromptLabel": "Base Prompt",
+    "createSpaceChatPromptLabel": "Chat Prompt",
     "knowledgeCreateButtonTitle": "Brew your memory.",
     "knowledgeCreateContentLabel": "Memory Content",
     "knowledgeCreateContentLabelPlaceholder": "Press \"/\" for commands",
@@ -236,5 +238,10 @@
     "ExpiredTime": "Expired Time",
     "NewTokenTitle": "Create a new token",
     "TokenDescription": "Token Description",
-    "TokenDeleteDescription": "Confirm to delete selected tokens"
+    "TokenDeleteDescription": "Confirm to delete selected tokens",
+    "VarTimeRangeDescription": "system time description",
+    "VarRelevantPassageDescription": "relevance knowledges",
+    "VarSymbolDescription": "system built-in syntax",
+    "AgentButlerDescription": "Home assistant, can help you record anything related to the list",
+    "AgentJournalDescription": "Work assistant, can view your diary and summarize"
 }

@@ -432,7 +432,7 @@ export default function Chat() {
 
     const navigate = useNavigate();
 
-    const [selectedUseMemory, setSelectedUseMemory] = useState(false);
+    const [selectedUseMemory, setSelectedUseMemory] = useState(localStorage.getItem('selectedUseMemory') === 'true');
     useEffect(() => {
         async function load() {
             setMessages([]);

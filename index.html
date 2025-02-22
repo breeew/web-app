@@ -34,6 +34,14 @@
         script.addEventListener('error', () => {
           console.warn(`检测到 JS 资源加载失败：${script.src}`);
           // 强制刷新页面，绕过缓存
+          const retryTimes = sessionStorage.getItem('script_retry_times')
+  
+          if (retryTimes && Number(retryTimes) > 3) {
+            console.error('重试次数过多，停止重试');
+            return;
+          }
+          sessionStorage.setItem('script_retry_times', retryTimes ? Number(retryTimes) + 1 : 1);
+          
           window.location.reload(true);
         });
       });

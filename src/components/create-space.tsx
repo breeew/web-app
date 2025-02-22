@@ -20,12 +20,14 @@ const CreateSpaceComponent = forwardRef((_, ref) => {
 
     const [desc, setDesc] = useState('');
     const [title, setTitle] = useState('');
+    const [basePrompt, setBasePrompt] = useState('');
+    const [chatPrompt, setChatPrompt] = useState('');
     const [loading, setLoading] = useState(false);
 
     async function createSpace() {
         setLoading(true);
         try {
-            await CreateUserSpace(title, desc);
+            await CreateUserSpace(title, desc, basePrompt, chatPrompt);
 
             await loadUserSpaces();
             onClose();
@@ -53,6 +55,24 @@ const CreateSpaceComponent = forwardRef((_, ref) => {
                                     placeholder="Your space description"
                                     className="w-full"
                                     onValueChange={setDesc}
+                                />
+                                <Textarea
+                                    size="lg"
+                                    label={t('createSpaceBasePromptLabel')}
+                                    variant="bordered"
+                                    labelPlacement="outside"
+                                    placeholder="Your space base prompt"
+                                    className="w-full"
+                                    onValueChange={setBasePrompt}
+                                />
+                                <Textarea
+                                    size="lg"
+                                    label={t('createSpaceChatPromptLabel')}
+                                    variant="bordered"
+                                    labelPlacement="outside"
+                                    placeholder="Your space chat prompt"
+                                    className="w-full"
+                                    onValueChange={setChatPrompt}
                                 />
                             </ModalBody>
                             <ModalFooter>

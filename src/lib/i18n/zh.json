@@ -95,6 +95,8 @@
     "Delete Enter": "确认删除",
     "createSpaceNameLabel": "空间名称",
     "createSpaceDescriptionLabel": "空间描述",
+    "createSpaceBasePromptLabel": "基础提示词",
+    "createSpaceChatPromptLabel": "聊天提示词",
     "knowledgeCreateButtonTitle": "开始酝酿你的记忆",
     "knowledgeCreateContentLabel": "记忆内容",
     "knowledgeCreateContentLabelPlaceholder": "键入 \"/\" 快速唤起命令栏",
@@ -236,5 +238,11 @@
     "ExpiredTime": "过期时间",
     "NewTokenTitle": "创建新密钥",
     "TokenDescription": "密钥描述",
-    "TokenDeleteDescription": "确认要删除所有选中的密钥吗？"
+    "TokenDeleteDescription": "确认要删除所有选中的密钥吗？",
+    "VarTimeRangeDescription": "时间段描述",
+    "VarRelevantPassageDescription": "关联记忆",
+    "VarSymbolDescription": "系统内置语法",
+    "AgentButlerDescription": "家庭助理，可以帮您记录任何与清单相关的内容",
+    "AgentJournalDescription": "工作助理，可以查看您的日记并总结"
 }
+

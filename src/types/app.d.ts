@@ -45,6 +45,8 @@ declare type UserSpace = {
     role: string;
     title: string;
     description: string;
+    base_prompt: string; 
+    chat_prompt: string;
     created_at: number;
 };
 

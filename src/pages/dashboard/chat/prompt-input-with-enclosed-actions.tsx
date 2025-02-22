@@ -15,8 +15,13 @@ export default function Component(
 
     const [useRag, setUseRag] = useState(false);
 
+    function setSelectedUseMemory(value: boolean) {
+        setUseRag(value);
+        localStorage.setItem('selectedUseMemory', value.toString());
+    }
+
     useEffect(() => {
-        setUseRag(props.selectedUseMemory === undefined ? false : props.selectedUseMemory);
+        setUseRag(props.selectedUseMemory === undefined ? localStorage.getItem('selectedUseMemory') === 'true' : props.selectedUseMemory);
     }, [props.selectedUseMemory]);
 
     // @ts-ignore
@@ -96,16 +101,12 @@ export default function Component(
     const agents = useMemo(() => {
         return [
             {
-                title: t('agent-jihe'),
-                description: '唤起记忆'
-            },
-            {
                 title: t('agent-butler'),
-                description: '家庭助理，可以帮您记录任何与清单相关的内容'
+                description: t('AgentButlerDescription')
             },
             {
                 title: t('agent-journal'),
-                description: '工作助理，可以查看您的日记并总结'
+                description: t('AgentJournalDescription')
             }
         ];
     }, []);
@@ -205,7 +206,7 @@ export default function Component(
                             wrapper: 'p-0 h-4 w-10 overflow-visible'
                         }}
                         isSelected={useRag}
-                        onValueChange={setUseRag}
+                        onValueChange={setSelectedUseMemory}
                     >
                         <div className="flex flex-col gap-1">
                             <p className="text-sm text-default-500">{t('UseMemory')}</p>
