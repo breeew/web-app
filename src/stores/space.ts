@@ -1,7 +1,6 @@
 import { proxy } from 'valtio';
 
 import { ListUserSpace } from '@/apis/space';
-import { UserSpace } from '@/apis/space';
 
 const spaceStore = proxy<SpaceStore>({
     spaces: [],
@@ -11,6 +10,9 @@ const spaceStore = proxy<SpaceStore>({
 
 export const setUserSpaces = (spaces: UserSpace[]) => {
     spaceStore.spaces = spaces;
+    if (spaceStore.currentSelectedSpace === '') {
+        spaceStore.currentSelectedSpace = spaces[0].space_id;
+    }
 };
 
 export const latestPickedSpace = (): string | undefined => {

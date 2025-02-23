@@ -42,10 +42,11 @@ export async function Login(email: string, password: string): Promise<EmailLogin
     return resp.data.data;
 }
 
-export async function UpdateUserProfile(userName: string, email: string): Promise<void> {
+export async function UpdateUserProfile(userName: string, email: string, avatar: string): Promise<void> {
     return await instance.put(`/user/profile`, {
         user_name: userName,
-        email: email
+        email: email,
+        avatar: avatar
     });
 }
 

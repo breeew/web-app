@@ -9,14 +9,14 @@ const MAX_WIDTH = 650; // 限制宽度
 const MAX_HEIGHT = 366; // 限制高度
 const QUALITY = 0.7; // 默认压缩质量
 
-export const compressImage = async (file: File, quality: number = QUALITY): Promise<CompressResult> => {
+export const compressImage = async (file: File, quality: number = QUALITY, maxSize: number = MAX_SIZE_MB): Promise<CompressResult> => {
     if (!file.type.startsWith('image/')) {
         return { success: false, file: null, error: 'Provided file is not an image' };
     }
 
     const sizeMB = file.size / (1024 * 1024);
 
-    if (sizeMB <= MAX_SIZE_MB) {
+    if (sizeMB <= maxSize) {
         return { success: true, file }; // 不需要压缩
     }
 

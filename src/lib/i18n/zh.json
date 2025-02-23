@@ -243,6 +243,9 @@
     "VarRelevantPassageDescription": "关联记忆",
     "VarSymbolDescription": "系统内置语法",
     "AgentButlerDescription": "家庭助理，可以帮您记录任何与清单相关的内容",
-    "AgentJournalDescription": "工作助理，可以查看您的日记并总结"
+    "AgentJournalDescription": "工作助理，可以查看您的日记并总结",
+    "Avatar": "头像",
+    "ClickImageToUpdate": "点击图片进行上传",
+    "ImageUploading": "图片上传中",
+    "ImageUploadSuccess": "图片上传成功"
 }
-

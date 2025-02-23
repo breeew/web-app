@@ -243,5 +243,9 @@
     "VarRelevantPassageDescription": "relevance knowledges",
     "VarSymbolDescription": "system built-in syntax",
     "AgentButlerDescription": "Home assistant, can help you record anything related to the list",
-    "AgentJournalDescription": "Work assistant, can view your diary and summarize"
+    "AgentJournalDescription": "Work assistant, can view your diary and summarize",
+    "Avatar": "Avatar",
+    "ClickImageToUpdate": "Click image to update",
+    "ImageUploading": "Image uploading",
+    "ImageUploadSuccess": "Image uploaded successfully"
 }

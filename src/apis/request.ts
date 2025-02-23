@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import { UNSAFE_ErrorResponseImpl } from 'react-router-dom';
+import { toast } from 'sonner';
 
-import { toast } from '@/hooks/use-toast';
 import i18n from '@/lib/i18n';
 import userStore, { logout } from '@/stores/user';
 
@@ -59,9 +59,8 @@ function handleAxiosError(error: AxiosError) {
     if (error.status && error.status === 401) {
         logout();
     }
-    toast({
-        title: i18n.t('RequestError'),
-        // @ts-ignore
+
+    toast.error(i18n.t('RequestError'), {
         description: error.response ? error.response.data.meta.message + ', ' + error.message : error.message
     });
 }

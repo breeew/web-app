@@ -54,12 +54,12 @@ export const setUserInfo = (userInfo?: UserInfo) => {
         return;
     }
     userStore.userInfo = {
-        userID: userInfo.userID,
-        userName: userInfo.userName,
-        avatar: userInfo.avatar,
-        email: userInfo.email,
-        planID: userInfo.planID,
-        serviceMode: userInfo.serviceMode
+        userID: userInfo.userID || userStore.userInfo.userID,
+        userName: userInfo.userName || userStore.userInfo.userName,
+        avatar: userInfo.avatar || userStore.userInfo.avatar,
+        email: userInfo.email || userStore.userInfo.email,
+        planID: userInfo.planID || userStore.userInfo.planID,
+        serviceMode: userInfo.serviceMode || userStore.userInfo.serviceMode
     };
 };
 

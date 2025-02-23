@@ -1,12 +1,14 @@
-import { Button, Input, Skeleton, Spacer } from "@heroui/react";
-import { cn } from "@heroui/react";
+import { avatar, Button, Input, Skeleton, Spacer, User } from '@heroui/react';
+import { cn } from '@heroui/react';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { useSnapshot } from 'valtio';
 import { subscribeKey } from 'valtio/utils';
 
 import { UpdateUserProfile } from '@/apis/user';
-import { useToast } from '@/hooks/use-toast';
+import AvatarUpload from '@/components/avatar-uploader';
+import spaceStore from '@/stores/space';
 import userStore, { setUserInfo } from '@/stores/user';
 
 interface ProfileSettingCardProps {
@@ -15,10 +17,10 @@ interface ProfileSettingCardProps {
 
 const ProfileSetting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>(({ className, ...props }, ref) => {
     const { t } = useTranslation();
+    const { currentSelectedSpace } = useSnapshot(spaceStore);
 
     const { userInfo } = useSnapshot(userStore);
     const [loading, setLoading] = React.useState(true);
-    const { toast } = useToast();
 
     const [userName, setUserName] = React.useState('');
     const [errorUserName, setErrorUserName] = React.useState({
@@ -40,6 +42,7 @@ const ProfileSetting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>
 
                 setEmail(userInfo.email);
                 setUserName(userInfo.userName);
+                setLoading(false);
             });
 
             return;
@@ -51,9 +54,19 @@ const ProfileSetting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>
         setLoading(false);
     }, [userInfo]);
 
+    const [avatarChanged, setAvatarChanged] = React.useState(false);
+    function needToUpdateAvatar(file: File | undefined) {
+        console.log('changed?', file);
+        if (file) {
+            setAvatarChanged(true);
+        } else {
+            setAvatarChanged(false);
+        }
+    }
+
     const disabled = React.useMemo(() => {
-        return userInfo.email === email && userInfo.userName === userName;
-    }, [email, userName, userInfo]);
+        return userInfo.email === email && userInfo.userName === userName && !avatarChanged;
+    }, [email, userName, userInfo, avatarChanged]);
 
     function initInvalidMessage() {
         setErrorUserName({
@@ -68,6 +81,7 @@ const ProfileSetting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+    const [updateLoading, setUpdateLoading] = React.useState(false);
     async function updateUserProfile() {
         initInvalidMessage();
         if (userName.length > 32) {
@@ -88,23 +102,47 @@ const ProfileSetting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>
             return;
         }
 
-        setLoading(true);
+        let avatar = userInfo.avatar;
+        if (avatarChanged) {
+            const uploadResult = await new Promise((resolve, reject) => {
+                toast.promise(avatarUploader.current.handleSubmit, {
+                    loading: t(`ImageUploading`),
+                    success: data => {
+                        resolve(data);
+                        return t(`ImageUploadSuccess`);
+                    },
+                    error: err => {
+                        reject(err);
+                        return err.error;
+                    }
+                });
+            });
+            if (uploadResult.success) {
+                avatar = uploadResult.file.url;
+            } else {
+                toast.error(uploadResult.error);
+                return;
+            }
+        }
+
+        setUpdateLoading(true);
         try {
-            await UpdateUserProfile(userName, email);
+            await UpdateUserProfile(userName, email, avatar);
             setUserInfo({
                 userID: userInfo.userID,
                 email: email,
-                avatar: 'https://avatar.vercel.sh/' + userInfo.user_id,
+                avatar: avatar,
                 userName: userName
             });
-            toast({
-                title: t('Success')
-            });
+            setAvatarChanged(false);
+            toast.success(t('Success'));
         } catch (e: any) {
             console.error(e);
         }
-        setLoading(false);
+        setUpdateLoading(false);
     }
+
+    const avatarUploader = React.useRef();
 
     return (
         <div ref={ref} className={cn('p-2', className)} {...props}>
@@ -138,7 +176,13 @@ const ProfileSetting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>
                 </Card> */}
             </div>
             <Spacer y={4} />
-            <Skeleton isLoaded={!loading}>
+            <Skeleton isLoaded={!loading} className="rounded-lg">
+                <div>
+                    <p className="text-base font-medium text-default-700">{t('Avatar')}</p>
+                    <p className="mt-1 text-sm font-normal text-default-400">{t('ClickImageToUpdate')}</p>
+                    <AvatarUpload ref={avatarUploader} src={userInfo.avatar} currentSelectedSpace={currentSelectedSpace} onChange={needToUpdateAvatar} />
+                </div>
+                <Spacer y={2} />
                 {/* Username */}
                 <div>
                     <p className="text-base font-medium text-default-700">{t('Nickname')}</p>
