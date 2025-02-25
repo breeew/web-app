@@ -376,6 +376,10 @@ export const Editor = memo(
             });
 
             setEditor(editor);
+
+            return () => {
+                editor && editor.destroy();
+            };
         }, [currentSelectedSpace]);
 
         async function reRender(data: OutputData) {

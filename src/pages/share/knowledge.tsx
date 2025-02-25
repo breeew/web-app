@@ -63,6 +63,14 @@ export default function () {
             </>
         );
     }, [knowledge]);
+
+    const editor = useMemo(() => {
+        if (!knowledge || !knowledge.content) {
+            return <></>;
+        }
+
+        return <Editor readOnly data={knowledge.content} dataType={knowledge.content_type} />;
+    }, [knowledge]);
     return (
         <section className="h-screen flex flex-col w-full p-4 overflow-hidden items-center bg-content2">
             <ShareHeader controlsContent={controlsContent} type="knowledge" createdUser={knowledge ? knowledge.user_id : ''}></ShareHeader>
@@ -76,7 +84,7 @@ export default function () {
                             <p className="text-2xl font-medium">{knowledge.title}</p>
                         </div>
 
-                        <div className="flex-1 basis-0 min-h-0 mx-4 lg:mx-0">{knowledge.content && <Editor readOnly data={knowledge.content} dataType={knowledge.content_type} />}</div>
+                        <div className="flex-1 basis-0 min-h-0 mx-4 lg:mx-0">{editor}</div>
                     </div>
                 </div>
                 <div className="hidden w-[260px] gap-4 xl:flex justify-end">
