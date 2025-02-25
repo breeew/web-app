@@ -25,13 +25,13 @@ const CreateKnowledge = () => {
     const { spaces } = useSnapshot(spaceStore);
     const spaceTitle = useMemo(() => {
         for (const item of spaces) {
-            if (item.key === knowledge?.space_id) {
+            if (item.space_id === spaceID) {
                 return item.title;
             }
         }
 
         return '';
-    }, [spaces]);
+    }, [spaces, spaceID]);
 
     const onCancelFunc = useCallback(function () {
         navigate(-1);

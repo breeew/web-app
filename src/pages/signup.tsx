@@ -1,18 +1,18 @@
+import { Button, Input, Tooltip } from '@heroui/react';
 import { Icon } from '@iconify/react';
-import { Button, Input, Tooltip } from "@heroui/react";
 import axios from 'axios';
 import { AnimatePresence, domAnimation, LazyMotion, m } from 'framer-motion';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { useImmer } from 'use-immer';
 
 import { SendVerifyEmail, Signup } from '@/apis/user';
-import { useToast } from '@/hooks/use-toast';
 import { md5 } from '@/lib/utils';
 
 export default function Component({ changeMode }: { changeMode: (v: string) => void }) {
     const { t } = useTranslation();
-    const { toast } = useToast();
 
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
@@ -68,14 +68,7 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
         setPage([page + newDirection, newDirection]);
     };
 
-    const handleEmailSubmit = () => {
-        if (!email.length) {
-            setIsEmailValid(t('InvalidEmail'));
-
-            return;
-        }
-        setIsEmailValid('');
-
+    const handleUserBaseSubmit = () => {
         if (!userName.length || userName.length > 30) {
             setIsUserNameValid(t('length between', { min: 0, max: 30 }));
 
@@ -95,6 +88,13 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
 
     const [isSendVerifyEmail, setIsSendVerifyEmail] = useState();
     const handlePasswordSubmit = async () => {
+        if (!email.length) {
+            setIsEmailValid(t('InvalidEmail'));
+
+            return;
+        }
+        setIsEmailValid('');
+
         if (!password.length) {
             setIsPasswordValid(false);
 
@@ -115,19 +115,70 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
 
             return;
         }
-        try {
-            setIsLoading(true);
-            await SendVerifyEmail(email);
-            paginate(1);
-            setIsSendVerifyEmail(true);
-            setTimeout(() => {
-                setIsSendVerifyEmail(false);
-            }, 1000 * 60);
-        } catch (e: any) {
-            console.error(e);
-        }
-        setIsLoading(false);
+
+        sendVerifyEmail(email)
+            .then(res => {
+                toast.success(t('Notify'), {
+                    description: t('Please check your email for the verification code')
+                });
+                paginate(1);
+            })
+            .finally(res => {
+                setIsLoading(false);
+            });
     };
+
+    const [resendEmailGap, setResendEmailGap] = useImmer(120);
+
+    const sendVerifyEmail = useCallback(
+        async (email: string) => {
+            if (isSendVerifyEmail) {
+                return;
+            }
+            setIsSendVerifyEmail(true);
+            setIsLoading(true);
+            try {
+                await SendVerifyEmail(email);
+                toast.success(t('Notify'), {
+                    description: t('Please check your email for the verification code')
+                });
+                setResendEmailGap(120);
+                let resendEmailGap = 120;
+                let interval = setInterval(() => {
+                    if (resendEmailGap > 1) {
+                        resendEmailGap -= 1;
+                        setResendEmailGap(resendEmailGap);
+                    } else {
+                        setIsSendVerifyEmail(false);
+                        setResendEmailGap(0);
+                        clearInterval(interval);
+                    }
+                }, 1000);
+            } catch (e: any) {
+                console.error(e);
+            }
+
+            setIsLoading(false);
+        },
+        [resendEmailGap, isSendVerifyEmail]
+    );
+    const ResendEmail = useMemo(() => {
+        if (isSendVerifyEmail) {
+            return <span className="text-sm dark:text-zinc-300 text-zinc-600">{t('ResendEmailAfter', { seconds: resendEmailGap })}</span>;
+        } else if (resendEmailGap === 0) {
+            return (
+                <span
+                    className="text-sm text-primary cursor-pointer"
+                    onClick={() => {
+                        sendVerifyEmail(email);
+                    }}
+                >
+                    {t('ResendEmail')}
+                </span>
+            );
+        }
+        return <span></span>;
+    }, [isSendVerifyEmail, email, resendEmailGap]);
 
     const handleSignUpSubmit = async () => {
         if (verifyCode === '') {
@@ -139,8 +190,7 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
         setIsLoading(true);
         try {
             await Signup(email, userName, spaceName, md5(password), verifyCode);
-            toast({
-                title: t('Notify'),
+            toast.success(t('Notify'), {
                 description: t('Welcome to signup')
             });
             changeMode('login');
@@ -157,7 +207,7 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
         e.preventDefault();
         switch (page) {
             case 0:
-                handleEmailSubmit();
+                handleUserBaseSubmit();
                 break;
             case 1:
                 handlePasswordSubmit();
@@ -206,22 +256,6 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
                                 <Input
                                     autoFocus
                                     isRequired
-                                    label={t('Email Address')}
-                                    name="email"
-                                    placeholder="Enter your email"
-                                    type="email"
-                                    variant="bordered"
-                                    isInvalid={isEmailValid !== ''}
-                                    errorMessage={isEmailValid}
-                                    value={email}
-                                    onValueChange={value => {
-                                        setIsEmailValid('');
-                                        setEmail(value);
-                                    }}
-                                />
-
-                                <Input
-                                    isRequired
                                     label={t('UserName')}
                                     name="username"
                                     placeholder="Enter your user name"
@@ -258,6 +292,21 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
                             <>
                                 <Input
                                     autoFocus
+                                    isRequired
+                                    label={t('Email Address')}
+                                    name="email"
+                                    placeholder="Enter your email"
+                                    type="email"
+                                    variant="bordered"
+                                    isInvalid={isEmailValid !== ''}
+                                    errorMessage={isEmailValid}
+                                    value={email}
+                                    onValueChange={value => {
+                                        setIsEmailValid('');
+                                        setEmail(value);
+                                    }}
+                                />
+                                <Input
                                     isRequired
                                     endContent={
                                         <button type="button" onClick={togglePasswordVisibility}>
@@ -326,6 +375,7 @@ export default function Component({ changeMode }: { changeMode: (v: string) => v
                                 <span className="text-sm dark:text-zinc-300 text-zinc-600">{t('Please check your email for the verification code')}</span>
                             </>
                         )}
+                        {ResendEmail}
                         <Button fullWidth color="primary" type="submit" className="mt-6" isLoading={isLoading}>
                             {page === 0 ? t('Continue') : page === 1 ? t('Enter Password') : t('SignUp')}
                         </Button>

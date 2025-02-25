@@ -247,5 +247,7 @@
     "Avatar": "Avatar",
     "ClickImageToUpdate": "Click image to update",
     "ImageUploading": "Image uploading",
-    "ImageUploadSuccess": "Image uploaded successfully"
+    "ImageUploadSuccess": "Image uploaded successfully",
+    "ResourceIDInputDescription": "only allow type a-z,A-Z, used by api request",
+    "ResourceClearCycleInputDescription": "Setting the automatic cleanup days means that the memories under this resource type will be automatically cleared by the system N days after they are created."
 }

@@ -18,6 +18,7 @@ import {
     Skeleton,
     useDisclosure
 } from '@heroui/react';
+import { current } from 'immer';
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -396,6 +397,7 @@ const CreateKnowledgeModal = memo(
         const [knowledge, setKnowledge] = useState<Knowledge>();
         const [size, setSize] = useState<Size>('md');
         const isMobile = useMediaQuery('(max-width: 768px)');
+        const { currentSelectedSpace } = useSnapshot(spaceStore);
 
         const onChangeFunc = useCallback(() => {
             props.onChange && props.onChange();
@@ -419,14 +421,18 @@ const CreateKnowledgeModal = memo(
 
         const { spaces } = useSnapshot(spaceStore);
         const spaceTitle = useMemo(() => {
+            let currentSpaceID = currentSelectedSpace;
+            if (knowledge && knowledge.space_id) {
+                currentSpaceID = knowledge.space_id;
+            }
             for (const item of spaces) {
-                if (item.key === knowledge?.space_id) {
+                if (item.space_id === currentSpaceID) {
                     return item.title;
                 }
             }
 
             return '';
-        }, [spaces]);
+        }, [spaces, knowledge, currentSelectedSpace]);
 
         const onCancelFunc = useCallback(
             function () {

@@ -60,6 +60,7 @@ export default function IndexPage() {
                                 {t('QuickStart')}
                             </Button>
                         </Link>
+
                         {/* <Link href="https://discord.gg/YGrbmbCVRF">
                         <Button color="primary" className="flex gap-2  items-center">
                             Document

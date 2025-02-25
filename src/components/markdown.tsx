@@ -1,10 +1,13 @@
+import 'katex/dist/katex.min.css';
 import { common } from 'lowlight';
 import { memo, useMemo } from 'react';
 // https://github.com/remarkjs/react-markdown
 import Markdown, { type ExtraProps, type Options } from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
+import rehypeKatex from 'rehype-katex';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
 import stringWidth from 'string-width';
 
 import { useTheme } from '@/hooks/use-theme';
@@ -21,7 +24,7 @@ export default memo(function MarkdownComponent(props: Options & { isLight?: bool
     }, [isLight]);
 
     const rehypePlugins = useMemo(() => {
-        let commonPlugins = [[rehypeRaw]];
+        let commonPlugins = [rehypeRaw, rehypeKatex];
 
         if (isLight) {
             return commonPlugins;
@@ -36,7 +39,7 @@ export default memo(function MarkdownComponent(props: Options & { isLight?: bool
 
     return (
         <>
-            <Markdown {...rest} className={markdownClassName} rehypePlugins={rehypePlugins} remarkPlugins={[[remarkGfm, { stringLength: stringWidth }]]} components={cps}>
+            <Markdown {...rest} className={markdownClassName} rehypePlugins={rehypePlugins} remarkPlugins={[[remarkGfm, { stringLength: stringWidth }], [remarkMath]]} components={cps}>
                 {children as string}
             </Markdown>
         </>

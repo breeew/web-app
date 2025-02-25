@@ -184,7 +184,7 @@ export default function Chat() {
                                 });
 
                                 if (i % 26 === 0) {
-                                    if (getScrollBottom() < 50) {
+                                    if (getScrollBottom() < 150) {
                                         goToBottom();
                                     }
                                 }
@@ -221,7 +221,7 @@ export default function Chat() {
                         default:
                     }
 
-                    if (getScrollBottom() < 50) {
+                    if (getScrollBottom() < 150) {
                         goToBottom();
                     }
                 }

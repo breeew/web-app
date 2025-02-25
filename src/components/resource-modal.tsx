@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Input, Kbd, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, Textarea, useDisclosure } from "@heroui/react";
+import { Button, ButtonGroup, Input, Kbd, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, Textarea, useDisclosure } from '@heroui/react';
 import { TargetIcon } from '@radix-ui/react-icons';
 import { forwardRef, memo, useCallback, useImperativeHandle, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -129,7 +129,7 @@ const ResourceManage = memo(
                                             className="text-xl text-gray-800 dark:text-gray-100"
                                             labelPlacement="outside"
                                             defaultValue={resource?.id}
-                                            description="only allow type a-z,A-Z"
+                                            description={t('ResourceIDInputDescription')}
                                             onValueChange={setID}
                                         />
                                     </div>
@@ -170,12 +170,12 @@ const ResourceManage = memo(
                                         <Input
                                             label={t('ClearCycle') + '(' + t('Day') + ')' + ' empty or 0 means unlimit'}
                                             variant="bordered"
-                                            placeholder="Resource life cycle (day)"
+                                            placeholder="Resource life cycle (days)"
                                             className="text-xl text-gray-800 dark:text-gray-100"
                                             labelPlacement="outside"
                                             type="number"
                                             defaultValue={resource?.cycle}
-                                            description="allow number"
+                                            description={t('ResourceClearCycleInputDescription')}
                                             onValueChange={setCycle}
                                         />
                                     </div>

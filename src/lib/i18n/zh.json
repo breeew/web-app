@@ -247,5 +247,9 @@
     "Avatar": "头像",
     "ClickImageToUpdate": "点击图片进行上传",
     "ImageUploading": "图片上传中",
-    "ImageUploadSuccess": "图片上传成功"
+    "ImageUploadSuccess": "图片上传成功",
+    "ResourceIDInputDescription": "资源类型的唯一标识，仅支持大小写字母组合，该ID用于您使用API时指定资源类型",
+    "ResourceClearCycleInputDescription": "设置自动清理天数，意味着该资源类型下的记忆在创建后的N天自动被系统清理。",
+    "ResendEmailAfter": "{{seconds}}秒后可重新发送",
+    "ResendEmail": "点击重新发送"
 }

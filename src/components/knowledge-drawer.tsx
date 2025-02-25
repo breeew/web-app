@@ -35,7 +35,7 @@ export interface KnowledgeDrawerButtonProps {
     className?: string;
 }
 
-export default function KnowledgeDrawerButton({ size, className, temporaryStorage }: KnowledgeDrawerButtonProps) {
+export default function KnowledgeDrawerButton({ size = 'sm', className, temporaryStorage }: KnowledgeDrawerButtonProps) {
     const { t } = useTranslation();
     const { onOpen, setTemporaryStorage } = useContext(KnowledgeDrawerContext);
 
@@ -48,7 +48,7 @@ export default function KnowledgeDrawerButton({ size, className, temporaryStorag
 
     className = 'bg-gradient-to-br from-pink-400 to-indigo-400 dark:from-indigo-500 dark:to-pink-500 ' + className;
     return (
-        <Button size={size} className={className} startContent={<Icon icon="fluent:brain-sparkle-20-regular" width={20} />} variant="flat" size="sm" onPress={onOpen}>
+        <Button size={size} className={className} startContent={<Icon icon="fluent:brain-sparkle-20-regular" width={20} />} variant="flat" onPress={onOpen}>
             {t('Quick Create Knowledge')}
         </Button>
     );

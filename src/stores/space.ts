@@ -10,7 +10,7 @@ const spaceStore = proxy<SpaceStore>({
 
 export const setUserSpaces = (spaces: UserSpace[]) => {
     spaceStore.spaces = spaces;
-    if (spaceStore.currentSelectedSpace === '') {
+    if (spaceStore.currentSelectedSpace === '' && spaces && spaces.length > 0) {
         spaceStore.currentSelectedSpace = spaces[0].space_id;
     }
 };
