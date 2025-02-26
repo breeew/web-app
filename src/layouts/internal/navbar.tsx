@@ -97,7 +97,7 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
             classNames={{
                 base: 'bg-transparent lg:backdrop-filter-none md:mt-3 flex',
                 item: 'data-[active=true]:text-primary',
-                wrapper: 'px-2 w-full max-w-full justify-between items-center'
+                wrapper: 'px-6 w-full max-w-full justify-between items-center'
             }}
             height="60px"
         >

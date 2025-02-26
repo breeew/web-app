@@ -8,6 +8,8 @@ import {
     CardFooter,
     CardHeader,
     Chip,
+    Image,
+    Link,
     Modal,
     ModalBody,
     ModalContent,
@@ -16,8 +18,10 @@ import {
     Progress,
     ScrollShadow,
     Skeleton,
+    Textarea,
     useDisclosure
 } from '@heroui/react';
+import { Icon } from '@iconify/react';
 import { current } from 'immer';
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -33,6 +37,7 @@ import KnowledgeEdit from '@/components/knowledge-edit';
 import KnowledgeModal from '@/components/knowledge-modal';
 import MainQuery from '@/components/main-query';
 import Markdown from '@/components/markdown';
+import WorkBar from '@/components/work-bar';
 import { useMedia } from '@/hooks/use-media';
 import { useRole } from '@/hooks/use-role';
 import { useUserAgent } from '@/hooks/use-user-agent';
@@ -213,8 +218,8 @@ export default memo(function Component() {
 
     return (
         <>
-            <div className="overflow-hidden w-full h-full flex flex-col relative px-3">
-                <div className="space-y-1 mb-6">
+            <div className="overflow-hidden w-full h-full flex flex-col relative">
+                {/* <div className="w-full px-6 space-y-1 mb-6">
                     <div className="flex justify-between">
                         <h1 className="text-2xl font-bold leading-9 text-default-foreground mb-4">{t('Your Memories')}</h1>
                         {isLoading && <Progress isIndeterminate size="sm" aria-label="Loading..." className="w-14" />}
@@ -223,8 +228,18 @@ export default memo(function Component() {
                     <Skeleton isLoaded={total > 0 || !isLoading} className="max-w-64 rounded-lg">
                         <p className="text-small text-default-400">{t('memories count', { total: total, title: currentSelectedResource?.title })}</p>
                     </Skeleton>
-                </div>
-                <KnowledgeList ref={ssDom} isShowCreate={isShowCreate} knowledgeList={dataList} onShowCreate={showCreate} onSelect={showKnowledge} onChanges={onChanges} onLoadMore={onLoadMore} />
+                </div> */}
+
+                <KnowledgeList
+                    ref={ssDom}
+                    total={total}
+                    isShowCreate={isShowCreate}
+                    knowledgeList={dataList}
+                    onShowCreate={showCreate}
+                    onSelect={showKnowledge}
+                    onChanges={onChanges}
+                    onLoadMore={onLoadMore}
+                />
 
                 <div className="absolute w-auto bottom-2 right-1/2 mr-[-130px]">
                     <MainQuery onClick={showCreate} />
@@ -253,6 +268,7 @@ export default memo(function Component() {
 
 interface KnowledgeListProps {
     knowledgeList: Knowledge[];
+    total: number;
     isShowCreate: boolean;
     onSelect: (data: Knowledge) => void;
     onChanges: () => void;
@@ -261,11 +277,13 @@ interface KnowledgeListProps {
 }
 
 const KnowledgeList = memo(
-    forwardRef(function KnowledgeList({ knowledgeList, onSelect, isShowCreate = true, onShowCreate, onChanges, onLoadMore }: KnowledgeListProps, ref: any) {
+    forwardRef(function KnowledgeList({ knowledgeList, total, onSelect, isShowCreate = true, onShowCreate, onChanges, onLoadMore }: KnowledgeListProps, ref: any) {
+        const { t } = useTranslation();
         const [dataList, setDataList] = useState(knowledgeList);
         const [onEvent, setEvent] = useState<FireTowerMsg | null>();
         const { currentSelectedSpace } = useSnapshot(spaceStore);
         const { subscribe, connectionStatus } = useSnapshot(socketStore);
+        const { currentSelectedResource } = useSnapshot(resourceStore);
         const { isMobile } = useMedia();
 
         useEffect(() => {
@@ -363,7 +381,17 @@ const KnowledgeList = memo(
 
         return (
             <>
-                <ScrollShadow ref={ssDom} hideScrollBar className="w-full flex-grow box-border mb-6 p-2" onScroll={scrollChanged}>
+                <ScrollShadow ref={ssDom} hideScrollBar className="w-full flex-grow box-border mb-6" onScroll={scrollChanged}>
+                    <WorkBar spaceid={currentSelectedSpace} onSubmit={onChanges} />
+                    <div className="w-full px-6 space-y-1 mb-6">
+                        <div className="flex justify-between">
+                            <h1 className="text-2xl font-bold leading-9 text-default-foreground mb-4">{t('Your Memories')}</h1>
+                        </div>
+
+                        <Skeleton isLoaded={total > 0} className="max-w-64 rounded-lg">
+                            <p className="text-small text-default-400">{t('memories count', { total: total, title: currentSelectedResource?.title })}</p>
+                        </Skeleton>
+                    </div>
                     <div className={[isSafari ? 'm-auto w-full max-w-[900px]' : 'columns-1 sm:columns-2 lg:columns-3 xl:columns-4 2xl:columns-5 3xl:columns-5', 'gap-[24px]'].join(' ')}>
                         {isShowCreate && (
                             <div className="mb-[24px]">

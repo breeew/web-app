@@ -165,7 +165,7 @@ export default function Component({ children }: { children: React.ReactNode }) {
     const { userPlan } = usePlan();
 
     return (
-        <div className="flex h-dvh w-full gap-4 dark:bg-zinc-900">
+        <div className="flex h-dvh w-full dark:bg-zinc-900">
             {/* Sidebar */}
             <SidebarDrawer className={'min-w-[288px] rounded-lg'} hideCloseButton={true} isOpen={isOpen} onOpenChange={onOpenChange}>
                 <div

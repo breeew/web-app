@@ -11,6 +11,7 @@ import { CopyKnowledge } from '@/apis/share';
 import { GetUserInfo, ListUserResources } from '@/apis/user';
 import { GithubIcon } from '@/components/icons';
 import { LogoIcon, Name } from '@/components/logo';
+import { title } from '@/components/primitives';
 import spaceStore, { loadUserSpaces } from '@/stores/space';
 import userStore, { setUserInfo } from '@/stores/user';
 
@@ -46,7 +47,7 @@ export default memo(({ controlsContent, type, createdUser }: ShareHeaderProps) =
         return acc;
     }
 
-    async function loudUserInfo() {
+    async function loadUserInfo() {
         setIsLoadUserInfo(true);
         try {
             const resp = await GetUserInfo();
@@ -74,20 +75,8 @@ export default memo(({ controlsContent, type, createdUser }: ShareHeaderProps) =
             return;
         }
 
-        loudUserInfo();
+        loadUserInfo();
     }, [accessToken, loginToken]);
-
-    const canBeSelectSpaces = useMemo(() => {
-        var canSelect: UserSpace[] = [];
-
-        spaces.forEach(v => {
-            if (userResources?.get(v.space_id)) {
-                canSelect.push(v);
-            }
-        });
-
-        return canSelect;
-    }, [spaces, userResources]);
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -99,7 +88,15 @@ export default memo(({ controlsContent, type, createdUser }: ShareHeaderProps) =
             }
             setSelectedSpace(e.target.value);
 
-            const list = userResources?.get(e.target.value);
+            let list = userResources?.get(e.target.value);
+            if (!list) {
+                list = [
+                    {
+                        id: 'knowledge',
+                        title: t('Knowledge')
+                    }
+                ];
+            }
             setResourceSelector(list);
         },
         [userResources]
@@ -152,7 +149,7 @@ export default memo(({ controlsContent, type, createdUser }: ShareHeaderProps) =
             <div className="flex items-center gap-2">
                 {!isLoadUserInfo && (
                     <>
-                        {type === 'knowledge' && createdUser !== userInfo.userID && canBeSelectSpaces && canBeSelectSpaces.length > 0 ? (
+                        {type === 'knowledge' && createdUser !== userInfo.userID && spaces && spaces.length > 0 ? (
                             <>
                                 <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange} onClose={onModalOpenChange}>
                                     <ModalContent>
@@ -170,7 +167,7 @@ export default memo(({ controlsContent, type, createdUser }: ShareHeaderProps) =
                                                         size="lg"
                                                         onChange={onSpaceSelect}
                                                     >
-                                                        {canBeSelectSpaces.map(item => (
+                                                        {spaces.map(item => (
                                                             <SelectItem key={item.space_id} className="h-12">
                                                                 {item.title}
                                                             </SelectItem>
