@@ -149,8 +149,6 @@ export default memo(function Component() {
     // @ts-ignore
     const viewKnowledge = useRef(null);
     // @ts-ignore
-    const createKnowledge = useRef<{ show: ({ space_id: string }) => void }>(null);
-    const [knowledgeIsShow, setKnowledgeIsShow] = useState(false);
 
     const showKnowledge = useCallback(
         (knowledge: Knowledge) => {
@@ -161,20 +159,10 @@ export default memo(function Component() {
             if (viewKnowledge && viewKnowledge.current) {
                 // @ts-ignore
                 viewKnowledge.current.show(knowledge);
-                setKnowledgeIsShow(true);
             }
         },
         [viewKnowledge]
     );
-
-    const showCreate = useCallback(() => {
-        if (createKnowledge && createKnowledge.current) {
-            createKnowledge.current.show({
-                space_id: currentSelectedSpace
-            });
-            setKnowledgeIsShow(true);
-        }
-    }, [createKnowledge, currentSelectedSpace]);
 
     function onChanges() {
         refreshDataList();
@@ -186,28 +174,6 @@ export default memo(function Component() {
         },
         [dataList]
     );
-
-    // page key down event listener
-    useEffect(() => {
-        if (isMobile) {
-            return;
-        }
-        const handleKeyDown = (event: KeyboardEvent) => {
-            if (knowledgeIsShow) {
-                return;
-            }
-            // meta + b = create knowledge
-            if (event.key === 'b' && event.metaKey) {
-                showCreate();
-            }
-        };
-
-        document.addEventListener('keydown', handleKeyDown);
-
-        return () => {
-            document.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [isMobile, currentSelectedSpace]);
 
     //@ts-ignore
     const ssDom = useRef<{ goToTop: () => void }>();
@@ -233,35 +199,20 @@ export default memo(function Component() {
                 <KnowledgeList
                     ref={ssDom}
                     total={total}
+                    isLoading={isLoading}
                     isShowCreate={isShowCreate}
                     knowledgeList={dataList}
-                    onShowCreate={showCreate}
                     onSelect={showKnowledge}
                     onChanges={onChanges}
                     onLoadMore={onLoadMore}
                 />
 
-                <div className="absolute w-auto bottom-2 right-1/2 mr-[-130px]">
+                {/* <div className="absolute w-auto bottom-2 right-1/2 mr-[-130px]">
                     <MainQuery onClick={showCreate} />
-                </div>
+                </div> */}
             </div>
 
-            <KnowledgeModal
-                ref={viewKnowledge}
-                onChange={onChanges}
-                onDelete={onDelete}
-                onClose={() => {
-                    setKnowledgeIsShow(false);
-                }}
-            />
-
-            <CreateKnowledgeModal
-                ref={createKnowledge}
-                onChange={onChanges}
-                onClose={() => {
-                    setKnowledgeIsShow(false);
-                }}
-            />
+            <KnowledgeModal ref={viewKnowledge} onChange={onChanges} onDelete={onDelete} />
         </>
     );
 });
@@ -270,14 +221,15 @@ interface KnowledgeListProps {
     knowledgeList: Knowledge[];
     total: number;
     isShowCreate: boolean;
+    isLoading: boolean;
     onSelect: (data: Knowledge) => void;
     onChanges: () => void;
     onLoadMore: () => void;
-    onShowCreate: () => void;
+    onShowCreate?: () => void;
 }
 
 const KnowledgeList = memo(
-    forwardRef(function KnowledgeList({ knowledgeList, total, onSelect, isShowCreate = true, onShowCreate, onChanges, onLoadMore }: KnowledgeListProps, ref: any) {
+    forwardRef(function KnowledgeList({ knowledgeList, total, onSelect, isLoading = false, isShowCreate = true, onShowCreate, onChanges, onLoadMore }: KnowledgeListProps, ref: any) {
         const { t } = useTranslation();
         const [dataList, setDataList] = useState(knowledgeList);
         const [onEvent, setEvent] = useState<FireTowerMsg | null>();
@@ -383,21 +335,25 @@ const KnowledgeList = memo(
             <>
                 <ScrollShadow ref={ssDom} hideScrollBar className="w-full flex-grow box-border mb-6" onScroll={scrollChanged}>
                     <WorkBar spaceid={currentSelectedSpace} onSubmit={onChanges} />
-                    <div className="w-full px-6 space-y-1 mb-6">
-                        <div className="flex justify-between">
-                            <h1 className="text-2xl font-bold leading-9 text-default-foreground mb-4">{t('Your Memories')}</h1>
+                    <div className="w-full  space-y-1 mb-6  py-1">
+                        <div className="flex justify-between items-center gap-4 px-6">
+                            <div className="flex flex-col gap-2">
+                                <div className="text-xl font-bold leading-9 text-default-foreground">{t('Your Memories')}</div>
+                                <div className="text-small text-default-400">{t('memories count', { total: total, title: currentSelectedResource?.title })}</div>
+                            </div>
+                            {isLoading && <Progress isIndeterminate size="sm" aria-label="Loading..." className="w-14" />}
                         </div>
 
-                        <Skeleton isLoaded={total > 0} className="max-w-64 rounded-lg">
+                        {/* <Skeleton isLoaded={total > 0} className="max-w-64 rounded-lg">
                             <p className="text-small text-default-400">{t('memories count', { total: total, title: currentSelectedResource?.title })}</p>
-                        </Skeleton>
+                        </Skeleton> */}
                     </div>
-                    <div className={[isSafari ? 'm-auto w-full max-w-[900px]' : 'columns-1 sm:columns-2 lg:columns-3 xl:columns-4 2xl:columns-5 3xl:columns-5', 'gap-[24px]'].join(' ')}>
-                        {isShowCreate && (
+                    <div className={[isSafari ? 'm-auto w-full max-w-[900px]' : 'columns-1 sm:columns-2 lg:columns-3 xl:columns-4 2xl:columns-5 3xl:columns-5 px-6', 'gap-[24px]'].join(' ')}>
+                        {/* {isShowCreate && (
                             <div className="mb-[24px]">
                                 <CreateKnowledge shadow={isMobile ? 'none' : 'sm'} onChanges={onChanges} openCreateKnowledge={onShowCreate} />
                             </div>
-                        )}
+                        )} */}
                         {dataList.map(item => {
                             return (
                                 <div key={item.id} role="button" tabIndex={0} className="mb-[24px] relative" onClick={() => onSelect(item)} onKeyDown={() => {}}>
@@ -412,116 +368,6 @@ const KnowledgeList = memo(
         );
     })
 );
-
-interface CreateKnowledgeModalProps {
-    onClose: () => void;
-    onChange: () => void;
-}
-
-const CreateKnowledgeModal = memo(
-    forwardRef((props: CreateKnowledgeModalProps, ref: any) => {
-        const { t } = useTranslation();
-        const { isOpen, onOpen, onClose } = useDisclosure();
-        const [knowledge, setKnowledge] = useState<Knowledge>();
-        const [size, setSize] = useState<Size>('md');
-        const isMobile = useMediaQuery('(max-width: 768px)');
-        const { currentSelectedSpace } = useSnapshot(spaceStore);
-
-        const onChangeFunc = useCallback(() => {
-            props.onChange && props.onChange();
-            onCancelFunc();
-        }, [props.onChange]);
-
-        useEffect(() => {
-            if (isMobile) {
-                setSize('full');
-            } else {
-                // TODO maybe
-                // setSize('3xl');
-                setSize('full');
-            }
-        }, [isMobile]);
-
-        function show(knowledge: Knowledge) {
-            setKnowledge(knowledge);
-            onOpen();
-        }
-
-        const { spaces } = useSnapshot(spaceStore);
-        const spaceTitle = useMemo(() => {
-            let currentSpaceID = currentSelectedSpace;
-            if (knowledge && knowledge.space_id) {
-                currentSpaceID = knowledge.space_id;
-            }
-            for (const item of spaces) {
-                if (item.space_id === currentSpaceID) {
-                    return item.title;
-                }
-            }
-
-            return '';
-        }, [spaces, knowledge, currentSelectedSpace]);
-
-        const onCancelFunc = useCallback(
-            function () {
-                props.onClose && props.onClose();
-                onClose();
-            },
-            [props.onClose]
-        );
-
-        useImperativeHandle(ref, () => {
-            return {
-                show
-            };
-        });
-
-        const editor = useRef();
-        const [createLoading, setCreateLoading] = useState(false);
-        const submit = useCallback(async () => {
-            try {
-                setCreateLoading(true);
-                await editor.current.submit();
-            } catch (e: any) {
-                console.error(e);
-            }
-            setCreateLoading(false);
-        }, [editor]);
-
-        return (
-            <>
-                <Modal backdrop="blur" placement="bottom" scrollBehavior="inside" size={size} isOpen={isOpen} isKeyboardDismissDisabled={true} onClose={onCancelFunc}>
-                    <ModalContent>
-                        {onClose => (
-                            <>
-                                <ModalHeader className="flex flex-col gap-1 dark:text-gray-100 text-gray-800">
-                                    <Breadcrumbs>
-                                        <BreadcrumbItem onClick={onClose}>{t('Home')}</BreadcrumbItem>
-                                        <BreadcrumbItem onClick={onClose}>{spaceTitle === 'Main' ? t('MainSpace') : spaceTitle}</BreadcrumbItem>
-                                        <BreadcrumbItem>{t('Create')}</BreadcrumbItem>
-                                    </Breadcrumbs>
-                                </ModalHeader>
-                                <ModalBody className="w-full overflow-hidden flex flex-col items-center">
-                                    <KnowledgeEdit ref={editor} classNames={{ editor: '!mx-0' }} knowledge={knowledge} hideSubmit onChange={onChangeFunc} onCancel={onCancelFunc} />
-                                </ModalBody>
-                                <ModalFooter className="flex justify-center">
-                                    <ButtonGroup variant="flat" size="base" className="mb-4">
-                                        <Button color="primary" onPress={submit} isLoading={createLoading}>
-                                            {t('Save')}
-                                        </Button>
-                                        <Button onPress={onClose}>{t('Close')}</Button>
-                                    </ButtonGroup>
-                                </ModalFooter>
-                            </>
-                        )}
-                    </ModalContent>
-                </Modal>
-            </>
-        );
-    })
-);
-
-CreateKnowledgeModal.displayName = 'createKnowledgeModal';
 
 const NormalCard = memo(function NormalCard({
     shadow,

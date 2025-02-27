@@ -93,7 +93,7 @@ export default memo(({ controlsContent, type, createdUser }: ShareHeaderProps) =
                 list = [
                     {
                         id: 'knowledge',
-                        title: t('Knowledge')
+                        title: t('resourceKnowledge')
                     }
                 ];
             }

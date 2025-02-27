@@ -2,7 +2,7 @@
 
 import { HeroUIProvider } from '@heroui/react';
 import { enableMapSet } from 'immer';
-import { useEffect, useState } from 'react';
+import { Children, useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Toaster as SonnerTotaster } from 'sonner';
 import { subscribeKey } from 'valtio/utils';
@@ -55,14 +55,22 @@ export function App({ children }: { children: React.ReactNode }) {
     }, 2000);
 
     return (
+        <MyProvider>
+            <Outlet />
+            <Toaster />
+            <SonnerTotaster theme={isDark ? 'dark' : 'light'} />
+            <span className="bg-zinc-800" />
+        </MyProvider>
+    );
+}
+
+function MyProvider({ children }: { children: React.ReactNode }) {
+    const navigate = useNavigate();
+
+    return (
         <HeroUIProvider navigate={navigate}>
             <KnowledgeProvider>
-                <ShareProvider>
-                    <Outlet />
-                    <Toaster />
-                    <SonnerTotaster theme={isDark ? 'dark' : 'light'} />
-                    <span className="bg-zinc-800" />
-                </ShareProvider>
+                <ShareProvider>{children}</ShareProvider>
             </KnowledgeProvider>
         </HeroUIProvider>
     );

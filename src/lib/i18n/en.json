@@ -203,6 +203,7 @@
     "MemoryUploadLimit": "Cannot upload more than {{times}} file at a time",
     "MemoryUploadSize": "The file size should be less than {{size}}",
     "DropZoneDescription": "Drop files here or click to upload",
+    "FileChunkDropZoneDescription": "Supports uploading of knowledge bases in docx, xlsx, pdf, txt, md formats.",
     "DropHere": "Drop here",
     "OR": "or",
     "UseDocs": "use file({{types}})",
@@ -249,5 +250,13 @@
     "ImageUploading": "Image uploading",
     "ImageUploadSuccess": "Image uploaded successfully",
     "ResourceIDInputDescription": "only allow type a-z,A-Z, used by api request",
-    "ResourceClearCycleInputDescription": "Setting the automatic cleanup days means that the memories under this resource type will be automatically cleared by the system N days after they are created."
+    "ResourceClearCycleInputDescription": "Setting the automatic cleanup days means that the memories under this resource type will be automatically cleared by the system N days after they are created.",
+    "ReadWebContentFromURL": "Retrieve web page content from a URL",
+    "TypeKnowledgeByYourSelf": "Type your memory...",
+    "Read": "Read",
+    "FileDescriptionTip": "Providing a brief description of the file can improve search accuracy.",
+    "Brief": "Brief",
+    "OpenRichText": "Use Editor",
+    "WorkSpace": "Work Space",
+    "CurrentResourceType": "Current resource type is {{type}}"
 }

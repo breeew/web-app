@@ -134,7 +134,7 @@ export function FileUploader(props: FileUploaderProps) {
 
             if (rejectedFiles.length > 0) {
                 rejectedFiles.forEach(({ file }) => {
-                    toast.error(t('FileRejected', { title: file.name }));
+                    toast.error(t('FileRejected', { description: file.name + ':' + file.errors.join('\n') }));
                 });
             }
 
@@ -206,7 +206,7 @@ export function FileUploader(props: FileUploaderProps) {
                                     <Icon icon="line-md:upload-loop" className="size-7 text-muted-foreground" aria-hidden="true" />
                                 </div>
                                 <div className="flex flex-col gap-px">
-                                    <p className="font-medium text-muted-foreground">{t('DropZoneDescription')}</p>
+                                    <p className="font-medium text-muted-foreground">{t('FileChunkDropZoneDescription')}</p>
                                     <p className="text-sm text-muted-foreground/70">
                                         {t('MemoryUploadLimit', { times: maxFileCount })}
                                         <br />
@@ -218,13 +218,13 @@ export function FileUploader(props: FileUploaderProps) {
                     </div>
                 )}
             </Dropzone>
-            {files?.length ? (
+            {/* {files?.length ? (
                 <ScrollShadow className="h-fit w-full px-3">
                     <div className="flex max-h-48 flex-col gap-4">
                         {files?.map((file, index) => <FileCard key={index} file={file} onRemove={() => onRemove(index)} progress={progresses?.[file.name]} />)}
                     </div>
                 </ScrollShadow>
-            ) : null}
+            ) : null} */}
         </div>
     );
 }

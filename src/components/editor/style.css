@@ -251,3 +251,7 @@ video {
 .editor .codex-editor-overlay__rectangle {
     border: none !important;
 }
+
+.ce-block__content li ul {
+    padding-inline-start: 20px !important;
+}

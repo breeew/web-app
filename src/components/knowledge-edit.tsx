@@ -65,32 +65,6 @@ export default memo(
         }, [currentSelectedResource, currentSelectedSpace]);
 
         const { groupedResources } = useGroupedResources();
-        // const resources = useMemo(() => {
-        //     let list: Resource[] = [];
-        //     let matched = false;
-
-        //     if (currentSpaceResources) {
-        //         for (const item of currentSpaceResources) {
-        //             if (resource === item.id) {
-        //                 matched = true;
-        //             }
-
-        //             if (item.id !== '') {
-        //                 list.push(item);
-        //             }
-        //         }
-        //     }
-
-        //     if (!matched && resource) {
-        //         list.push({
-        //             id: resource,
-        //             title: t('UnCreate') + ': ' + resource
-        //         });
-        //     }
-
-        //     return list;
-        // }, [currentSpaceResources]);
-
         const defaultResource = useMemo(() => {
             if (knowledge && knowledge.resource) {
                 return knowledge.resource;
@@ -99,11 +73,11 @@ export default memo(
                 return currentSelectedResource.id;
             }
 
-            if (groupedResources.length > 0 && groupedResources[0].items.length > 0) {
-                return groupedResources[0].items[0].id;
-            }
+            // if (groupedResources.length > 0 && groupedResources[0].items.length > 0) {
+            //     return groupedResources[0].items[0].id;
+            // }
 
-            return '';
+            return 'knowledge';
         }, [currentSelectedResource, groupedResources, knowledge]);
 
         const onKnowledgeContentChanged = useCallback((value: string | OutputData) => {

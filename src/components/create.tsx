@@ -304,7 +304,7 @@ interface TaskListProps {
     onClose: () => void;
 }
 
-function TaskList({ isShow, spaceID, onClose }: TaskListProps) {
+export function TaskList({ isShow, spaceID, onClose }: TaskListProps) {
     const [hasMore, setHasMore] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
