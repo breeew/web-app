@@ -1,13 +1,24 @@
-import { Button, cn, Listbox, ListboxItem, Spinner, Switch, type TextAreaProps, Tooltip, useDisclosure } from '@heroui/react';
+import { Badge, Button, cn, Image, Listbox, ListboxItem, Spinner, Switch, type TextAreaProps, Tooltip, useDisclosure } from '@heroui/react';
 import { Icon } from '@iconify/react';
+import { VisuallyHidden } from '@react-aria/visually-hidden';
 import { t } from 'i18next';
 import { KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
+import { useSnapshot } from 'valtio';
 
 import PromptInput from './prompt-input';
 
+import { UploadResult, useUploader } from '@/hooks/use-uploader';
+import spaceStore from '@/stores/space';
+
 export default function Component(
-    props: TextAreaProps & { classNames?: Record<'button' | 'buttonIcon', string>; selectedUseMemory: boolean; onSubmitFunc: (data: string, agent: string) => Promise<void> }
+    props: TextAreaProps & {
+        classNames?: Record<'button' | 'buttonIcon', string>;
+        selectedUseMemory: boolean;
+        allowAttach: boolean;
+        onSubmitFunc: (data: string, agent: string, files: Attach[]) => Promise<void>;
+    }
 ) {
     const { t } = useTranslation();
     const [prompt, setPrompt] = useState<string>('');
@@ -52,12 +63,7 @@ export default function Component(
                 return;
             }
             if (props.onSubmitFunc && prompt) {
-                setLoading(true);
-                try {
-                    await props.onSubmitFunc(prompt, useRag ? 'rag' : '');
-                    setPrompt('');
-                } catch (e: any) {}
-                setLoading(false);
+                await submit();
             }
         }
     };
@@ -111,6 +117,110 @@ export default function Component(
         ];
     }, []);
 
+    const [assets, setAssets] = useState<string[]>([]);
+    const handlePaste = useCallback(async (e: React.ClipboardEvent) => {
+        if (!props.allowAttach) {
+            return;
+        }
+        const items = Array.from(e.clipboardData.items);
+
+        for (const item of items) {
+            if (item.type.indexOf('image') !== -1) {
+                const blob = item.getAsFile();
+
+                if (!blob) continue;
+
+                if (blob.size > 10 * 1024 * 1024) {
+                    // 10MB
+                    toast.error('File size exceeds the limit of 10MB');
+                    continue;
+                }
+                setAssets(prev => [...prev, blob]);
+            }
+        }
+    }, []);
+
+    const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!props.allowAttach) {
+            return;
+        }
+        const files = Array.from(e.target.files || []);
+
+        files.forEach(file => {
+            if (file.type.startsWith('image/')) {
+                if (file.size > 10 * 1024 * 1024) {
+                    // 10MB
+                    toast.error('File size exceeds the limit of 10MB');
+                    return;
+                }
+
+                setAssets(prev => [...prev, file]);
+            }
+        });
+
+        // Reset input value to allow uploading the same file again
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    }, []);
+
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const { uploader } = useUploader();
+    const { currentSelectedSpace } = useSnapshot(spaceStore);
+    const submit = useCallback(async () => {
+        const files: Attach[] = [];
+        if (assets && assets.length > 0) {
+            try {
+                const res: UploadResult[] = await new Promise((resolve, reject) => {
+                    toast.promise(
+                        Promise.all(
+                            assets.map((file: File) => {
+                                return uploader(currentSelectedSpace, file, 'chat', 'chat');
+                            })
+                        )
+                            .then((values: UploadResult[]) => {
+                                resolve(values);
+                            })
+                            .catch(err => {
+                                console.log('got errr', err);
+                                reject(err);
+                            }),
+                        {
+                            loading: t(`Uploading`, { target: t('Attach') }),
+                            success: (values: UploadResult[]) => {
+                                resolve(values);
+                                return t(`Success`);
+                            },
+                            error: err => {
+                                reject(err);
+                                return err;
+                            }
+                        }
+                    );
+                });
+
+                res.forEach(v => {
+                    files.push({
+                        type: 'image',
+                        url: v.file?.url
+                    });
+                });
+            } catch (err: any) {
+                console.error(err);
+                return;
+            }
+        }
+
+        setLoading(true);
+        try {
+            await props.onSubmitFunc(prompt, useRag ? 'rag' : '', files);
+            setPrompt('');
+        } catch (e: any) {
+            console.error(e);
+        }
+        setLoading(false);
+    }, [prompt, useRag, assets, currentSelectedSpace]);
+
     return (
         <form className="flex flex-col w-full items-start gap-2 relative rounded-medium bg-default-100 transition-colors">
             {isOpen && (
@@ -132,6 +242,16 @@ export default function Component(
                             );
                         })}
                     </Listbox>
+                </div>
+            )}
+            {assets && assets.length > 0 && (
+                <div className={cn('group flex gap-2 pl-[20px] pr-3', assets.length > 0 ? 'pt-4' : '')}>
+                    <PromptInputAssets
+                        assets={assets}
+                        onRemoveAsset={index => {
+                            setAssets(prev => prev.filter((_, i) => i !== index));
+                        }}
+                    />
                 </div>
             )}
 
@@ -158,10 +278,7 @@ export default function Component(
                                 isDisabled={!prompt}
                                 radius="full"
                                 variant={!prompt ? 'flat' : 'solid'}
-                                onPress={() => {
-                                    props.onSubmitFunc(prompt, useRag ? 'rag' : '');
-                                    setPrompt('');
-                                }}
+                                onPress={submit}
                             >
                                 {loading ? (
                                     <Spinner />
@@ -184,12 +301,23 @@ export default function Component(
                 value={prompt}
                 onValueChange={onSetPrompt}
                 onKeyDown={handleKeyDown}
+                onPaste={handlePaste}
             />
             <div className="flex w-full flex-wrap items-center justify-between gap-2 px-3 pb-2">
                 <div className="flex flex-wrap gap-3">
                     {/* <Button size="sm" startContent={<Icon className="text-default-500" icon="solar:paperclip-linear" width={18} />} variant="flat">
                         Attach
                     </Button> */}
+                    {props.allowAttach && (
+                        <Tooltip showArrow content="Attach Files">
+                            <Button isIconOnly radius="full" size="sm" variant="light" onPress={() => fileInputRef.current?.click()}>
+                                <Icon className="text-default-500" icon="solar:paperclip-outline" width={24} />
+                                <VisuallyHidden>
+                                    <input ref={fileInputRef} multiple accept="image/*" type="file" onChange={handleFileUpload} />
+                                </VisuallyHidden>
+                            </Button>
+                        </Tooltip>
+                    )}
 
                     {/* <Button size="sm" startContent={<Icon className="text-default-500" icon="solar:notes-linear" width={18} />} variant="flat">
                         Templates
@@ -218,3 +346,51 @@ export default function Component(
         </form>
     );
 }
+
+interface PromptInputAssetsProps {
+    assets: File[];
+    onRemoveAsset: (index: number) => void;
+}
+
+const PromptInputAssets = ({ assets, onRemoveAsset }: PromptInputAssetsProps) => {
+    if (assets.length === 0) return null;
+
+    const [previewList, setPreviewList] = useState<string[]>([]);
+    useEffect(() => {
+        Promise.all(
+            assets.map((file, index) => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const base64data = reader.result as string;
+                        resolve(base64data);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            })
+        ).then((values: string[]) => {
+            setPreviewList(values);
+        });
+    }, [assets]);
+
+    return (
+        <>
+            {previewList.map((previewBase64, index) => {
+                return (
+                    <Badge
+                        key={index}
+                        isOneChar
+                        className="opacity-0 group-hover:opacity-100"
+                        content={
+                            <Button isIconOnly radius="full" size="sm" variant="light" onPress={() => onRemoveAsset(index)}>
+                                <Icon className="text-foreground" icon="iconamoon:close-thin" width={16} />
+                            </Button>
+                        }
+                    >
+                        <Image alt="uploaded image" className="h-14 w-14 rounded-small border-small border-default-200/50 object-cover" src={previewBase64} />
+                    </Badge>
+                );
+            })}
+        </>
+    );
+};

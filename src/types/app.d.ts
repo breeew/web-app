@@ -45,7 +45,7 @@ declare type UserSpace = {
     role: string;
     title: string;
     description: string;
-    base_prompt: string; 
+    base_prompt: string;
     chat_prompt: string;
     created_at: number;
 };
@@ -90,3 +90,8 @@ declare type KnowledgeStore = {
 };
 
 declare type Size = 'sm' | 'md' | 'lg' | 'xs' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | 'full' | undefined;
+
+declare type Attach = {
+    type: string;
+    url: string;
+};

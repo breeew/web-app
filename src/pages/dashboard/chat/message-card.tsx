@@ -1,12 +1,12 @@
+import { Avatar, Badge, Button, Image, Link, Skeleton, Tooltip } from '@heroui/react';
+import { cn } from '@heroui/react';
+import { useClipboard } from '@heroui/use-clipboard';
 import { Icon } from '@iconify/react';
-import { Avatar, Badge, Button, Link, Skeleton, Tooltip } from "@heroui/react";
-import { cn } from "@heroui/react";
-import { useClipboard } from "@heroui/use-clipboard";
+import { t } from 'i18next';
 import React, { ReactNode } from 'react';
 
 import { RelDoc } from '@/apis/chat';
 import Markdown from '@/components/markdown';
-import { t } from 'i18next';
 
 // import { useMedia } from '@/hooks/use-media';
 
@@ -15,6 +15,7 @@ export type MessageCardProps = React.HTMLAttributes<HTMLDivElement> & {
     role?: string;
     showFeedback?: boolean;
     message?: string;
+    attach?: Attach[];
     currentAttempt?: number;
     status?: 'success' | 'failed' | 'continue';
     attempts?: number;
@@ -39,6 +40,7 @@ const MessageCard = React.forwardRef<HTMLDivElement, MessageCardProps>(
             message,
             showFeedback,
             attempts = 1,
+            attach,
             currentAttempt = 1,
             status,
             isLoading,
@@ -126,8 +128,8 @@ const MessageCard = React.forwardRef<HTMLDivElement, MessageCardProps>(
                         )}
                     </Badge>
                 </div>
-                <div className="flex flex-1 overflow-hidden flex-col gap-4 relative">
-                    <div className={cn('relative w-full rounded-medium py-3 text-default-600', failedMessageClassName, messageClassName)}>
+                <div className="max-w-full flex flex-1 overflow-hidden flex-col items-start gap-4 relative">
+                    <div className={cn('relative rounded-medium py-3  text-default-600', failedMessageClassName, messageClassName)}>
                         {!hasFailed && !message ? (
                             <>
                                 <div className="flex flex-col gap-3 mt-[-3px]">
@@ -138,7 +140,20 @@ const MessageCard = React.forwardRef<HTMLDivElement, MessageCardProps>(
                             </>
                         ) : (
                             <div ref={messageRef} className={'text-small gap-1'}>
-                                {hasFailed ? failedMessage : <Markdown className="w-full px-3 text-wrap break-words text-gray-600 dark:text-gray-300 leading-loose">{message}</Markdown>}
+                                {hasFailed ? (
+                                    failedMessage
+                                ) : (
+                                    <>
+                                        <Markdown className="px-3 text-wrap break-words text-gray-600 dark:text-gray-300 leading-loose">{message}</Markdown>
+                                        {attach && (
+                                            <div className="flex flex-wrap gap-3 m-2 mb-0">
+                                                {attach.map((v, index) => {
+                                                    return <Image key={index} className="w-40 h-50 rounded-small border-small border-default-200/50 object-cover" src={v.url} />;
+                                                })}
+                                            </div>
+                                        )}
+                                    </>
+                                )}
                             </div>
                         )}
                         {showFeedback && !hasFailed && (

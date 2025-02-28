@@ -13,8 +13,8 @@ export default function Chat() {
     const navigate = useNavigate();
     const { currentSelectedSpace } = useSnapshot(spaceStore);
 
-    const onSubmit = useCallback<(msg: string, agent: string) => Promise<void>>(
-        async (message: string, agent: string) => {
+    const onSubmit = useCallback<(msg: string, agent: string, files?: Attach[]) => Promise<void>>(
+        async (message: string, agent: string, files?: Attach[]) => {
             if (!currentSelectedSpace) {
                 throw new Error('uninited');
             }
@@ -33,7 +33,8 @@ export default function Chat() {
                                 key: 1
                             }
                         ],
-                        agent: agent
+                        agent: agent,
+                        files: files
                     }
                 });
             } catch (e: any) {
@@ -55,6 +56,7 @@ export default function Chat() {
                     </div>
                     <div className="flex flex-col w-full">
                         <PromptInputWithEnclosedActions
+                            allowAttach={true}
                             classNames={{
                                 button: 'bg-default-foreground opacity-100 w-[30px] h-[30px] !min-w-[30px] self-center',
                                 buttonIcon: 'text-background',
