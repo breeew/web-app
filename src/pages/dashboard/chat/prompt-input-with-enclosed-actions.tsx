@@ -215,6 +215,7 @@ export default function Component(
         try {
             await props.onSubmitFunc(prompt, useRag ? 'rag' : '', files);
             setPrompt('');
+            setAssets([]);
         } catch (e: any) {
             console.error(e);
         }
@@ -222,30 +223,9 @@ export default function Component(
     }, [prompt, useRag, assets, currentSelectedSpace]);
 
     return (
-        <form className="flex flex-col w-full items-start gap-2 relative rounded-medium bg-default-100 transition-colors">
-            {isOpen && (
-                <div className="absolute w-full left-0 top-0">
-                    <Listbox
-                        disallowEmptySelection
-                        aria-label="Single agent selection"
-                        className="absolute bottom-1 left-0 bg-content2 rounded-xl"
-                        autoFocus="first"
-                        selectionMode="single"
-                        variant="flat"
-                        onAction={setSelectedKeys}
-                    >
-                        {agents.map(v => {
-                            return (
-                                <ListboxItem key={v.title} className="h-12">
-                                    {v.title} <span className="text-sm text-zinc-400">（{v.description}）</span>
-                                </ListboxItem>
-                            );
-                        })}
-                    </Listbox>
-                </div>
-            )}
+        <>
             {assets && assets.length > 0 && (
-                <div className={cn('group flex gap-2 pl-[20px] pr-3', assets.length > 0 ? 'pt-4' : '')}>
+                <div className="group flex gap-2 px-2 mb-2">
                     <PromptInputAssets
                         assets={assets}
                         onRemoveAsset={index => {
@@ -255,95 +235,119 @@ export default function Component(
                 </div>
             )}
 
-            <PromptInput
-                {...props}
-                ref={inputRef}
-                classNames={{
-                    inputWrapper: '!bg-transparent shadow-none',
-                    innerWrapper: cn('items-center outline-0', props.classNames?.innerWrapper),
-                    input: cn('text-medium pl-1 data-[has-start-content=true]:ps-0 data-[has-start-content=true]:pe-0', props.classNames?.input)
-                }}
-                endContent={
-                    <div className="flex gap-2 pt-1">
-                        {/* {!prompt && (
+            <form className="flex flex-col w-full items-start gap-2 relative rounded-medium bg-default-100 transition-colors">
+                {isOpen && (
+                    <div className="absolute w-full left-0 top-0">
+                        <Listbox
+                            disallowEmptySelection
+                            aria-label="Single agent selection"
+                            className="absolute bottom-1 left-0 bg-content2 rounded-xl z-50"
+                            autoFocus="first"
+                            selectionMode="single"
+                            variant="flat"
+                            onAction={setSelectedKeys}
+                        >
+                            {agents.map(v => {
+                                return (
+                                    <ListboxItem key={v.title} className="h-12">
+                                        {v.title} <span className="text-sm text-zinc-400">（{v.description}）</span>
+                                    </ListboxItem>
+                                );
+                            })}
+                        </Listbox>
+                    </div>
+                )}
+
+                <PromptInput
+                    {...props}
+                    ref={inputRef}
+                    classNames={{
+                        inputWrapper: '!bg-transparent shadow-none',
+                        innerWrapper: cn('items-center outline-0', props.classNames?.innerWrapper),
+                        input: cn('text-medium pl-1 data-[has-start-content=true]:ps-0 data-[has-start-content=true]:pe-0', props.classNames?.input)
+                    }}
+                    endContent={
+                        <div className="flex gap-2 pt-1">
+                            {/* {!prompt && (
                             <Button isIconOnly radius="full" variant="light">
                                 <Icon className="text-default-500" icon="solar:microphone-3-linear" width={20} />
                             </Button>
                         )} */}
-                        <Tooltip showArrow content="Send message">
-                            <Button
-                                isIconOnly
-                                className={props?.classNames?.button || ''}
-                                color={!prompt ? 'default' : 'primary'}
-                                isDisabled={!prompt}
-                                radius="full"
-                                variant={!prompt ? 'flat' : 'solid'}
-                                onPress={submit}
-                            >
-                                {loading ? (
-                                    <Spinner />
-                                ) : (
-                                    <Icon
-                                        className={cn('[&>path]:stroke-[2px]', !prompt ? 'text-default-500' : 'text-primary-foreground', props?.classNames?.buttonIcon || '')}
-                                        icon="solar:arrow-up-linear"
-                                        width={20}
-                                    />
-                                )}
-                            </Button>
-                        </Tooltip>
-                    </div>
-                }
-                // startContent={
-                //     <Button isIconOnly className="p-[10px]" radius="full" variant="light">
-                //         <Icon className="text-default-500" icon="solar:paperclip-linear" width={20} />
-                //     </Button>
-                // }
-                value={prompt}
-                onValueChange={onSetPrompt}
-                onKeyDown={handleKeyDown}
-                onPaste={handlePaste}
-            />
-            <div className="flex w-full flex-wrap items-center justify-between gap-2 px-3 pb-2">
-                <div className="flex flex-wrap gap-3">
-                    {/* <Button size="sm" startContent={<Icon className="text-default-500" icon="solar:paperclip-linear" width={18} />} variant="flat">
+                            <Tooltip showArrow content="Send message">
+                                <Button
+                                    isIconOnly
+                                    className={props?.classNames?.button || ''}
+                                    color={!prompt ? 'default' : 'primary'}
+                                    isDisabled={!prompt}
+                                    radius="full"
+                                    variant={!prompt ? 'flat' : 'solid'}
+                                    onPress={submit}
+                                >
+                                    {loading ? (
+                                        <Spinner />
+                                    ) : (
+                                        <Icon
+                                            className={cn('[&>path]:stroke-[2px]', !prompt ? 'text-default-500' : 'text-primary-foreground', props?.classNames?.buttonIcon || '')}
+                                            icon="solar:arrow-up-linear"
+                                            width={20}
+                                        />
+                                    )}
+                                </Button>
+                            </Tooltip>
+                        </div>
+                    }
+                    // startContent={
+                    //     <Button isIconOnly className="p-[10px]" radius="full" variant="light">
+                    //         <Icon className="text-default-500" icon="solar:paperclip-linear" width={20} />
+                    //     </Button>
+                    // }
+                    value={prompt}
+                    onValueChange={onSetPrompt}
+                    onKeyDown={handleKeyDown}
+                    onPaste={handlePaste}
+                />
+                <div className="flex w-full flex-wrap items-center justify-between gap-2 px-3 pb-2">
+                    <div className="flex flex-wrap gap-3">
+                        {/* <Button size="sm" startContent={<Icon className="text-default-500" icon="solar:paperclip-linear" width={18} />} variant="flat">
                         Attach
                     </Button> */}
-                    {props.allowAttach && (
-                        <Tooltip showArrow content="Attach Files">
-                            <Button isIconOnly radius="full" size="sm" variant="light" onPress={() => fileInputRef.current?.click()}>
-                                <Icon className="text-default-500" icon="solar:paperclip-outline" width={24} />
-                                <VisuallyHidden>
-                                    <input ref={fileInputRef} multiple accept="image/*" type="file" onChange={handleFileUpload} />
-                                </VisuallyHidden>
-                            </Button>
-                        </Tooltip>
-                    )}
+                        {props.allowAttach && (
+                            <Tooltip showArrow content="Attach Files">
+                                <Button isIconOnly radius="full" size="sm" variant="light" onPress={() => fileInputRef.current?.click()}>
+                                    <Icon className="text-default-500" icon="solar:paperclip-outline" width={24} />
+                                    <VisuallyHidden>
+                                        <input ref={fileInputRef} multiple accept="image/*" type="file" onChange={handleFileUpload} />
+                                    </VisuallyHidden>
+                                </Button>
+                            </Tooltip>
+                        )}
 
-                    {/* <Button size="sm" startContent={<Icon className="text-default-500" icon="solar:notes-linear" width={18} />} variant="flat">
+                        {/* <Button size="sm" startContent={<Icon className="text-default-500" icon="solar:notes-linear" width={18} />} variant="flat">
                         Templates
                     </Button> */}
+                    </div>
+                    <div className="flex flex-row justify-end items-end gap-4">
+                        <Switch
+                            classNames={{
+                                base: cn(
+                                    'inline-flex flex-row-reverse hover:bg-content2 items-center bg-default-100',
+                                    'justify-between cursor-pointer rounded-lg gap-2 pl-1 pr-2 border-2 border-transparent',
+                                    'border-default h-8'
+                                ),
+                                wrapper: 'p-0 h-4 w-10 overflow-visible'
+                            }}
+                            isSelected={useRag}
+                            onValueChange={setSelectedUseMemory}
+                        >
+                            <div className="flex flex-col gap-1">
+                                <p className="text-sm text-default-500">{t('UseMemory')}</p>
+                            </div>
+                        </Switch>
+                        <p className="py-1 text-tiny text-default-400 w-16 justify-end flex">{prompt.length}/2000</p>
+                    </div>
                 </div>
-                <div className="flex flex-row justify-end items-end gap-4">
-                    <Switch
-                        classNames={{
-                            base: cn(
-                                'inline-flex flex-row-reverse hover:bg-content2 items-center bg-default-100',
-                                'justify-between cursor-pointer rounded-lg gap-2 pl-1 pr-2 border-2 border-transparent',
-                                'border-default h-8'
-                            ),
-                            wrapper: 'p-0 h-4 w-10 overflow-visible'
-                        }}
-                        isSelected={useRag}
-                        onValueChange={setSelectedUseMemory}
-                    >
-                        <div className="flex flex-col gap-1">
-                            <p className="text-sm text-default-500">{t('UseMemory')}</p>
-                        </div>
-                    </Switch>
-                    <p className="py-1 text-tiny text-default-400 w-16 justify-end flex">{prompt.length}/2000</p>
-                </div>
-            </div>
-        </form>
+            </form>
+        </>
     );
 }
 
@@ -387,7 +391,7 @@ const PromptInputAssets = ({ assets, onRemoveAsset }: PromptInputAssetsProps) =>
                             </Button>
                         }
                     >
-                        <Image alt="uploaded image" className="h-14 w-14 rounded-small border-small border-default-200/50 object-cover" src={previewBase64} />
+                        <Image alt="uploaded image" className="h-24 w-24 rounded-small border-small border-default-200/50 object-cover" src={previewBase64} />
                     </Badge>
                 );
             })}

@@ -145,7 +145,7 @@ const MessageCard = React.forwardRef<HTMLDivElement, MessageCardProps>(
                                 ) : (
                                     <>
                                         <Markdown className="px-3 text-wrap break-words text-gray-600 dark:text-gray-300 leading-loose">{message}</Markdown>
-                                        {attach && (
+                                        {attach && attach.length > 0 && (
                                             <div className="flex flex-wrap gap-3 m-2 mb-0">
                                                 {attach.map((v, index) => {
                                                     return <Image key={index} className="w-40 h-50 rounded-small border-small border-default-200/50 object-cover" src={v.url} />;
