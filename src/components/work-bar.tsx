@@ -85,7 +85,7 @@ const WorkBar = memo(function WorkBar({ spaceid, onSubmit }: WorkBarProps) {
 
         setIsLoading(true);
         try {
-            await CreateKnowledge(currentSelectedSpace, currentSelectedResource?.id, knowledgeContent, 'markdown');
+            await CreateKnowledge(currentSelectedSpace, createToResource?.id, knowledgeContent, 'markdown');
             setKnowledgeContent('');
             toast.success(t('Success'));
             if (onSubmit) {
@@ -95,7 +95,7 @@ const WorkBar = memo(function WorkBar({ spaceid, onSubmit }: WorkBarProps) {
             console.error(e);
         }
         setIsLoading(false);
-    }, [knowledgeContent, currentSelectedSpace, currentSelectedResource, userIsPro]);
+    }, [knowledgeContent, currentSelectedSpace, createToResource, userIsPro]);
 
     const [readEndpoint, setReadEndpoint] = useState('');
     const [readLoading, setReadLoading] = useState(false);
@@ -254,7 +254,6 @@ const FileTask = memo(() => {
     function init() {
         setChunkFile({});
         setFileMeta('');
-        setResource('');
     }
 
     const { currentSelectedSpace } = useSnapshot(spaceStore);
@@ -294,36 +293,55 @@ const FileTask = memo(() => {
 
     return (
         <>
-            <Button className="absolute right-2 top-2 z-50" variant="faded" size="sm" onPress={() => setIsShowTaskList(true)}>
-                {t('TaskList')}
-            </Button>
+            {!chunkFile.url && (
+                <Button className="absolute right-2 top-2 z-50" variant="faded" size="sm" onPress={() => setIsShowTaskList(true)}>
+                    {t('TaskList')}
+                </Button>
+            )}
+
             <TaskList spaceID={currentSelectedSpace} isShow={isShowTaskList} onClose={() => setIsShowTaskList(false)} />
             {!chunkFile.url ? (
-                <FileUploader
-                    className="border-zinc-600 h-[180px] rounded-xl"
-                    accept={{
-                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
-                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': [],
-                        'application/pdf': []
-                    }}
-                    onValueChange={e => {
-                        console.log(e);
-                    }}
-                    onUpload={async f => {
-                        if (f.length === 0) {
-                            return;
-                        }
-                        const resp = await uploader(currentSelectedSpace, f[0], 'knowledge', 'chunk');
-                        if (resp.success) {
-                            setChunkFile({
-                                name: resp.file?.name,
-                                url: resp.file?.url,
-                                file: f[0]
-                            });
-                        }
-                    }}
-                    disabled={!userIsPro}
-                />
+                <>
+                    <FileUploader
+                        className="border-zinc-600 h-[180px] rounded-xl"
+                        accept={{
+                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
+                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document': [],
+                            'application/pdf': []
+                        }}
+                        onValueChange={e => {
+                            console.log(e);
+                            return false;
+                        }}
+                        onUpload={async f => {
+                            if (!currentSelectedResource || !currentSelectedResource.id) {
+                                toast.error(t('FileUploadMustChooseAResource'), {
+                                    description: t('FileUploadSuggestToANewResource')
+                                });
+                                return;
+                            }
+
+                            if (f.length === 0) {
+                                return;
+                            }
+                            const resp = await uploader(currentSelectedSpace, f[0], 'knowledge', 'chunk');
+                            if (resp.success) {
+                                setChunkFile({
+                                    name: resp.file?.name,
+                                    url: resp.file?.url,
+                                    file: f[0]
+                                });
+                            }
+                        }}
+                        disabled={!userIsPro || !currentSelectedResource || !currentSelectedResource.id}
+                    />
+                    <div className="flex w-full items-center justify-end gap-2 p-1">
+                        <p className="text-tiny text-default-300 dark:text-default-500">
+                            {!currentSelectedResource || (!currentSelectedResource.id && <span className=" text-red-400">{t('FileUploadMustChooseAResource')}</span>)} ⚠{' '}
+                            {t('FileUploadSuggestToANewResource')}
+                        </p>
+                    </div>
+                </>
             ) : (
                 <>
                     <span className="text-white my-2">{t('AIAutoChunkDescription')}</span>

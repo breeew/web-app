@@ -360,7 +360,6 @@ export function TaskList({ isShow, spaceID, onClose }: TaskListProps) {
         const taskMap = new Map<string, number>();
         taskList.forEach(v => {
             if (v.status !== 1 && v.retry_times < 3) {
-                console.log(v);
                 needToRefresh.push(v.task_id);
                 taskMap.set(v.task_id, v.status);
             }

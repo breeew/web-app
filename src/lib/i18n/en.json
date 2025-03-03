@@ -259,5 +259,7 @@
     "Brief": "Brief",
     "OpenRichText": "Use Editor",
     "WorkSpace": "Work Space",
-    "CurrentResourceType": "Current resource type is {{type}}"
+    "CurrentResourceType": "Current resource type is {{type}}",
+    "FileUploadMustChooseAResource": "File chunk must choose one resource type.",
+    "FileUploadSuggestToANewResource": "Suggest to create new resource for each file."
 }

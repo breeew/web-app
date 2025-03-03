@@ -272,8 +272,10 @@ export function FilePreview({ file, onRemove }: FilePreviewProps) {
     }
 
     return (
-        <Chip variant="light" radius="sm" color="warning" className="w-full overflow-hidden" onClose={() => onRemove && onRemove(file)}>
-            {file.name}
-        </Chip>
+        <div className="w-full">
+            <Chip variant="light" radius="sm" color="warning" className="w-full overflow-hidden" onClose={() => onRemove && onRemove(file)}>
+                {file.name}
+            </Chip>
+        </div>
     );
 }
