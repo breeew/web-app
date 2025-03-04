@@ -9,6 +9,7 @@ import ProfileSetting from './profile-setting';
 
 //import UserManagement from './user-management';
 import { usePlan } from '@/hooks/use-plan';
+import SpaceUserSetting from '@/pages/dashboard/space-setting/user-setting';
 import spaceStore from '@/stores/space';
 
 const Setting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>(({ className, space, onClose, ...props }, ref) => {
@@ -39,6 +40,7 @@ const Setting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>(({ cla
                     </Tab>
                     <Tab key="appearance" title={t('UserManage')}>
                         {/* <UserManagement /> */}
+                        <SpaceUserSetting />
                     </Tab>
                 </Tabs>
             </div>

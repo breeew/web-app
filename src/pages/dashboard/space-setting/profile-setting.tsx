@@ -74,7 +74,7 @@ const ProfileSetting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>
         return (
             <>
                 {vars.map(v => {
-                    return <p>{v}</p>;
+                    return <p key={v}>{v}</p>;
                 })}
             </>
         );

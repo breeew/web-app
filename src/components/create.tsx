@@ -30,7 +30,6 @@ import {
     User
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
-import { formToJSON } from 'axios';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -409,13 +408,13 @@ export function TaskList({ isShow, spaceID, onClose }: TaskListProps) {
             td: [
                 // changing the rows border radius
                 // first
-                'group-data-[first=true]/tr:first:before:rounded-none',
-                'group-data-[first=true]/tr:last:before:rounded-none',
+                'group-data-[first=true]/tr:first:before:rounded-lg',
+                'group-data-[first=true]/tr:last:before:rounded-lg',
                 // middle
                 'group-data-[middle=true]/tr:before:rounded-none',
                 // last
-                'group-data-[last=true]/tr:first:before:rounded-none',
-                'group-data-[last=true]/tr:last:before:rounded-none'
+                'group-data-[last=true]/tr:first:before:rounded-lg',
+                'group-data-[last=true]/tr:last:before:rounded-lg'
             ]
         }),
         []

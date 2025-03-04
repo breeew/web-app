@@ -7,7 +7,7 @@ import { useSnapshot } from 'valtio';
 import { subscribeKey } from 'valtio/utils';
 
 import { UserSpace } from '@/apis/space';
-import CreateSpace from '@/components/create-space';
+import CreateSpace from '@/components/space/create-space';
 import { useChatPageCondition } from '@/hooks/use-chat-page';
 import spaceStore, { latestPickedSpace, loadUserSpaces, setCurrentSelectedSpace } from '@/stores/space';
 

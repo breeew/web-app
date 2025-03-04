@@ -875,14 +875,14 @@
 .markdown-body pre code,
 .markdown-body pre tt {
     display: inline;
-    max-width: auto;
     padding: 0;
     margin: 0;
     overflow: visible;
     line-height: inherit;
-    word-wrap: normal;
+    word-wrap: break-word;
     background-color: transparent;
     border: 0;
+    text-wrap: auto;
 }
 
 .markdown-body .csv-data td,

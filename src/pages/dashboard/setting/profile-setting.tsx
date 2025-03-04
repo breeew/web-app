@@ -35,7 +35,7 @@ const ProfileSetting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>
 
     React.useEffect(() => {
         if (!userInfo) {
-            subscribeKey(userStore, 'userInfo', userInfo => {
+            const cancel = subscribeKey(userStore, 'userInfo', userInfo => {
                 if (!userInfo) {
                     return;
                 }
@@ -45,7 +45,7 @@ const ProfileSetting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>
                 setLoading(false);
             });
 
-            return;
+            return cancel;
         }
 
         setEmail(userInfo.email);

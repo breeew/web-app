@@ -475,9 +475,10 @@ function useResourceMode() {
         if (!currentSelectedSpace) {
             return;
         }
-        subscribeKey(resourceStore, 'onResourceUpdate', () => {
+        const cancel = subscribeKey(resourceStore, 'onResourceUpdate', () => {
             listResource(currentSelectedSpace);
         });
+        return cancel;
     }, [currentSelectedSpace]);
 
     const { groupedResources } = useGroupedResources();

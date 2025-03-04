@@ -314,13 +314,6 @@ const FileTask = memo(() => {
                             return false;
                         }}
                         onUpload={async f => {
-                            if (!currentSelectedResource || !currentSelectedResource.id) {
-                                toast.error(t('FileUploadMustChooseAResource'), {
-                                    description: t('FileUploadSuggestToANewResource')
-                                });
-                                return;
-                            }
-
                             if (f.length === 0) {
                                 return;
                             }
