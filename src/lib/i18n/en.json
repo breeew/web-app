@@ -261,5 +261,13 @@
     "WorkSpace": "Work Space",
     "CurrentResourceType": "Current resource type is {{type}}",
     "FileUploadMustChooseAResource": "File chunk must choose one resource type.",
-    "FileUploadSuggestToANewResource": "Suggest to create new resource for each file."
+    "FileUploadSuggestToANewResource": "Suggest to create new resource for each file.",
+    "User": "User",
+    "Role": "Role",
+    "JoinTime": "Join Time",
+    "Remove": "Remove",
+    "role-admin": "Admin",
+    "role-editor": "Editor",
+    "role-viewer": "Viewer",
+    "role-member": "Member"
 }

@@ -488,7 +488,7 @@ export default function Chat() {
                                     avatar={role === 'assistant' ? <LogoIcon /> : <Avatar src={userAvatar} />}
                                     message={message}
                                     attach={attach}
-                                    messageClassName={role === 'user' ? 'bg-content2 text-content2-foreground' : 'w-full'}
+                                    messageClassName={role === 'user' ? 'bg-content2 text-content2-foreground !py-3' : 'w-full'}
                                     // showFeedback={role === 'assistant'}
                                     status={status}
                                     ext={ext}

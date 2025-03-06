@@ -23,7 +23,7 @@ const Setting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>(({ cla
             <div className="w-full flex-1 p-4">
                 {/* Title */}
                 <div className="flex items-center gap-x-3">
-                    <h1 className="text-3xl font-bold leading-9 text-default-foreground">{t('Space Setting')}</h1>
+                    <h1 className="text-2xl font-bold leading-9 text-default-foreground">{t('Space Setting')}</h1>
                 </div>
                 <h2 className="mt-2 text-small text-default-500">Space Setting.</h2>
                 {/*  Tabs */}

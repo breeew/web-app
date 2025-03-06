@@ -111,6 +111,11 @@ pre code.hljs {
     text-wrap: wrap;
 }
 
+.markdown-body table {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
 @media (max-width: 650px) {
     .markdown-body video {
         max-width: 60%;

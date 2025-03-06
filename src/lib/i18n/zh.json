@@ -263,5 +263,13 @@
     "WorkSpace": "工作区",
     "CurrentResourceType": "当前资源类型为：{{type}}",
     "FileUploadMustChooseAResource": "通过文件构建知识库请先选择一个自建的资源类型",
-    "FileUploadSuggestToANewResource": "建议为每个文件创建一个新的资源类型，以便于管理与分类"
+    "FileUploadSuggestToANewResource": "建议为每个文件创建一个新的资源类型，以便于管理与分类",
+    "User": "用户",
+    "Role": "角色",
+    "JoinTime": "加入时间",
+    "Remove": "移出",
+    "role-admin": "管理员",
+    "role-editor": "编辑员",
+    "role-viewer": "成员",
+    "role-member": "客户"
 }

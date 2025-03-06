@@ -167,9 +167,9 @@ export default function Component({ children }: { children: React.ReactNode }) {
     return (
         <div className="flex h-dvh w-full dark:bg-zinc-900">
             {/* Sidebar */}
-            <SidebarDrawer className={'min-w-[288px] rounded-lg'} hideCloseButton={true} isOpen={isOpen} onOpenChange={onOpenChange}>
+            <SidebarDrawer className={'min-w-64'} hideCloseButton={true} isOpen={isOpen} onOpenChange={onOpenChange}>
                 <div
-                    className={cn('will-change relative flex w-72 flex-col bg-default-100 p-6 transition-width h-dvh', {
+                    className={cn('will-change relative flex w-64 flex-col bg-default-100 py-6 px-4 transition-width h-dvh', {
                         'w-[83px] items-center px-[6px] py-6': isCollapsed
                     })}
                 >

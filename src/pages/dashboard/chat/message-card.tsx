@@ -7,6 +7,7 @@ import React, { ReactNode } from 'react';
 
 import { RelDoc } from '@/apis/chat';
 import Markdown from '@/components/markdown';
+import { useMedia } from '@/hooks/use-media';
 
 // import { useMedia } from '@/hooks/use-media';
 
@@ -108,9 +109,11 @@ const MessageCard = React.forwardRef<HTMLDivElement, MessageCardProps>(
             [onAttemptFeedback]
         );
 
+        const { isMobile } = useMedia();
+
         return (
-            <div {...props} ref={ref} className={cn('flex gap-2', className)}>
-                <div className="relative flex-none py-1">
+            <div {...props} ref={ref} className={cn('flex flex-col md:flex-row md:gap-2', className)}>
+                <div className="relative flex-none md:py-1">
                     <Badge
                         isOneChar
                         color="danger"
@@ -120,7 +123,7 @@ const MessageCard = React.forwardRef<HTMLDivElement, MessageCardProps>(
                         shape="circle"
                     >
                         {avatar ? (
-                            <Avatar icon={avatar} />
+                            <Avatar icon={avatar} size={isMobile ? 'sm' : 'base'} />
                         ) : (
                             <Skeleton className="rounded-full">
                                 <Avatar />
@@ -129,7 +132,7 @@ const MessageCard = React.forwardRef<HTMLDivElement, MessageCardProps>(
                     </Badge>
                 </div>
                 <div className="max-w-full flex flex-1 overflow-hidden flex-col items-start gap-4 relative">
-                    <div className={cn('relative rounded-medium py-3  text-default-600', failedMessageClassName, messageClassName)}>
+                    <div className={cn('relative rounded-medium md:py-3 text-default-600', failedMessageClassName, messageClassName)}>
                         {!hasFailed && !message ? (
                             <>
                                 <div className="flex flex-col gap-3 mt-[-3px]">

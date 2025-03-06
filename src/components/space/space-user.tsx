@@ -97,7 +97,7 @@ export function SpaceUserList({ spaceID }: SpaceUserProps) {
     const columns = [
         { name: t('User'), uid: 'user' },
         { name: t('Role'), uid: 'role' },
-        { name: t('CreatedAt'), uid: 'created_at' },
+        { name: t('JoinTime'), uid: 'created_at' },
         { name: t('Operate'), uid: 'actions' }
     ];
 
