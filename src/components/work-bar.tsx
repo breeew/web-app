@@ -232,14 +232,6 @@ const WorkBar = memo(function WorkBar({ spaceid, onSubmit }: WorkBarProps) {
                     />
                 </div>
                 <div className="w-full flex-1 relative">
-                    {/* <Card className="h-[180px] cursor-pointer">
-                        <CardHeader className="absolute z-10 top-1 flex-col !items-start">
-                            <p className="text-tiny text-white/60 uppercase font-bold">Rich Text</p>
-                            <h4 className="text-white font-medium text-large">富文本编辑</h4>
-                        </CardHeader>
-                        <Image removeWrapper alt="Card background" className="z-0 w-full h-full object-cover" src="https://heroui.com/images/card-example-2.jpeg" />
-                    </Card> */}
-
                     <FileTask />
                 </div>
             </div>
@@ -303,7 +295,7 @@ const FileTask = memo(() => {
             {!chunkFile.url ? (
                 <>
                     <FileUploader
-                        className="border-zinc-600 h-[180px] rounded-xl"
+                        className="border-zinc-600 h-[180px] rounded-xl "
                         accept={{
                             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
                             'application/vnd.openxmlformats-officedocument.wordprocessingml.document': [],
@@ -328,9 +320,10 @@ const FileTask = memo(() => {
                         }}
                         disabled={!userIsPro || !currentSelectedResource || !currentSelectedResource.id}
                     />
-                    <div className="flex w-full items-center justify-end gap-2 p-1">
+                    <div className="flex w-full items-center justify-start gap-2 p-1">
                         <p className="text-tiny text-default-300 dark:text-default-500">
-                            {!currentSelectedResource || (!currentSelectedResource.id && <span className=" text-red-400">{t('FileUploadMustChooseAResource')}</span>)} ⚠{' '}
+                            {!currentSelectedResource || (!currentSelectedResource.id && <span className=" text-red-500">⚠{t('FileUploadMustChooseAResource')}</span>)}
+                            <br />
                             {t('FileUploadSuggestToANewResource')}
                         </p>
                     </div>
