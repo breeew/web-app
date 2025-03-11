@@ -348,7 +348,7 @@ const KnowledgeList = memo(
                             <p className="text-small text-default-400">{t('memories count', { total: total, title: currentSelectedResource?.title })}</p>
                         </Skeleton> */}
                     </div>
-                    <div className={[isSafari ? 'm-auto w-full max-w-[900px]' : 'columns-1 sm:columns-2 lg:columns-3 xl:columns-4 2xl:columns-5 3xl:columns-5 px-6', 'gap-[24px]'].join(' ')}>
+                    <div className={[isSafari ? 'm-auto w-full max-w-[900px]' : 'columns-1 sm:columns-2 lg:columns-3 xl:columns-4 2xl:columns-5 3xl:columns-5', 'gap-[24px] px-6'].join(' ')}>
                         {/* {isShowCreate && (
                             <div className="mb-[24px]">
                                 <CreateKnowledge shadow={isMobile ? 'none' : 'sm'} onChanges={onChanges} openCreateKnowledge={onShowCreate} />
