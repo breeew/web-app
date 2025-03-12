@@ -295,7 +295,7 @@ const FileTask = memo(() => {
             {!chunkFile.url ? (
                 <>
                     <FileUploader
-                        className="border-zinc-600 h-[180px] rounded-xl "
+                        className="border-zinc-600 h-[180px] rounded-xl"
                         accept={{
                             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [],
                             'application/vnd.openxmlformats-officedocument.wordprocessingml.document': [],
@@ -322,8 +322,14 @@ const FileTask = memo(() => {
                     />
                     <div className="flex w-full items-center justify-start gap-2 p-1">
                         <p className="text-tiny text-default-300 dark:text-default-500">
-                            {!currentSelectedResource || (!currentSelectedResource.id && <span className=" text-red-500">⚠{t('FileUploadMustChooseAResource')}</span>)}
-                            <br />
+                            {!currentSelectedResource ||
+                                (!currentSelectedResource.id && (
+                                    <span className=" text-red-500">
+                                        ⚠️{t('FileUploadMustChooseAResource')}
+                                        <br />
+                                    </span>
+                                ))}
+
                             {t('FileUploadSuggestToANewResource')}
                         </p>
                     </div>
