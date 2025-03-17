@@ -206,10 +206,6 @@ export default memo(function Component() {
                     onChanges={onChanges}
                     onLoadMore={onLoadMore}
                 />
-
-                {/* <div className="absolute w-auto bottom-2 right-1/2 mr-[-130px]">
-                    <MainQuery onClick={showCreate} />
-                </div> */}
             </div>
 
             <KnowledgeModal ref={viewKnowledge} onChange={onChanges} onDelete={onDelete} />
@@ -330,11 +326,11 @@ const KnowledgeList = memo(
             }
         }
         const { isSafari } = useUserAgent();
-
+        const [isShowMemoryCreate, setIsShowMemoryCreate] = useState(false);
         return (
             <>
                 <ScrollShadow ref={ssDom} hideScrollBar className="w-full flex-grow box-border mb-6" onScroll={scrollChanged}>
-                    <WorkBar spaceid={currentSelectedSpace} onSubmit={onChanges} />
+                    <WorkBar spaceid={currentSelectedSpace} onSubmit={onChanges} isShowCreate={isShowMemoryCreate} onShowChange={setIsShowMemoryCreate} />
                     <div className="w-full  space-y-1 mb-6  py-1">
                         <div className="flex justify-between items-center gap-4 px-6">
                             <div className="flex flex-col gap-2">
@@ -363,6 +359,13 @@ const KnowledgeList = memo(
                         })}
                     </div>
                 </ScrollShadow>
+                <div className="absolute w-[260px] bottom-2 right-1/2 mr-[-130px]">
+                    <MainQuery
+                        onClick={() => {
+                            setIsShowMemoryCreate(true);
+                        }}
+                    />
+                </div>
                 {showGoTop && <GoTop className="fixed bottom-7 right-2 backdrop-blur backdrop-saturate-150 dark:border-white/20 dark:bg-white/10 dark:text-white text-gray-500" onPress={goToTop} />}
             </>
         );

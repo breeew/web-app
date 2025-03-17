@@ -97,7 +97,7 @@
     "createSpaceDescriptionLabel": "空间描述",
     "createSpaceBasePromptLabel": "基础提示词",
     "createSpaceChatPromptLabel": "聊天提示词",
-    "knowledgeCreateButtonTitle": "开始酝酿你的记忆",
+    "knowledgeCreateButtonTitle": "开始记忆",
     "knowledgeCreateContentLabel": "记忆内容",
     "knowledgeCreateContentLabelPlaceholder": "键入 \"/\" 快速唤起命令栏",
     "knowledgeCreateResourceLable": "资源类型",
@@ -271,5 +271,6 @@
     "role-admin": "管理员",
     "role-editor": "编辑员",
     "role-viewer": "成员",
-    "role-member": "客户"
+    "role-member": "客户",
+    "Search": "搜索"
 }

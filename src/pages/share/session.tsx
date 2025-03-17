@@ -1,7 +1,7 @@
 import { Accordion, AccordionItem, Avatar, Button, Listbox, ListboxItem, ScrollShadow, User } from '@heroui/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { GetSharedSession, type SharedSessionDetail } from '@/apis/share';
 import { LogoIcon } from '@/components/logo';
@@ -28,6 +28,8 @@ const ShareSessionPage = function () {
     useEffect(() => {
         loadSession();
     }, [token]);
+
+    const navigator = useNavigate();
 
     const controlsContent = useMemo(() => {
         return (
@@ -77,7 +79,7 @@ const ShareSessionPage = function () {
                                                     key={key}
                                                     avatar={role === 2 ? <LogoIcon /> : <Avatar src={session.user.avatar} />}
                                                     message={message}
-                                                    messageClassName={role === 1 ? 'bg-content3 text-content3-foreground' : ''}
+                                                    messageClassName={role === 'user' ? 'bg-content2 text-content2-foreground !py-3 w-full' : 'w-full'}
                                                     // showFeedback={role === 'assistant'}
                                                     status={complete === 1 ? 'success' : 'failed'}
                                                     role={role}

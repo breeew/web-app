@@ -52,11 +52,6 @@ export default function Component(props: NavbarProps) {
                         🤔 {t('knowledgeCreateButtonTitle')}...
                     </Button>
                 </NavbarItem>
-                {!isMobile && (
-                    <Kbd keys={['command']} className="mr-2">
-                        B
-                    </Kbd>
-                )}
             </NavbarContent>
         </Navbar>
     );

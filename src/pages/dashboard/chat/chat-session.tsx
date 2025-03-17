@@ -481,14 +481,14 @@ export default function Chat() {
             <div className="overflow-hidden w-full h-full flex flex-col relative px-3">
                 <main className="h-full w-full relative gap-4 py-3 flex flex-col justify-center items-center">
                     <ScrollShadow ref={ssDom} hideScrollBar className="w-full py-6 flex-grow items-center">
-                        <div className="w-full m-auto max-w-[760px] overflow-hidden relative flex flex-col gap-6">
+                        <div className="w-full m-auto max-w-[760px] overflow-hidden relative flex flex-col gap-4">
                             {messages.map(({ key, role, message, attach, status, ext }) => (
                                 <MessageCard
                                     key={key}
                                     avatar={role === 'assistant' ? <LogoIcon /> : <Avatar src={userAvatar} />}
                                     message={message}
                                     attach={attach}
-                                    messageClassName={role === 'user' ? 'bg-content2 text-content2-foreground !py-3' : 'w-full'}
+                                    messageClassName={role === 'user' ? 'bg-content2 text-content2-foreground !py-3 w-full px-3' : 'px-1 w-full'}
                                     // showFeedback={role === 'assistant'}
                                     status={status}
                                     ext={ext}

@@ -44,9 +44,11 @@ import spaceStore from '@/stores/space';
 export interface WorkBarProps {
     spaceid: string;
     onSubmit?: () => void;
+    isShowCreate?: boolean;
+    onShowChange?: (isShow: boolean) => void;
 }
 
-const WorkBar = memo(function WorkBar({ spaceid, onSubmit }: WorkBarProps) {
+const WorkBar = memo(function WorkBar({ spaceid, onSubmit, isShowCreate, onShowChange }: WorkBarProps) {
     const { t } = useTranslation();
 
     const { currentSelectedSpace } = useSnapshot(spaceStore);
@@ -127,8 +129,18 @@ const WorkBar = memo(function WorkBar({ spaceid, onSubmit }: WorkBarProps) {
                 space_id: currentSelectedSpace
             });
             setKnowledgeIsShow(true);
+            onShowChange(true);
         }
     }, [knowledgeModal, currentSelectedSpace]);
+
+    useEffect(() => {
+        if (knowledgeModal && knowledgeModal.current && isShowCreate) {
+            knowledgeModal.current.show({
+                space_id: currentSelectedSpace
+            });
+            setKnowledgeIsShow(true);
+        }
+    }, [isShowCreate, knowledgeModal]);
 
     useEffect(() => {
         if (isMobile) {
@@ -228,6 +240,7 @@ const WorkBar = memo(function WorkBar({ spaceid, onSubmit }: WorkBarProps) {
                         onChange={onSubmit}
                         onClose={() => {
                             setKnowledgeIsShow(false);
+                            onShowChange(false);
                         }}
                     />
                 </div>

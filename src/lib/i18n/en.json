@@ -97,7 +97,7 @@
     "createSpaceDescriptionLabel": "Space Description",
     "createSpaceBasePromptLabel": "Base Prompt",
     "createSpaceChatPromptLabel": "Chat Prompt",
-    "knowledgeCreateButtonTitle": "Brew your memory.",
+    "knowledgeCreateButtonTitle": "Start your memory.",
     "knowledgeCreateContentLabel": "Memory Content",
     "knowledgeCreateContentLabelPlaceholder": "Press \"/\" for commands",
     "knowledgeCreateResourceLable": "Resource",
@@ -269,5 +269,6 @@
     "role-admin": "Admin",
     "role-editor": "Editor",
     "role-viewer": "Viewer",
-    "role-member": "Member"
+    "role-member": "Member",
+    "Search": "Search"
 }

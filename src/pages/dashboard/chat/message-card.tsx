@@ -147,7 +147,7 @@ const MessageCard = React.forwardRef<HTMLDivElement, MessageCardProps>(
                                     failedMessage
                                 ) : (
                                     <>
-                                        <Markdown className="px-3 text-wrap break-words text-gray-600 dark:text-gray-300 leading-loose">{message}</Markdown>
+                                        <Markdown className="text-wrap break-words text-gray-600 dark:text-gray-300 leading-loose">{message}</Markdown>
                                         {attach && attach.length > 0 && (
                                             <div className="flex flex-wrap gap-3 m-2 mb-0">
                                                 {attach.map((v, index) => {
