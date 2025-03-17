@@ -1,4 +1,5 @@
 import ImageTool from '@editorjs/image';
+import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 
 import { DescribeImage } from '@/apis/tools';
@@ -40,28 +41,17 @@ async function aiGenImageDescription(i18n: (string) => string, url: string): Pro
                     resolve(data);
                     return i18n(`Success`);
                 },
-                error: err => {
-                    return err;
+                error: (err: AxiosError) => {
+                    reject(err.message);
+                    if (err.response.data && err.response.data.meta) {
+                        return err.response.data.meta.message;
+                    }
+                    return err.message;
                 }
             });
         });
-
-        console.log('result', result);
-        // result = await DescribeImage(url);
-        // notifyTaskProgress({
-        //     id: id,
-        //     title: 'AI Task Notify',
-        //     description: 'Done',
-        //     status: 'success'
-        // });
     } catch (e: any) {
         console.error(e);
-        // notifyTaskProgress({
-        //     id: id,
-        //     title: 'AI Task Notify',
-        //     description: 'Failed',
-        //     status: 'failed'
-        // });
     }
     genenrating.delete(url);
     return result;

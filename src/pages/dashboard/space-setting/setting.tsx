@@ -9,6 +9,7 @@ import ProfileSetting from './profile-setting';
 
 //import UserManagement from './user-management';
 import { usePlan } from '@/hooks/use-plan';
+import SpaceUserSetting from '@/pages/dashboard/space-setting/user-setting';
 import spaceStore from '@/stores/space';
 
 const Setting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>(({ className, space, onClose, ...props }, ref) => {
@@ -22,7 +23,7 @@ const Setting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>(({ cla
             <div className="w-full flex-1 p-4">
                 {/* Title */}
                 <div className="flex items-center gap-x-3">
-                    <h1 className="text-3xl font-bold leading-9 text-default-foreground">{t('Space Setting')}</h1>
+                    <h1 className="text-2xl font-bold leading-9 text-default-foreground">{t('Space Setting')}</h1>
                 </div>
                 <h2 className="mt-2 text-small text-default-500">Space Setting.</h2>
                 {/*  Tabs */}
@@ -39,6 +40,7 @@ const Setting = React.forwardRef<HTMLDivElement, ProfileSettingCardProps>(({ cla
                     </Tab>
                     <Tab key="appearance" title={t('UserManage')}>
                         {/* <UserManagement /> */}
+                        <SpaceUserSetting />
                     </Tab>
                 </Tabs>
             </div>

@@ -16,7 +16,6 @@ export default memo(function KnowledgeAITaskList(props: any) {
 
     useEffect(() => {
         const unSubscribe = subscribeKey(eventStore, 'taskModify', (taskInfo: TaskInfo) => {
-            console.log('got new event', taskInfo);
             if (taskInfo.status === 'warning') {
                 toast({
                     title: t(taskInfo.title),

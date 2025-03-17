@@ -134,7 +134,7 @@ export function FileUploader(props: FileUploaderProps) {
 
             if (rejectedFiles.length > 0) {
                 rejectedFiles.forEach(({ file }) => {
-                    toast.error(t('FileRejected', { title: file.name }));
+                    toast.error(t('FileRejected', { description: file.name + ':' + file.errors.join('\n') }));
                 });
             }
 
@@ -178,13 +178,13 @@ export function FileUploader(props: FileUploaderProps) {
     const isDisabled = disabled || (files?.length ?? 0) >= maxFileCount;
 
     return (
-        <div className="relative flex flex-col gap-6 overflow-hidden">
+        <div className="relative flex flex-col gap-6 overflow-hidden inset-0 bg-gradient-to-b from-transparent to-indigo-50/5 dark:to-blue-800/5">
             <Dropzone onDrop={onDrop} accept={accept} maxSize={maxSize} maxFiles={maxFileCount} multiple={maxFileCount > 1 || multiple} disabled={isDisabled}>
                 {({ getRootProps, getInputProps, isDragActive }) => (
                     <div
                         {...getRootProps()}
                         className={cn(
-                            'group relative grid h-52 w-full cursor-pointer place-items-center rounded-lg border-2 border-dashed border-muted-foreground/25 px-5 py-2.5 text-center transition hover:bg-muted/25',
+                            'group relative grid h-52 w-full cursor-pointer place-items-center rounded-lg border-2 border-muted-foreground/25 px-5 py-2.5 text-center transition hover:bg-muted/25',
                             'ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
                             isDragActive && 'border-muted-foreground/50',
                             isDisabled && 'pointer-events-none opacity-60',
@@ -206,8 +206,8 @@ export function FileUploader(props: FileUploaderProps) {
                                     <Icon icon="line-md:upload-loop" className="size-7 text-muted-foreground" aria-hidden="true" />
                                 </div>
                                 <div className="flex flex-col gap-px">
-                                    <p className="font-medium text-muted-foreground">{t('DropZoneDescription')}</p>
-                                    <p className="text-sm text-muted-foreground/70">
+                                    <p className=" text-sm font-medium text-muted-foreground">{t('FileChunkDropZoneDescription')}</p>
+                                    <p className="text-xs text-muted-foreground/70">
                                         {t('MemoryUploadLimit', { times: maxFileCount })}
                                         <br />
                                         {t('MemoryUploadSize', { size: formatBytes(maxSize) })}
@@ -218,13 +218,13 @@ export function FileUploader(props: FileUploaderProps) {
                     </div>
                 )}
             </Dropzone>
-            {files?.length ? (
+            {/* {files?.length ? (
                 <ScrollShadow className="h-fit w-full px-3">
                     <div className="flex max-h-48 flex-col gap-4">
                         {files?.map((file, index) => <FileCard key={index} file={file} onRemove={() => onRemove(index)} progress={progresses?.[file.name]} />)}
                     </div>
                 </ScrollShadow>
-            ) : null}
+            ) : null} */}
         </div>
     );
 }
@@ -272,8 +272,10 @@ export function FilePreview({ file, onRemove }: FilePreviewProps) {
     }
 
     return (
-        <Chip variant="light" radius="sm" color="warning" className="w-full overflow-hidden" onClose={() => onRemove && onRemove(file)}>
-            {file.name}
-        </Chip>
+        <div className="w-full">
+            <Chip variant="light" radius="sm" color="warning" className="w-full overflow-hidden" onClose={() => onRemove && onRemove(file)}>
+                {file.name}
+            </Chip>
+        </div>
     );
 }

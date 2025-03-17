@@ -20,7 +20,7 @@ export default memo(function MarkdownComponent(props: Options & { isLight?: bool
             return { a: LightLink };
         }
 
-        return { a: CustomLink, pre: Pre };
+        return { a: CustomLink, pre: Pre, table: CustomTable };
     }, [isLight]);
 
     const rehypePlugins = useMemo(() => {
@@ -55,6 +55,14 @@ const CustomLink = ({ href, children }) => {
         <a href={href} className={href && href !== '#' && 'text-blue-400'} target="_blank" rel="noopener noreferrer">
             {children}
         </a>
+    );
+};
+
+const CustomTable = ({ href, children }) => {
+    return (
+        <div className="w-full overflow-x-auto">
+            <table>{children}</table>
+        </div>
     );
 };
 

@@ -25,6 +25,7 @@ interface Message {
     status: 'success' | 'failed' | 'continue' | undefined;
     sequence: number;
     spaceID: string;
+    attach: Attach[];
     ext: MessageExt;
     len: number;
 }
@@ -342,6 +343,7 @@ export default function Chat() {
                             status: v.meta.complete === 1 ? 'success' : 'failed',
                             sequence: v.meta.sequence,
                             spaceID: currentSelectedSpace,
+                            attach: v.meta.attach,
                             ext: {
                                 relDocs: v.ext?.rel_docs
                             }
@@ -371,7 +373,7 @@ export default function Chat() {
     const isNew = urlParams.get('isNew');
 
     const query = useCallback(
-        async (message: string, agent: string) => {
+        async (message: string, agent: string, files?: Attach[]) => {
             if (!currentSelectedSpace || !sessionID) {
                 return;
             }
@@ -383,7 +385,8 @@ export default function Chat() {
                 const resp = await SendMessage(currentSelectedSpace, sessionID, {
                     messageID: msgID,
                     message: message,
-                    agent: agent
+                    agent: agent,
+                    files: files
                 });
 
                 setMessages((prev: Message[]) => {
@@ -394,6 +397,7 @@ export default function Chat() {
                         status: 'success',
                         sequence: resp.sequence,
                         spaceID: currentSelectedSpace,
+                        attach: files,
                         ext: {}
                     });
                 });
@@ -443,7 +447,7 @@ export default function Chat() {
                 if (location.state && location.state.messages && location.state.messages.length === 1) {
                     NamedSession(location.state.messages[0].message);
                     setSelectedUseMemory(location.state.agent === 'rag');
-                    await query(location.state.messages[0].message, location.state.agent);
+                    await query(location.state.messages[0].message, location.state.agent, location.state.files);
                     location.state.messages = undefined;
                 }
             } else {
@@ -477,13 +481,14 @@ export default function Chat() {
             <div className="overflow-hidden w-full h-full flex flex-col relative px-3">
                 <main className="h-full w-full relative gap-4 py-3 flex flex-col justify-center items-center">
                     <ScrollShadow ref={ssDom} hideScrollBar className="w-full py-6 flex-grow items-center">
-                        <div className="w-full m-auto max-w-[760px] overflow-hidden relative flex flex-col gap-6">
-                            {messages.map(({ key, role, message, status, ext }) => (
+                        <div className="w-full m-auto max-w-[760px] overflow-hidden relative flex flex-col gap-4">
+                            {messages.map(({ key, role, message, attach, status, ext }) => (
                                 <MessageCard
                                     key={key}
                                     avatar={role === 'assistant' ? <LogoIcon /> : <Avatar src={userAvatar} />}
                                     message={message}
-                                    messageClassName={role === 'user' ? 'bg-content3 text-content3-foreground' : ''}
+                                    attach={attach}
+                                    messageClassName={role === 'user' ? 'bg-content2 text-content2-foreground !py-3 w-full px-3' : 'px-1 w-full'}
                                     // showFeedback={role === 'assistant'}
                                     status={status}
                                     ext={ext}
@@ -537,6 +542,7 @@ export default function Chat() {
 
                     <div className="mt-auto flex flex-col gap-2 max-w-[760px] w-full">
                         <PromptInputWithEnclosedActions
+                            allowAttach={true}
                             classNames={{
                                 button: 'bg-default-foreground opacity-100 w-[30px] h-[30px] !min-w-[30px] self-center',
                                 buttonIcon: 'text-background',

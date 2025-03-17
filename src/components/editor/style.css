@@ -222,6 +222,16 @@
     @apply !text-base;
 }
 
+.editor .image-tool__image {
+    @apply mx-auto;
+    @apply max-w-[65%];
+}
+
+.editor .image-tool__caption {
+    @apply rounded-xl;
+    @apply !border-foreground-200;
+}
+
 video {
     width: 100%;
     height: auto;
@@ -250,4 +260,8 @@ video {
 
 .editor .codex-editor-overlay__rectangle {
     border: none !important;
+}
+
+.ce-block__content li ul {
+    padding-inline-start: 20px !important;
 }

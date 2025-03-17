@@ -65,6 +65,7 @@ export interface MessageDetail {
         message: {
             text: string;
         };
+        attach: Attach[];
     };
     ext?: {
         is_read: boolean | null;
@@ -96,6 +97,7 @@ export interface SendMessageArgs {
     messageID: string;
     message: string;
     agent: string;
+    files?: Attach[];
 }
 
 export interface SendMessageResponse {
@@ -106,7 +108,8 @@ export async function SendMessage(spaceID: string, sessionID: string, args: Send
     const resp = await instance.post(`/${spaceID}/chat/${sessionID}/message`, {
         message_id: args.messageID,
         message: args.message,
-        agent: args.agent
+        agent: args.agent,
+        files: args.files
     });
 
     return resp.data.data;

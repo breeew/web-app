@@ -97,7 +97,7 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
             classNames={{
                 base: 'bg-transparent lg:backdrop-filter-none md:mt-3 flex',
                 item: 'data-[active=true]:text-primary',
-                wrapper: 'px-2 w-full max-w-full justify-between items-center'
+                wrapper: 'px-2 md:px-6 w-full max-w-full justify-between items-center'
             }}
             height="60px"
         >
@@ -206,7 +206,7 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
             )}
 
             {!isChat && (
-                <NavbarContent className="flex gap-2 h-12 max-w-fit items-center rounded-full p-0 lg:px-1" justify="end">
+                <NavbarContent className="flex gap-2 h-12 max-w-fit items-center  p-0 lg:px-1" justify="end">
                     <NavbarItem className="flex">
                         {/* <Button isIconOnly radius="full" variant="light">
                         <Icon className="text-default-500" icon="solar:magnifer-linear" width={22} />
@@ -216,9 +216,9 @@ export default function Component({ onSideBarOpenChange }: { onSideBarOpenChange
                                 base: 'max-w-full sm:max-w-[20rem] h-10',
                                 mainWrapper: 'h-full',
                                 input: 'text-small',
-                                inputWrapper: 'h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20'
+                                inputWrapper: 'h-full rounded-xl font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20'
                             }}
-                            placeholder="Type to search..."
+                            placeholder={t('Search')}
                             size="sm"
                             startContent={<Icon className="text-default-500" icon="solar:magnifer-linear" width={18} />}
                             endContent={<Kbd keys={['enter']} className="cursor-pointer" onClick={_ => triggerKnowledgeSearch()} />}

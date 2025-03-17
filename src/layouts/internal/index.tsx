@@ -165,12 +165,12 @@ export default function Component({ children }: { children: React.ReactNode }) {
     const { userPlan } = usePlan();
 
     return (
-        <div className="flex h-dvh w-full gap-4 dark:bg-zinc-900">
+        <div className="flex h-dvh w-full dark:bg-zinc-900">
             {/* Sidebar */}
-            <SidebarDrawer className={'min-w-[288px] rounded-lg'} hideCloseButton={true} isOpen={isOpen} onOpenChange={onOpenChange}>
+            <SidebarDrawer className="min-w-64" sidebarWidth={260} hideCloseButton={true} isOpen={isOpen} onOpenChange={onOpenChange}>
                 <div
-                    className={cn('will-change relative flex w-72 flex-col bg-default-100 p-6 transition-width h-dvh', {
-                        'w-[83px] items-center px-[6px] py-6': isCollapsed
+                    className={cn('will-change relative flex w-[260px] flex-col bg-default-100 py-6 px-4 box-border transition-width h-dvh', {
+                        'items-center': isCollapsed
                     })}
                 >
                     <div className="flex items-center justify-between">
@@ -197,30 +197,29 @@ export default function Component({ children }: { children: React.ReactNode }) {
 
                     <div className="flex flex-col gap-y-2">
                         <WorkSpaceSelection />
-                        {!isChat && (
-                            <>
-                                <Spacer y={4} />
-                                <Button className="mx-1" startContent={<Icon icon="stash:data-date" width={24} />} onPress={goJournal}>
-                                    {t('Journal')}
-                                </Button>
-                            </>
-                        )}
+
+                        <Spacer y={2} />
+                        <Button className="mx-1" startContent={<Icon icon="stash:data-date" width={24} />} onPress={goJournal}>
+                            {t('Journal')}
+                        </Button>
+                        <Spacer y={2} />
                     </div>
 
-                    <div className="flex flex-col gap-y-2">
-                        <div className="pt-6 pb-2 px-2 text-zinc-500 text-sm">{isChat ? t('Chat Sessions') : t('Resource List')}</div>
-                        {isChat ? (
-                            <Button className="mx-1" variant="ghost" startContent={<Icon icon="bx:chat" width={24} />} onPress={createNewSession}>
-                                {t('New Session')}
-                            </Button>
-                        ) : (
-                            <>
-                                <Button className="mx-1" variant="ghost" startContent={<Icon icon="ic:outline-create-new-folder" width={24} />} onPress={showCreateResource}>
-                                    {t('New Resource')}
+                    <ScrollShadow hideScrollBar className="-mr-6 h-full max-h-full pr-6">
+                        <div className="flex flex-col gap-y-2">
+                            <div className=" pb-2 px-2 text-zinc-500 text-sm">{isChat ? t('Chat Sessions') : t('Resource List')}</div>
+                            {isChat ? (
+                                <Button className="mx-1" variant="ghost" startContent={<Icon icon="bx:chat" width={24} />} onPress={createNewSession}>
+                                    {t('New Session')}
                                 </Button>
-                                <ResourceManage ref={resourceManage} onModify={onResourceModify} />
-                                {/* <Spacer y={2} /> */}
-                                {/* <Input
+                            ) : (
+                                <>
+                                    <Button className="mx-1" variant="ghost" startContent={<Icon icon="ic:outline-create-new-folder" width={24} />} onPress={showCreateResource}>
+                                        {t('New Resource')}
+                                    </Button>
+                                    <ResourceManage ref={resourceManage} onModify={onResourceModify} />
+                                    {/* <Spacer y={2} /> */}
+                                    {/* <Input
                                     fullWidth
                                     aria-label="search"
                                     classNames={{
@@ -232,12 +231,10 @@ export default function Component({ children }: { children: React.ReactNode }) {
                                     placeholder="Search resources"
                                     startContent={<Icon className="text-default-500 [&>g]:stroke-[2px]" icon="solar:magnifer-linear" width={18} />}
                                 /> */}
-                            </>
-                        )}
-                    </div>
-                    <Spacer y={1} />
-
-                    <ScrollShadow hideScrollBar className="-mr-6 h-full max-h-full py-3 pr-6">
+                                </>
+                            )}
+                        </div>
+                        <Spacer y={2} />
                         {resourceLoading || (sessionLoading && sessionList.length === 0) ? (
                             <div className="w-full flex flex-col gap-2">
                                 <Skeleton className="h-3 w-3/5 rounded-lg" />
@@ -475,9 +472,10 @@ function useResourceMode() {
         if (!currentSelectedSpace) {
             return;
         }
-        subscribeKey(resourceStore, 'onResourceUpdate', () => {
+        const cancel = subscribeKey(resourceStore, 'onResourceUpdate', () => {
             listResource(currentSelectedSpace);
         });
+        return cancel;
     }, [currentSelectedSpace]);
 
     const { groupedResources } = useGroupedResources();

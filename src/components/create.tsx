@@ -30,7 +30,6 @@ import {
     User
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
-import { formToJSON } from 'axios';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -304,7 +303,7 @@ interface TaskListProps {
     onClose: () => void;
 }
 
-function TaskList({ isShow, spaceID, onClose }: TaskListProps) {
+export function TaskList({ isShow, spaceID, onClose }: TaskListProps) {
     const [hasMore, setHasMore] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -360,7 +359,6 @@ function TaskList({ isShow, spaceID, onClose }: TaskListProps) {
         const taskMap = new Map<string, number>();
         taskList.forEach(v => {
             if (v.status !== 1 && v.retry_times < 3) {
-                console.log(v);
                 needToRefresh.push(v.task_id);
                 taskMap.set(v.task_id, v.status);
             }
@@ -410,13 +408,13 @@ function TaskList({ isShow, spaceID, onClose }: TaskListProps) {
             td: [
                 // changing the rows border radius
                 // first
-                'group-data-[first=true]/tr:first:before:rounded-none',
-                'group-data-[first=true]/tr:last:before:rounded-none',
+                'group-data-[first=true]/tr:first:before:rounded-lg',
+                'group-data-[first=true]/tr:last:before:rounded-lg',
                 // middle
                 'group-data-[middle=true]/tr:before:rounded-none',
                 // last
-                'group-data-[last=true]/tr:first:before:rounded-none',
-                'group-data-[last=true]/tr:last:before:rounded-none'
+                'group-data-[last=true]/tr:first:before:rounded-lg',
+                'group-data-[last=true]/tr:last:before:rounded-lg'
             ]
         }),
         []

@@ -106,3 +106,24 @@ pre code.hljs {
         'Segoe UI Symbol',
         'Noto Color Emoji';
 }
+
+.markdown-body code {
+    text-wrap: wrap;
+}
+
+.markdown-body table {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+@media (max-width: 650px) {
+    .markdown-body video {
+        max-width: 60%;
+    }
+}
+
+@media (min-width: 651px) {
+    .markdown-body video {
+        max-width: 30%;
+    }
+}
